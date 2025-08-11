@@ -1,0 +1,450 @@
+{% extends "base.html" %}
+
+{% block title %}All Users{% endblock %}
+
+{% block extra_head %}
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        .nav-menu {
+            background-color: #2c3e50;
+            padding: 0;
+            margin: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-menu ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-menu li {
+            margin: 0;
+        }
+        
+        .nav-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 15px 25px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-menu a:hover {
+            background-color: #34495e;
+        }
+        
+        .nav-menu a.active {
+            background-color: #3498db;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+        }
+        
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .users-table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        .users-table-container h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 14px;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 14px;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .subscription-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .subscription-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .subscription-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .subscription-trial {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .search-bar {
+            margin-bottom: 15px;
+        }
+        
+        .search-bar input {
+            width: 300px;
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .btn-refresh {
+            float: right;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-refresh:hover {
+            background-color: #0056b3;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-overview {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="/admin/dashboard" id="adminLink" class="active">Dashboard</a></li>
+            <li><a href="/admin/products" id="adminProductsLink">Products</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <p>View and manage all users, their subscriptions, and API usage</p>
+        </div>
+        
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div id="totalUsers" class="stat-value">-</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div id="activeSubscriptions" class="stat-value">-</div>
+                <div class="stat-label">Active Subscriptions</div>
+            </div>
+            <div class="stat-card">
+                <div id="totalRequests" class="stat-value">-</div>
+                <div class="stat-label">Total API Requests</div>
+            </div>
+            <div class="stat-card">
+                <div id="monthlyRevenue" class="stat-value">-</div>
+                <div class="stat-label">Monthly Revenue</div>
+            </div>
+        </div>
+        
+        <div class="users-table-container">
+            <h2>
+                Users List
+                <button class="btn-refresh" onclick="loadUsersData()">🔄 Refresh</button>
+            </h2>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by email or name..." onkeyup="filterTable()">
+            </div>
+            <div id="loadingMessage" class="loading">Loading users data...</div>
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+            <table id="usersTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Subscription</th>
+                        <th>Plan</th>
+                        <th>API Requests</th>
+                        <th>This Month</th>
+                        <th>Total Cost</th>
+                        <th>Joined</th>
+                        <th>Last Active</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        let allUsersData = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Preserve token in navigation links
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            if (token) {
+                // Update navigation links to include token
+                const adminLink = document.getElementById('adminLink');
+                const adminProductsLink = document.getElementById('adminProductsLink');
+                
+                if (adminLink) {
+                    adminLink.href = `/admin/dashboard?token=${token}`;
+                }
+                if (adminProductsLink) {
+                    adminProductsLink.href = `/admin/products?token=${token}`;
+                }
+            }
+            
+            loadUsersData();
+        });
+        
+        async function loadUsersData() {
+            const loadingEl = document.getElementById('loadingMessage');
+            const errorEl = document.getElementById('errorMessage');
+            const tableEl = document.getElementById('usersTable');
+            
+            loadingEl.style.display = 'block';
+            errorEl.style.display = 'none';
+            tableEl.style.display = 'none';
+            
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const token = urlParams.get('token') || localStorage.getItem('authToken');
+                
+                if (!token) {
+                    showError('Authentication required. Please provide a token.');
+                    return;
+                }
+                
+                const response = await fetch('/api/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch users data');
+                }
+                
+                const data = await response.json();
+                allUsersData = data.users || [];
+                
+                updateOverviewStats(data.stats);
+                renderUsersTable(allUsersData);
+                
+                loadingEl.style.display = 'none';
+                tableEl.style.display = 'table';
+                
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showError('Failed to load users data. ' + error.message);
+            }
+        }
+        
+        function updateOverviewStats(stats) {
+            document.getElementById('totalUsers').textContent = stats.total_users || 0;
+            document.getElementById('activeSubscriptions').textContent = stats.active_subscriptions || 0;
+            document.getElementById('totalRequests').textContent = formatNumber(stats.total_requests || 0);
+            document.getElementById('monthlyRevenue').textContent = '$' + (stats.monthly_revenue || 0).toFixed(2);
+        }
+        
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (!users || users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 20px;">No users found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = users.map(user => {
+                const subscriptionBadge = getSubscriptionBadge(user.subscription_status);
+                const joinedDate = user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A';
+                const lastActive = user.last_active ? new Date(user.last_active).toLocaleString() : 'Never';
+                
+                // Get current token from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const token = urlParams.get('token') || '';
+                
+                return `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.email || 'N/A'}</td>
+                        <td>${user.name || 'N/A'}</td>
+                        <td>${subscriptionBadge}</td>
+                        <td>${user.subscription_plan || 'Free'}</td>
+                        <td>${user.total_requests || 0}</td>
+                        <td>${user.monthly_requests || 0}</td>
+                        <td>$${(user.total_cost || 0).toFixed(2)}</td>
+                        <td>${joinedDate}</td>
+                        <td>${lastActive}</td>
+                        <td>
+                            <a href="/admin/user/${user.id}/dashboard${token ? '?token=' + token : ''}" 
+                               class="btn-view-more" 
+                               style="background-color: #007bff; color: white; padding: 4px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; display: inline-block;">
+                                View More
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function getSubscriptionBadge(status) {
+            if (!status || status === 'inactive') {
+                return '<span class="subscription-badge subscription-inactive">Inactive</span>';
+            } else if (status === 'active') {
+                return '<span class="subscription-badge subscription-active">Active</span>';
+            } else if (status === 'trial') {
+                return '<span class="subscription-badge subscription-trial">Trial</span>';
+            }
+            return '<span class="subscription-badge subscription-inactive">' + status + '</span>';
+        }
+        
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const filteredUsers = allUsersData.filter(user => {
+                const email = (user.email || '').toLowerCase();
+                const name = (user.name || '').toLowerCase();
+                return email.includes(filter) || name.includes(filter);
+            });
+            renderUsersTable(filteredUsers);
+        }
+        
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+        
+        function showError(message) {
+            const loadingEl = document.getElementById('loadingMessage');
+            const errorEl = document.getElementById('errorMessage');
+            const tableEl = document.getElementById('usersTable');
+            
+            loadingEl.style.display = 'none';
+            errorEl.style.display = 'block';
+            errorEl.textContent = message;
+            tableEl.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

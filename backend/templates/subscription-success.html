@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Subscription Successful!</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
+        }
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        .icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+        }
+        .message {
+            color: #666;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .button {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🎉</div>
+        <h1>Welcome to Pro!</h1>
+        <p class="message">
+            Your subscription is now active. You have full access to all features!<br><br>
+            Please return to the Chrome extension to start using your Pro features.
+        </p>
+        <button class="button" onclick="closeTab()">Close This Tab</button>
+    </div>
+    
+    <script>
+        function closeTab() {
+            // Try multiple methods to close the tab
+            try {
+                // Method 1: Direct close
+                window.close();
+                
+                // Method 2: If that doesn't work, try closing parent
+                if (window.opener) {
+                    window.opener.focus();
+                    window.close();
+                }
+                
+                // Method 3: Navigate back if close doesn't work
+                setTimeout(() => {
+                    if (!window.closed) {
+                        // Show message that tab needs to be closed manually
+                        document.querySelector('.container').innerHTML = `
+                            <div class="icon">✅</div>
+                            <h1>All Set!</h1>
+                            <p class="message">
+                                Your subscription is active!<br><br>
+                                <strong>Please manually close this tab and return to the Chrome extension.</strong>
+                            </p>
+                        `;
+                    }
+                }, 1000);
+                
+            } catch (e) {
+                console.log('Tab close failed:', e);
+                // Show manual close message
+                document.querySelector('.container').innerHTML = `
+                    <div class="icon">✅</div>
+                    <h1>All Set!</h1>
+                    <p class="message">
+                        Your subscription is active!<br><br>
+                        <strong>Please manually close this tab and return to the Chrome extension.</strong>
+                    </p>
+                `;
+            }
+        }
+        
+        // Try to auto-close after 3 seconds
+        setTimeout(() => {
+            closeTab();
+        }, 3000);
+        
+        // Show countdown
+        let countdown = 3;
+        const button = document.querySelector('.button');
+        const interval = setInterval(() => {
+            if (countdown > 0) {
+                button.textContent = `Closing in ${countdown}s...`;
+                countdown--;
+            } else {
+                clearInterval(interval);
+                button.textContent = 'Close This Tab';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

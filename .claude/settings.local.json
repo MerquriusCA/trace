@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(vercel ls:*)",
+      "Bash(vercel inspect:*)",
+      "Bash(vercel:*)",
+      "Bash(curl:*)",
+      "Bash(cp:*)",
+      "Bash(railway up:*)",
+      "Bash(python3:*)",
+      "Bash(git add:*)",
+      "Bash(rg:*)",
+      "Bash(sqlite3:*)",
+      "Bash(mkdir:*)",
+      "Bash(docker:*)",
+      "Bash(grep:*)",
+      "Bash(source:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(PORT=5001 python:*)",
+      "Bash(rm:*)",
+      "Bash(mv:*)",
+      "Bash(railway whoami:*)",
+      "Bash(railway status:*)",
+      "Bash(railway link:*)"
+    ],
+    "deny": []
+  }
+}

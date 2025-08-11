@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Speed Extension</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe', 
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <h1 class="text-xl font-bold text-gray-900">Speed Admin</h1>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="/admin/dashboard" id="adminLink" class="border-primary-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Dashboard
+                        </a>
+                        <a href="/admin/products" id="adminProductsLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Products
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="px-4 sm:px-0">
+            <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <h1 class="text-2xl font-semibold text-gray-900">All Users</h1>
+                    <p class="mt-2 text-sm text-gray-700">View and manage all users, their subscriptions, and API usage</p>
+                </div>
+                <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+                    <button onclick="loadUsersData()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="mt-6">
+                <input type="text" id="searchInput" placeholder="Search by email or name..." onkeyup="filterTable()"
+                       class="block w-full md:w-96 rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm px-4 py-2 border">
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <dt class="text-sm font-medium text-gray-500 truncate">Total Users</dt>
+                        <dd id="totalUsers" class="mt-1 text-3xl font-semibold text-gray-900">-</dd>
+                    </div>
+                </div>
+                
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <dt class="text-sm font-medium text-gray-500 truncate">Active Subscriptions</dt>
+                        <dd id="activeSubscriptions" class="mt-1 text-3xl font-semibold text-green-600">-</dd>
+                    </div>
+                </div>
+                
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <dt class="text-sm font-medium text-gray-500 truncate">Total API Requests</dt>
+                        <dd id="totalRequests" class="mt-1 text-3xl font-semibold text-blue-600">-</dd>
+                    </div>
+                </div>
+                
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <dt class="text-sm font-medium text-gray-500 truncate">Monthly Revenue</dt>
+                        <dd id="monthlyRevenue" class="mt-1 text-3xl font-semibold text-gray-900">-</dd>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Users Table -->
+            <div class="mt-8 flex flex-col">
+                <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                            <!-- Loading State -->
+                            <div id="loadingMessage" class="bg-white px-6 py-12 text-center">
+                                <div class="inline-flex items-center">
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span class="text-gray-600">Loading users data...</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Error State -->
+                            <div id="errorMessage" class="hidden bg-red-50 border border-red-200 rounded-md p-4 m-4">
+                                <p class="text-sm text-red-800"></p>
+                            </div>
+                            
+                            <!-- Table -->
+                            <table id="usersTable" class="min-w-full divide-y divide-gray-300 hidden">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">ID</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">User</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Subscription</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Usage</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Cost</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Joined</th>
+                                        <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                            <span class="sr-only">Actions</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody" class="divide-y divide-gray-200 bg-white">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        let allUsersData = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Preserve token in navigation links
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            if (token) {
+                const adminLink = document.getElementById('adminLink');
+                const adminProductsLink = document.getElementById('adminProductsLink');
+                
+                if (adminLink) {
+                    adminLink.href = `/admin/dashboard?token=${token}`;
+                }
+                if (adminProductsLink) {
+                    adminProductsLink.href = `/admin/products?token=${token}`;
+                }
+            }
+            
+            loadUsersData();
+        });
+        
+        async function loadUsersData() {
+            const loadingEl = document.getElementById('loadingMessage');
+            const errorEl = document.getElementById('errorMessage');
+            const tableEl = document.getElementById('usersTable');
+            
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            tableEl.classList.add('hidden');
+            
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const token = urlParams.get('token') || localStorage.getItem('authToken');
+                
+                if (!token) {
+                    showError('Authentication required. Please provide a token.');
+                    return;
+                }
+                
+                const response = await fetch('/api/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch users data');
+                }
+                
+                const data = await response.json();
+                allUsersData = data.users || [];
+                
+                updateOverviewStats(data.stats);
+                renderUsersTable(allUsersData);
+                
+                loadingEl.classList.add('hidden');
+                tableEl.classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showError('Failed to load users data. ' + error.message);
+            }
+        }
+        
+        function updateOverviewStats(stats) {
+            document.getElementById('totalUsers').textContent = stats.total_users || 0;
+            document.getElementById('activeSubscriptions').textContent = stats.active_subscriptions || 0;
+            document.getElementById('totalRequests').textContent = formatNumber(stats.total_requests || 0);
+            document.getElementById('monthlyRevenue').textContent = '$' + (stats.monthly_revenue || 0).toFixed(2);
+        }
+        
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (!users || users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-500">No users found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = users.map(user => {
+                const subscriptionBadge = getSubscriptionBadge(user.subscription_status);
+                const joinedDate = user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A';
+                const lastActive = user.last_active ? new Date(user.last_active).toLocaleDateString() : 'Never';
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const token = urlParams.get('token') || '';
+                
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">${user.id}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm">
+                            <div class="flex items-center">
+                                <div class="h-10 w-10 flex-shrink-0">
+                                    <div class="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
+                                        <span class="text-primary-700 font-medium">${(user.name || user.email || 'U')[0].toUpperCase()}</span>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="font-medium text-gray-900">${user.name || 'No name'}</div>
+                                    <div class="text-gray-500">${user.email || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm">
+                            ${subscriptionBadge}
+                            <div class="text-xs text-gray-500 mt-1">${user.subscription_plan || 'Free'}</div>
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm">
+                            <div class="text-gray-900">${user.total_requests || 0} total</div>
+                            <div class="text-gray-500">${user.monthly_requests || 0} this month</div>
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
+                            $${(user.total_cost || 0).toFixed(2)}
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            <div>${joinedDate}</div>
+                            <div class="text-xs">Last: ${lastActive}</div>
+                        </td>
+                        <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                            <a href="/admin/user/${user.id}/dashboard${token ? '?token=' + token : ''}" 
+                               class="text-primary-600 hover:text-primary-900">
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function getSubscriptionBadge(status) {
+            if (!status || status === 'inactive') {
+                return '<span class="inline-flex rounded-full bg-gray-100 px-2 text-xs font-semibold leading-5 text-gray-800">Inactive</span>';
+            } else if (status === 'active') {
+                return '<span class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">Active</span>';
+            } else if (status === 'trial' || status === 'free_trial') {
+                return '<span class="inline-flex rounded-full bg-blue-100 px-2 text-xs font-semibold leading-5 text-blue-800">Trial</span>';
+            } else if (status === 'cancelled') {
+                return '<span class="inline-flex rounded-full bg-red-100 px-2 text-xs font-semibold leading-5 text-red-800">Cancelled</span>';
+            }
+            return '<span class="inline-flex rounded-full bg-gray-100 px-2 text-xs font-semibold leading-5 text-gray-800">' + status + '</span>';
+        }
+        
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const filteredUsers = allUsersData.filter(user => {
+                const email = (user.email || '').toLowerCase();
+                const name = (user.name || '').toLowerCase();
+                return email.includes(filter) || name.includes(filter);
+            });
+            renderUsersTable(filteredUsers);
+        }
+        
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+        
+        function showError(message) {
+            const loadingEl = document.getElementById('loadingMessage');
+            const errorEl = document.getElementById('errorMessage');
+            const tableEl = document.getElementById('usersTable');
+            
+            loadingEl.classList.add('hidden');
+            errorEl.classList.remove('hidden');
+            errorEl.querySelector('p').textContent = message;
+            tableEl.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

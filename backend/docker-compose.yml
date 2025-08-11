@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: chrome_ext_postgres
+    environment:
+      POSTGRES_DB: chrome_extension
+      POSTGRES_USER: chrome_user
+      POSTGRES_PASSWORD: chrome_password
+    ports:
+      - "5433:5432"  # External access for debugging
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d/
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chrome_user -d chrome_extension"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - chrome_ext_network
+
+  app:
+    image: python:3.11-slim
+    container_name: chrome_ext_app
+    working_dir: /app
+    env_file:
+      - .env.docker
+    environment:
+      - DATABASE_URL=postgresql://chrome_user:chrome_password@postgres:5432/chrome_extension
+      - PORT=8000
+      - ENVIRONMENT=development
+      - FLASK_DEBUG=1
+      - FLASK_ENV=development
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app:rw  # Mount current directory with read-write access
+      - /app/__pycache__  # Prevent pycache conflicts
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    command: ["sh", "-c", "apt-get update && apt-get install -y gcc libpq-dev && pip install -r requirements-minimal.txt && sleep 5 && python -c 'from app import app; app.run(host=\"0.0.0.0\", port=8000, debug=True, use_reloader=True)'"]
+    networks:
+      - chrome_ext_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: chrome_ext_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - chrome_ext_network
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  chrome_ext_network:
+    driver: bridge
