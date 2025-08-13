@@ -8,19 +8,13 @@
     "activeTab",
     "tabs",
     "scripting",
-    "sidePanel",
-    "identity"
+    "sidePanel"
   ],
   "host_permissions": [
     "http://localhost:8000/*",
     "https://api.openai.com/*",
-    "https://trace-api-production.up.railway.app/*",
-    "https://accounts.google.com/*"
+    "https://trace-api-production.up.railway.app/*"
   ],
-  "oauth2": {
-    "client_id": "953660294928-e9hfvo7c9rhvobsij5rli2lv5vqj221q.apps.googleusercontent.com",
-    "scopes": ["openid", "email", "profile"]
-  },
   "side_panel": {
     "default_path": "sidepanel.html"
   },

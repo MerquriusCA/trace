@@ -23,5 +23,11 @@ RUN mkdir -p instance
 # Expose port (Railway will override with PORT env var)
 EXPOSE 8000
 
+# Set default environment variables for minimal startup
+ENV FLASK_ENV=production
+ENV SECRET_KEY=temporary-secret-key-please-change
+ENV DATABASE_URL=sqlite:///instance/chrome_extension.db
+
 # Start the application using PORT environment variable
-CMD gunicorn app:app --bind 0.0.0.0:$PORT
+# Railway provides PORT at runtime, so we use shell expansion
+CMD sh -c "gunicorn app:app --bind 0.0.0.0:${PORT:-8000} --timeout 120 --workers 1 --log-level info"

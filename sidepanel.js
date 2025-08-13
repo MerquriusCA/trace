@@ -1131,6 +1131,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   function updateSubscriptionSettingsUI(subscription) {
+    // Use the same logic as the main view for consistency
     const status = subscription.status || 'inactive';
     
     if (status === 'active') {

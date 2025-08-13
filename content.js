@@ -12,18 +12,7 @@ chrome.storage.local.get(['extensionEnabled'], function(result) {
       url: window.location.href
     });
     
-    // Quick DOM test - add a small indicator
-    const testDiv = document.createElement('div');
-    testDiv.id = 'chrome-ext-test';
-    testDiv.style.cssText = 'position: fixed; top: 10px; right: 10px; background: #4CAF50; color: white; padding: 5px; font-size: 12px; z-index: 9999; border-radius: 3px;';
-    testDiv.textContent = '✅ Extension Active';
-    document.body.appendChild(testDiv);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-      const element = document.getElementById('chrome-ext-test');
-      if (element) element.remove();
-    }, 3000);
+    // Extension active indicator removed - no popup notification needed
   }
 });
 
