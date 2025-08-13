@@ -3,7 +3,9 @@ builder = "DOCKERFILE"
 dockerfilePath = "./Dockerfile"
 
 [deploy]
-startCommand = "gunicorn app:app --bind 0.0.0.0:$PORT"
+# Let the Dockerfile CMD handle the start command
+# startCommand is commented out to use Dockerfile CMD instead
+# startCommand = "gunicorn --config gunicorn_config.py app:app"
 healthcheckPath = "/health"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
