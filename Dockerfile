@@ -28,6 +28,6 @@ ENV FLASK_ENV=production
 ENV SECRET_KEY=temporary-secret-key-please-change
 ENV DATABASE_URL=sqlite:///instance/chrome_extension.db
 
-# Start the application using PORT environment variable
-# Railway provides PORT at runtime, so we use shell expansion
-CMD sh -c "gunicorn app:app --bind 0.0.0.0:${PORT:-8000} --timeout 120 --workers 1 --log-level info"
+# Start the application
+# Use exec form with sh -c to ensure PORT variable expansion works
+CMD ["/bin/sh", "-c", "exec gunicorn app:app --bind 0.0.0.0:${PORT:-8000} --timeout 120 --workers 1 --log-level info"]
