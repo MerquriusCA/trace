@@ -995,12 +995,12 @@ def admin_users():
 @app.route('/admin/user/<int:user_id>/dashboard')
 def admin_user_dashboard(user_id):
     """Serve the individual user dashboard page"""
-    return render_template('user_dashboard.html')
+    return render_template('user_dashboard_tw.html')
 
 @app.route('/admin/products')
 def admin_products():
     """Serve the admin products page"""
-    return render_template('admin_products.html')
+    return render_template('admin_products_tw.html')
 
 @app.route('/subscription-success')
 def subscription_success():

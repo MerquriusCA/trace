@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Products - Trace Extension</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe', 
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <h1 class="text-xl font-bold text-gray-900">Trace Admin</h1>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="/admin/dashboard" id="adminDashboardLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Dashboard
+                        </a>
+                        <a href="/admin/products" id="adminProductsLink" class="border-primary-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Products
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="px-4 sm:px-0">
+            <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <h1 class="text-2xl font-semibold text-gray-900">Products & Pricing</h1>
+                    <p class="mt-2 text-sm text-gray-700">Manage and view your Stripe products and pricing information</p>
+                </div>
+                <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+                    <button onclick="loadProductsData()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Products Container -->
+        <div class="mt-8 px-4 sm:px-0">
+            <div id="productsContainer" class="space-y-6">
+                <!-- Loading State -->
+                <div id="loadingState" class="text-center py-12">
+                    <div class="inline-flex items-center">
+                        <svg class="animate-spin h-8 w-8 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="ml-3 text-lg text-gray-600">Loading products...</span>
+                    </div>
+                </div>
+                
+                <!-- Error State (hidden by default) -->
+                <div id="errorState" class="hidden">
+                    <div class="rounded-md bg-red-50 p-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">Error loading products</h3>
+                                <div class="mt-2 text-sm text-red-700">
+                                    <p id="errorMessage">Unable to fetch products data</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Products Grid (populated by JavaScript) -->
+                <div id="productsGrid" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <!-- Products will be inserted here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for auth token
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            if (token) {
+                localStorage.setItem('adminToken', token);
+                
+                // Update navigation links with token
+                const adminDashboardLink = document.getElementById('adminDashboardLink');
+                const adminProductsLink = document.getElementById('adminProductsLink');
+                
+                if (adminDashboardLink) {
+                    adminDashboardLink.href = `/admin/dashboard?token=${token}`;
+                }
+                if (adminProductsLink) {
+                    adminProductsLink.href = `/admin/products?token=${token}`;
+                }
+            }
+            
+            loadProductsData();
+        });
+        
+        async function loadProductsData() {
+            const loadingState = document.getElementById('loadingState');
+            const errorState = document.getElementById('errorState');
+            const productsGrid = document.getElementById('productsGrid');
+            
+            // Show loading state
+            loadingState.classList.remove('hidden');
+            errorState.classList.add('hidden');
+            productsGrid.innerHTML = '';
+            
+            try {
+                const token = localStorage.getItem('adminToken') || new URLSearchParams(window.location.search).get('token');
+                
+                if (!token) {
+                    throw new Error('No authentication token found');
+                }
+                
+                const response = await fetch('/api/admin/products', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Hide loading state
+                loadingState.classList.add('hidden');
+                
+                if (data.success && data.products) {
+                    displayProducts(data.products);
+                } else {
+                    throw new Error(data.error || 'Failed to load products');
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+                document.getElementById('errorMessage').textContent = error.message;
+            }
+        }
+        
+        function displayProducts(products) {
+            const productsGrid = document.getElementById('productsGrid');
+            
+            if (!products || products.length === 0) {
+                productsGrid.innerHTML = `
+                    <div class="col-span-full">
+                        <div class="text-center py-12">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                            </svg>
+                            <h3 class="mt-2 text-sm font-medium text-gray-900">No products found</h3>
+                            <p class="mt-1 text-sm text-gray-500">Get started by creating a product in your Stripe dashboard.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            productsGrid.innerHTML = products.map(product => `
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-medium text-gray-900">${product.name}</h3>
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full ${
+                                product.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                            }">
+                                ${product.active ? 'Active' : 'Inactive'}
+                            </span>
+                        </div>
+                        
+                        ${product.description ? `
+                            <p class="text-sm text-gray-600 mb-4">${product.description}</p>
+                        ` : ''}
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Product ID</dt>
+                                <dd class="mt-1 text-sm text-gray-900 font-mono">${product.id}</dd>
+                            </div>
+                            
+                            ${product.prices && product.prices.length > 0 ? `
+                                <div>
+                                    <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Pricing</dt>
+                                    <dd class="space-y-2">
+                                        ${product.prices.map(price => `
+                                            <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                                <div>
+                                                    <span class="text-lg font-semibold text-gray-900">
+                                                        ${price.currency.toUpperCase()} ${(price.unit_amount / 100).toFixed(2)}
+                                                    </span>
+                                                    <span class="text-sm text-gray-500">
+                                                        / ${price.recurring ? price.recurring.interval : 'one-time'}
+                                                    </span>
+                                                </div>
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full ${
+                                                    price.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                                                }">
+                                                    ${price.active ? 'Active' : 'Inactive'}
+                                                </span>
+                                            </div>
+                                        `).join('')}
+                                    </dd>
+                                </div>
+                            ` : ''}
+                            
+                            ${product.metadata && Object.keys(product.metadata).length > 0 ? `
+                                <div>
+                                    <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Metadata</dt>
+                                    <dd class="text-sm text-gray-600">
+                                        ${Object.entries(product.metadata).map(([key, value]) => 
+                                            `<div class="text-xs"><span class="font-medium">${key}:</span> ${value}</div>`
+                                        ).join('')}
+                                    </dd>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
