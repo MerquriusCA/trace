@@ -631,12 +631,20 @@ document.addEventListener('DOMContentLoaded', function() {
     settingsTabButton.classList.remove('hidden');
     
     if (currentUser) {
-      userAvatar.src = currentUser.picture || '';
-      userName.textContent = currentUser.name || '';
-      userEmail.textContent = currentUser.email || '';
+      console.log('📸 Setting user avatar from Google picture:', currentUser.picture);
       
-      // Update bottom profile as well
-      userAvatarBottom.src = currentUser.picture || '';
+      // Set Google profile picture for bottom profile
+      if (currentUser.picture) {
+        userAvatarBottom.src = currentUser.picture;
+        userAvatarBottom.onerror = function() {
+          console.log('❌ Failed to load Google profile picture, using fallback');
+          userAvatarBottom.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNFMEUwRTAiLz4KPHBhdGggZD0iTTE2IDE2QzE4LjIwOTEgMTYgMjAgMTQuMjA5MSAyMCAxMkMyMCA5Ljc5MDg2IDE4LjIwOTEgOCAxNiA4QzEzLjc5MDkgOCAxMiA5Ljc5MDg2IDEyIDEyQzEyIDE0LjIwOTEgMTMuNzkwOSAxNiAxNiAxNloiIGZpbGw9IiM5RTlFOUUiLz4KPHBhdGggZD0iTTI0IDI2QzI0IDIxLjU4MTcgMjAuNDE4MyAxOCAxNiAxOEMxMS41ODE3IDE4IDggMjEuNTgxNyA4IDI2IiBmaWxsPSIjOUU5RTlFIi8+Cjwvc3ZnPg==';
+        };
+      } else {
+        // Use a default avatar if no picture URL
+        userAvatarBottom.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNFMEUwRTAiLz4KPHBhdGggZD0iTTE2IDE2QzE4LjIwOTEgMTYgMjAgMTQuMjA5MSAyMCAxMkMyMCA5Ljc5MDg2IDE4LjIwOTEgOCAxNiA4QzEzLjc5MDkgOCAxMiA5Ljc5MDg2IDEyIDEyQzEyIDE0LjIwOTEgMTMuNzkwOSAxNiAxNiAxNloiIGZpbGw9IiM5RTlFOUUiLz4KPHBhdGggZD0iTTI0IDI2QzI0IDIxLjU4MTcgMjAuNDE4MyAxOCAxNiAxOEMxMS41ODE3IDE4IDggMjEuNTgxNyA4IDI2IiBmaWxsPSIjOUU5RTlFIi8+Cjwvc3ZnPg==';
+      }
+      
       userNameBottom.textContent = currentUser.name || '';
       userEmailBottom.textContent = currentUser.email || '';
       
@@ -1140,8 +1148,16 @@ document.addEventListener('DOMContentLoaded', function() {
   
   function updateSettingsView() {
     if (currentUser) {
-      // Update user profile in settings
-      settingsUserAvatar.src = currentUser.picture || '';
+      // Update user profile in settings with Google picture
+      if (currentUser.picture) {
+        settingsUserAvatar.src = currentUser.picture;
+        settingsUserAvatar.onerror = function() {
+          console.log('❌ Failed to load Google profile picture in settings, using fallback');
+          settingsUserAvatar.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNFMEUwRTAiLz4KPHBhdGggZD0iTTE2IDE2QzE4LjIwOTEgMTYgMjAgMTQuMjA5MSAyMCAxMkMyMCA5Ljc5MDg2IDE4LjIwOTEgOCAxNiA4QzEzLjc5MDkgOCAxMiA5Ljc5MDg2IDEyIDEyQzEyIDE0LjIwOTEgMTMuNzkwOSAxNiAxNiAxNloiIGZpbGw9IiM5RTlFOUUiLz4KPHBhdGggZD0iTTI0IDI2QzI0IDIxLjU4MTcgMjAuNDE4MyAxOCAxNiAxOEMxMS41ODE3IDE4IDggMjEuNTgxNiA4IDI2IiBmaWxsPSIjOUU5RTlFIi8+Cjwvc3ZnPg==';
+        };
+      } else {
+        settingsUserAvatar.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNFMEUwRTAiLz4KPHBhdGggZD0iTTE2IDE2QzE4LjIwOTEgMTYgMjAgMTQuMjA5MSAyMCAxMkMyMCA5Ljc5MDg2IDE4LjIwOTEgOCAxNiA4QzEzLjc5MDkgOCAxMiA5Ljc5MDg2IDEyIDEyQzEyIDE0LjIwOTEgMTMuNzkwOSAxNiAxNiAxNloiIGZpbGw9IiM5RTlFOUUiLz4KPHBhdGggZD0iTTI0IDI2QzI0IDIxLjU4MTcgMjAuNDE4MyAxOCAxNiAxOEMxMS41ODE3IDE4IDggMjEuNTgxNiA4IDI2IiBmaWxsPSIjOUU5RTlFIi8+Cjwvc3ZnPg==';
+      }
       settingsUserName.textContent = currentUser.name || 'Loading...';
       settingsUserEmail.textContent = currentUser.email || 'Loading...';
       

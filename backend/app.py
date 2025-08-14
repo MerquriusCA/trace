@@ -231,9 +231,32 @@ def require_auth(f):
         
         try:
             payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-            current_user = User.query.get(payload['user_id'])
-            if not current_user:
-                return jsonify({'error': 'User not found'}), 401
+            
+            # Check if this is an admin token
+            if payload.get('admin'):
+                # Create a mock admin user object for admin tokens
+                class AdminUser:
+                    def __init__(self):
+                        self.id = 0
+                        self.email = payload.get('email', 'admin@trace.com')
+                        self.name = 'Admin'
+                        self.subscription_status = 'active'
+                        self.is_admin = True
+                    
+                    def to_dict(self):
+                        return {
+                            'id': self.id,
+                            'email': self.email,
+                            'name': self.name,
+                            'is_admin': True
+                        }
+                
+                current_user = AdminUser()
+            else:
+                # Regular user token
+                current_user = User.query.get(payload['user_id'])
+                if not current_user:
+                    return jsonify({'error': 'User not found'}), 401
         except jwt.ExpiredSignatureError:
             return jsonify({'error': 'Token has expired'}), 401
         except jwt.InvalidTokenError:
@@ -904,6 +927,55 @@ def stripe_webhook():
     
     print(f"{'='*50}\n")
     return jsonify({'success': True})
+
+# Admin Login Route
+@app.route('/admin/login')
+def admin_login():
+    """Serve the admin login page"""
+    return render_template('admin_login.html')
+
+@app.route('/admin/authenticate', methods=['POST'])
+def admin_authenticate():
+    """Authenticate admin password and generate token"""
+    try:
+        data = request.get_json()
+        password = data.get('password', '')
+        
+        # Get admin password from environment variable or use a default for testing
+        ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'trace-admin-2024')
+        
+        # Check if password is correct
+        if password != ADMIN_PASSWORD:
+            return jsonify({
+                'success': False,
+                'error': 'Invalid password'
+            }), 401
+        
+        # Generate admin token with 24-hour expiration
+        token_payload = {
+            'admin': True,
+            'email': 'admin@trace.com',
+            'exp': datetime.utcnow() + timedelta(hours=24),
+            'iat': datetime.utcnow()
+        }
+        
+        # Create JWT token
+        token = jwt.encode(token_payload, app.config['SECRET_KEY'], algorithm='HS256')
+        
+        print(f"✅ Admin authenticated successfully at {datetime.utcnow()}")
+        
+        return jsonify({
+            'success': True,
+            'token': token,
+            'expires_in': '24 hours'
+        })
+        
+    except Exception as e:
+        print(f"❌ Admin authentication error: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Authentication failed'
+        }), 500
 
 # Dashboard and Usage Statistics Routes
 @app.route('/admin/dashboard')
