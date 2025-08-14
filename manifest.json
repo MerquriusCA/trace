@@ -11,10 +11,16 @@
     "sidePanel",
     "identity"
   ],
+  "web_accessible_resources": [
+    {
+      "resources": ["onboarding.html", "onboarding.css", "onboarding.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "host_permissions": [
     "http://localhost:8000/*",
     "https://api.openai.com/*",
-    "https://trace-api-production.up.railway.app/*",
+    "https://trace-production-79d5.up.railway.app/*",
     "https://accounts.google.com/*"
   ],
   "oauth2": {

@@ -567,3 +567,84 @@ input:checked + .slider:before {
 .setting-item input[type="checkbox"] {
   margin-right: 6px;
 }
+
+/* Fixed Bottom User Profile */
+.user-profile-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background: #ffffff;
+  border-top: 1px solid #e9ecef;
+  padding: 12px 16px;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.user-profile-bottom .user-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-profile-bottom .user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.user-profile-bottom .user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-profile-bottom .user-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #212529;
+}
+
+.user-profile-bottom .user-email {
+  font-size: 10px;
+  color: #6c757d;
+}
+
+/* Adjust main container to account for fixed bottom */
+body {
+  padding-bottom: 60px; /* Space for fixed bottom profile */
+}
+
+/* Welcome Card */
+.welcome-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.welcome-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.welcome-icon {
+  font-size: 20px;
+  animation: wave 0.6s ease-in-out;
+}
+
+.welcome-text {
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(20deg); }
+  75% { transform: rotate(-20deg); }
+}

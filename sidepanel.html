@@ -32,19 +32,13 @@
         </button>
       </div>
       
-      <!-- User Section -->
-      <div id="userSection" class="hidden">
-        <!-- User Info Card -->
-        <div class="card">
-          <div class="user-info">
-            <div style="display: flex; align-items: center; flex: 1;">
-              <img id="userAvatar" class="user-avatar" src="" alt="User">
-              <div class="user-details">
-                <span id="userName" class="user-name"></span>
-                <span id="userEmail" class="user-email"></span>
-              </div>
-            </div>
-            <button id="logoutButton" class="btn-small btn-secondary">Logout</button>
+      <!-- User Section - Subscription Status Only -->
+      <div id="userSection" class="hidden">        
+        <!-- Welcome Message -->
+        <div class="welcome-card">
+          <div class="welcome-content">
+            <span class="welcome-icon">👋</span>
+            <span id="welcomeMessage" class="welcome-text">Welcome!</span>
           </div>
         </div>
         
@@ -52,10 +46,6 @@
         <div class="card">
           <div id="subscriptionStatus" class="subscription-status"></div>
           <div id="subscriptionActions"></div>
-          <button id="manageSubscriptionMainButton" class="btn-secondary" style="display: flex; align-items: center; gap: 4px; width: auto; margin-top: 8px;">
-            <span>⚙️</span>
-            Manage Subscription
-          </button>
         </div>
       </div>
     </div>
@@ -84,7 +74,6 @@
     
     <!-- Action Buttons -->
     <div>
-      <button id="actionButton" class="btn-primary">Click Me</button>
       <button id="highlightButton" class="btn-secondary">Highlight First Sentence</button>
       <div id="highlightedSentence" class="highlighted-sentence hidden"></div>
       <button id="analyzeButton" class="btn-purple hidden">Get Top 5 Purpose Sentences</button>
@@ -187,10 +176,32 @@
             Show notifications
           </label>
         </div>
+        <div class="setting-item" style="border-bottom: none; padding-top: 12px;">
+          <button id="startOnboardingButton" class="btn-secondary" style="width: 100%; margin-bottom: 0;">
+            🚀 Start Onboarding
+          </button>
+          <p style="font-size: 11px; color: #6c757d; margin: 4px 0 0 0; text-align: center;">
+            Re-run the initial setup to update your preferences
+          </p>
+        </div>
       </div>
       
       <!-- Settings Messages -->
       <div id="settingsMessage" class="hidden"></div>
+    </div>
+  </div>
+  
+  <!-- User Profile - Fixed Bottom -->
+  <div id="userProfileBottom" class="user-profile-bottom hidden">
+    <div class="user-info">
+      <div style="display: flex; align-items: center; flex: 1;">
+        <img id="userAvatarBottom" class="user-avatar" src="" alt="User">
+        <div class="user-details">
+          <span id="userNameBottom" class="user-name"></span>
+          <span id="userEmailBottom" class="user-email"></span>
+        </div>
+      </div>
+      <button id="logoutButtonBottom" class="btn-small btn-secondary">Logout</button>
     </div>
   </div>
   

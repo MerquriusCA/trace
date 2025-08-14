@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+  <div class="onboarding-container">
+    <!-- Welcome Step -->
+    <div id="welcomeStep" class="onboarding-step active">
+      <div class="onboarding-header">
+        <div class="logo-section">
+          <h1>Welcome to Trace</h1>
+          <p class="subtitle">Your AI-powered web reading companion</p>
+        </div>
+      </div>
+      
+      <div class="welcome-content">
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="feature-icon">✨</span>
+            <div>
+              <h3>Smart Summaries</h3>
+              <p>Get AI-powered summaries of any webpage</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🎯</span>
+            <div>
+              <h3>Key Insights</h3>
+              <p>Extract the most important sentences and purpose</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">⚡</span>
+            <div>
+              <h3>Instant Analysis</h3>
+              <p>One-click analysis for faster reading</p>
+            </div>
+          </div>
+        </div>
+        
+        <button id="getStartedBtn" class="btn-primary">Get Started</button>
+      </div>
+    </div>
+
+    <!-- Preferences Step -->
+    <div id="preferencesStep" class="onboarding-step">
+      <div class="onboarding-header">
+        <h2>How would you like us to tailor our content for you?</h2>
+        <p class="subtitle">Choose your preferred summary style - you can change this anytime in Settings</p>
+      </div>
+      
+      <div class="preferences-content">
+        <div class="preference-options">
+          <label class="preference-option">
+            <input type="radio" name="summaryStyle" value="quick" id="quickSummaryOnboard">
+            <div class="preference-content">
+              <strong>Quick Summary</strong>
+              <p>Get the main point in 1 sentence - perfect for busy professionals</p>
+            </div>
+          </label>
+          
+          <label class="preference-option">
+            <input type="radio" name="summaryStyle" value="eli8" id="eli8SummaryOnboard" checked>
+            <div class="preference-content">
+              <strong>Explain Like I'm 8</strong>
+              <p>Simple and clear explanations that anyone can understand</p>
+            </div>
+          </label>
+          
+          <label class="preference-option">
+            <input type="radio" name="summaryStyle" value="detailed" id="detailedSummaryOnboard">
+            <div class="preference-content">
+              <strong>Detailed Summary</strong>
+              <p>Thorough breakdown in 5 bullet points for comprehensive understanding</p>
+            </div>
+          </label>
+        </div>
+        
+        <div class="onboarding-actions">
+          <button id="backBtn" class="btn-secondary">Back</button>
+          <button id="finishOnboardingBtn" class="btn-primary">Complete Setup</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completion Step -->
+    <div id="completionStep" class="onboarding-step">
+      <div class="completion-content">
+        <div class="success-icon">🎉</div>
+        <h2>You're all set!</h2>
+        <p class="subtitle">Trace is now configured with your preferences</p>
+        
+        <div class="next-steps">
+          <h3>Next steps:</h3>
+          <ul>
+            <li>Navigate to any webpage</li>
+            <li>Click the Trace extension icon</li>
+            <li>Try the "Summarize Page" feature</li>
+          </ul>
+        </div>
+        
+        <button id="startUsingBtn" class="btn-primary">Start Using Trace</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="onboarding.js"></script>
+</body>
+</html>

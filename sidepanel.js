@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const actionButton = document.getElementById('actionButton');
   const highlightButton = document.getElementById('highlightButton');
   const analyzeButton = document.getElementById('analyzeButton');
   const summarizeButton = document.getElementById('summarizeButton');
@@ -15,11 +14,17 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Authentication elements
   const googleSignInButton = document.getElementById('googleSignInButton');
-  const logoutButton = document.getElementById('logoutButton');
+  const logoutButtonBottom = document.getElementById('logoutButtonBottom');
   const resetSubscriptionButton = document.getElementById('resetSubscriptionButton');
-  const manageSubscriptionMainButton = document.getElementById('manageSubscriptionMainButton');
+  const welcomeMessage = document.getElementById('welcomeMessage');
   const loginSection = document.getElementById('loginSection');
   const userSection = document.getElementById('userSection');
+  
+  // Bottom user profile elements
+  const userProfileBottom = document.getElementById('userProfileBottom');
+  const userAvatarBottom = document.getElementById('userAvatarBottom');
+  const userNameBottom = document.getElementById('userNameBottom');
+  const userEmailBottom = document.getElementById('userEmailBottom');
   const userAvatar = document.getElementById('userAvatar');
   const userName = document.getElementById('userName');
   const userEmail = document.getElementById('userEmail');
@@ -43,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const settingsMessage = document.getElementById('settingsMessage');
   const autoSummarizeEnabled = document.getElementById('autoSummarizeEnabled');
   const notificationsEnabled = document.getElementById('notificationsEnabled');
+  const startOnboardingButton = document.getElementById('startOnboardingButton');
   
   let currentSentence = null;
   let currentPageUrl = null;
@@ -113,32 +119,9 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateStatus(isEnabled) {
     statusText.textContent = isEnabled ? 'ON' : 'OFF';
     statusText.className = isEnabled ? 'on' : 'off';
-    actionButton.disabled = !isEnabled;
     highlightButton.disabled = !isEnabled;
   }
 
-  actionButton.addEventListener('click', function() {
-    if (actionButton.disabled) return;
-    
-    messageDiv.textContent = 'Button clicked!';
-    setMessageColor(messageDiv, 'Button clicked!', '#4CAF50');
-    
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, {action: "buttonClicked"}, function(response) {
-        if (chrome.runtime.lastError) {
-          // No content script is listening, just show a message
-          messageDiv.textContent = 'Extension is active!';
-          setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
-        } else if (response && response.status) {
-          messageDiv.textContent = 'Action completed: ' + response.status;
-        }
-      });
-    });
-    
-    setTimeout(() => {
-      messageDiv.textContent = '';
-    }, 3000);
-  });
 
   // Handle highlight button click
   highlightButton.addEventListener('click', function() {
@@ -536,6 +519,9 @@ document.addEventListener('DOMContentLoaded', function() {
         currentUser = response.user;
         showUserSection();
         loadSubscriptionStatus();
+        
+        // Check if user needs onboarding
+        checkOnboardingStatus();
       } else {
         console.log('❌ User not authenticated, showing login');
         isAuthenticated = false;
@@ -545,10 +531,80 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
+  function checkOnboardingStatus() {
+    // Check if onboarding has been completed
+    chrome.storage.sync.get(['onboardingCompleted', 'userPreferences'], function(result) {
+      console.log('Onboarding status:', result);
+      
+      if (!result.onboardingCompleted) {
+        console.log('🎯 Starting onboarding for new user');
+        startOnboarding();
+      } else {
+        console.log('✅ Onboarding already completed');
+        // Load user preferences if available
+        if (result.userPreferences) {
+          applyUserPreferences(result.userPreferences);
+        }
+      }
+    });
+  }
+  
+  function startOnboarding() {
+    // Open onboarding in a new popup window
+    chrome.windows.create({
+      url: chrome.runtime.getURL('onboarding.html'),
+      type: 'popup',
+      width: 380,
+      height: 620,
+      left: Math.round((screen.availWidth - 380) / 2),
+      top: Math.round((screen.availHeight - 620) / 2)
+    }, function(window) {
+      console.log('🚀 Onboarding window opened');
+    });
+  }
+  
+  function applyUserPreferences(preferences) {
+    console.log('⚙️ Applying user preferences:', preferences);
+    
+    // Apply summary style preferences to UI elements
+    if (preferences.summaryStyle) {
+      // Update radio buttons in settings to match saved preferences
+      const styleRadios = document.querySelectorAll('input[name="summaryStyle"]');
+      styleRadios.forEach(radio => {
+        radio.checked = radio.value === preferences.summaryStyle;
+      });
+    }
+    
+    // Store preferences locally for quick access
+    chrome.storage.local.set({ 
+      currentUserPreferences: preferences 
+    });
+    
+    // Sync preferences with backend if authenticated
+    if (isAuthenticated && preferences.summaryStyle) {
+      console.log('🔄 Syncing onboarding preferences with backend...');
+      chrome.runtime.sendMessage({
+        action: 'savePreferences',
+        preferences: {
+          summary_style: preferences.summaryStyle,  // Backend expects snake_case
+          auto_summarize_enabled: false,
+          notifications_enabled: true
+        }
+      }, function(response) {
+        if (response && response.success) {
+          console.log('✅ Onboarding preferences synced with backend');
+        } else {
+          console.log('⚠️ Could not sync preferences with backend:', response?.error);
+        }
+      });
+    }
+  }
+  
   function showLoginSection() {
     console.log('🔑 Showing login section');
     loginSection.classList.remove('hidden');
     userSection.classList.add('hidden');
+    userProfileBottom.classList.add('hidden');
     
     // Hide AI features when not authenticated
     analyzeButton.classList.add('hidden');
@@ -556,9 +612,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Hide settings tab when not authenticated
     settingsTabButton.classList.add('hidden');
-    
-    // Hide manage subscription button when not authenticated  
-    manageSubscriptionMainButton.classList.add('hidden');
     
     // Force switch to main view if currently on settings
     if (settingsView && !settingsView.classList.contains('hidden')) {
@@ -572,17 +625,24 @@ document.addEventListener('DOMContentLoaded', function() {
   function showUserSection() {
     loginSection.classList.add('hidden');
     userSection.classList.remove('hidden');
+    userProfileBottom.classList.remove('hidden');
     
     // Show settings tab when authenticated
     settingsTabButton.classList.remove('hidden');
-    
-    // Show manage subscription button when authenticated
-    manageSubscriptionMainButton.classList.remove('hidden');
     
     if (currentUser) {
       userAvatar.src = currentUser.picture || '';
       userName.textContent = currentUser.name || '';
       userEmail.textContent = currentUser.email || '';
+      
+      // Update bottom profile as well
+      userAvatarBottom.src = currentUser.picture || '';
+      userNameBottom.textContent = currentUser.name || '';
+      userEmailBottom.textContent = currentUser.email || '';
+      
+      // Update welcome message with first name
+      const firstName = currentUser.name ? currentUser.name.split(' ')[0] : 'there';
+      welcomeMessage.textContent = `Welcome, ${firstName}!`;
       
       // Load user preferences from backend when user signs in
       loadUserPreferences();
@@ -630,7 +690,6 @@ document.addEventListener('DOMContentLoaded', function() {
         <small>Access to all AI features</small>
       `;
       
-      // No additional buttons needed - Manage Subscription is now a permanent button
       subscriptionActions.innerHTML = '';
     } else if (status === 'past_due') {
       subscriptionStatus.className = 'subscription-status expired';
@@ -654,10 +713,6 @@ document.addEventListener('DOMContentLoaded', function() {
       subscriptionActions.innerHTML = `
         <button class="subscribe-button" id="upgradeButton">
           Upgrade to Pro - $9.99/month
-        </button>
-        <br><br>
-        <button onclick="testCheckout()" style="font-size: 12px; padding: 5px 10px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer;">
-          Test Checkout (Debug)
         </button>
       `;
       
@@ -701,7 +756,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
-  logoutButton.addEventListener('click', function() {
+  // Logout button (bottom bar)
+  logoutButtonBottom.addEventListener('click', function() {
     messageDiv.textContent = 'Signing out and clearing cached credentials...';
     setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
     
@@ -719,11 +775,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
       }
     });
-  });
-  
-  // Manage Subscription button in main tab
-  manageSubscriptionMainButton.addEventListener('click', function() {
-    manageSubscription();
   });
   
   resetSubscriptionButton.addEventListener('click', function() {
@@ -901,21 +952,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   };
   
-  // Test function for debugging
-  window.testCheckout = function() {
-    console.log('Test checkout clicked');
-    alert('Test checkout clicked! Check console for debug info.');
-    console.log('isAuthenticated:', isAuthenticated);
-    console.log('currentUser:', currentUser);
-    
-    // Check if we need to get authToken from background
-    chrome.storage.local.get(['authToken'], function(result) {
-      console.log('authToken from storage:', result.authToken ? 'Present' : 'Missing');
-    });
-    
-    // Try calling the function directly
-    startSubscription();
-  };
+  // Test function removed - no longer needed
   
   // Manual refresh subscription status
   window.refreshSubscription = function() {
@@ -1044,9 +1081,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Hide settings tab initially (shown when user logs in)
     settingsTabButton.classList.add('hidden');
     
-    // Hide manage subscription button initially (shown when user logs in)
-    manageSubscriptionMainButton.classList.add('hidden');
-    
     // Load user preferences
     loadUserPreferences();
     
@@ -1072,6 +1106,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     cancelSubscriptionButton.addEventListener('click', function() {
       cancelSubscription();
+    });
+    
+    startOnboardingButton.addEventListener('click', function() {
+      console.log('🚀 Manual onboarding triggered from settings');
+      startOnboarding();
     });
   }
   
@@ -1138,14 +1177,26 @@ document.addEventListener('DOMContentLoaded', function() {
       subscriptionStatusSettings.textContent = '✅ Active Subscription';
       subscriptionStatusSettings.className = 'subscription-status subscription-active';
       subscriptionPlan.textContent = 'Pro Plan - $9.99/month • Access to all AI features';
+      
+      // Show subscription management buttons for active users
+      resetSubscriptionButton.style.display = 'flex';
+      cancelSubscriptionButton.style.display = 'block';
     } else if (status === 'past_due') {
       subscriptionStatusSettings.textContent = '⚠️ Payment Required';
       subscriptionStatusSettings.className = 'subscription-status subscription-inactive';
       subscriptionPlan.textContent = 'Subscription payment is past due';
+      
+      // Show subscription management buttons for past due users
+      resetSubscriptionButton.style.display = 'flex';
+      cancelSubscriptionButton.style.display = 'block';
     } else {
       subscriptionStatusSettings.textContent = '💡 Free Trial';
       subscriptionStatusSettings.className = 'subscription-status subscription-trial';
       subscriptionPlan.textContent = 'Upgrade to Pro to access AI features (Analyze & Summarize)';
+      
+      // Hide subscription management buttons for free trial users
+      resetSubscriptionButton.style.display = 'none';
+      cancelSubscriptionButton.style.display = 'none';
     }
   }
   
