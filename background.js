@@ -859,7 +859,7 @@ async function sendFeedback(feedbackData, sendResponse) {
   console.log("📧 Sending feedback to backend");
   
   try {
-    if (\!authToken) {
+    if (!authToken) {
       console.log("❌ No auth token - cannot send feedback");
       sendResponse({
         success: false,
