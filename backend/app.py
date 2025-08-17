@@ -12,7 +12,7 @@ import re
 from datetime import datetime, timedelta
 from functools import wraps
 
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -214,6 +214,32 @@ class Cnter(db.Model):
         }
 
 # Authentication decorator
+def require_admin_token(f):
+    """Decorator for admin template routes - checks for valid admin JWT token in query params"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = request.args.get('token')
+        
+        if not token:
+            return redirect('/admin/login')
+        
+        try:
+            payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            
+            # Check if this is an admin token
+            if not payload.get('admin'):
+                return redirect('/admin/login')
+                
+            # Token is valid, proceed with the route
+            return f(*args, **kwargs)
+            
+        except jwt.ExpiredSignatureError:
+            return redirect('/admin/login?error=expired')
+        except jwt.InvalidTokenError:
+            return redirect('/admin/login?error=invalid')
+    
+    return decorated_function
+
 def require_auth(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -1140,6 +1166,7 @@ def admin_authenticate():
 
 # Dashboard and Usage Statistics Routes
 @app.route('/admin/dashboard')
+@require_admin_token
 def admin_dashboard():
     """Serve the admin dashboard page"""
     return render_template('admin_users_tw.html')
@@ -1154,11 +1181,13 @@ def admin_users():
     return redirect('/admin/dashboard')
 
 @app.route('/admin/user/<int:user_id>/dashboard')
+@require_admin_token
 def admin_user_dashboard(user_id):
     """Serve the individual user dashboard page"""
     return render_template('user_dashboard_tw.html')
 
 @app.route('/admin/products')
+@require_admin_token
 def admin_products():
     """Serve the admin products page"""
     return render_template('admin_products_tw.html')
