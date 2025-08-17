@@ -2238,25 +2238,34 @@ def create_tables():
     """Create database tables if they don't exist"""
     with app.app_context():
         try:
-            # Check if tables exist by trying a simple query
-            User.query.limit(1).all()
-            print("✅ Database tables already exist")
-        except Exception as e:
-            print(f"📝 Creating database tables: {e}")
+            # Create all tables defined in models
             db.create_all()
-            print("✅ Database tables created")
+            print("✅ Database tables created/verified")
+            
+            # List all tables for verification
+            from sqlalchemy import inspect
+            inspector = inspect(db.engine)
+            tables = inspector.get_table_names()
+            print(f"📊 Tables in database: {', '.join(tables)}")
+            
+            if 'feedback' in tables:
+                print("✅ Feedback table confirmed")
+            else:
+                print("⚠️ Feedback table not found - creating...")
+                # Try to create just the feedback table
+                Feedback.__table__.create(db.engine, checkfirst=True)
+                print("✅ Feedback table created")
+                
+        except Exception as e:
+            print(f"❌ Error with database tables: {e}")
+            import traceback
+            print(traceback.format_exc())
 
-# Create tables on startup (for Railway runtime)
+# Initialize database when module loads (works with gunicorn)
+print("🔧 Initializing database tables...")
 create_tables()
 
 if __name__ == '__main__':
-    # Create database tables if they don't exist
-    with app.app_context():
-        try:
-            db.create_all()
-            print("✅ Database tables verified/created")
-        except Exception as e:
-            print(f"⚠️ Error creating tables: {e}")
     
     # Get port from environment, default to 8000 to avoid AirPlay conflict
     port = int(os.environ.get('PORT', 8000))
