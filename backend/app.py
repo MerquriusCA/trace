@@ -736,6 +736,7 @@ def submit_feedback(current_user):
         smtp_port = int(os.getenv('SMTP_PORT', '587'))
         smtp_user = os.getenv('SMTP_USER', '')
         smtp_pass = os.getenv('SMTP_PASS', '')
+        smtp_from = os.getenv('SMTP_FROM', 'david@merqurius.com')
         admin_email = os.getenv('ADMIN_EMAIL', 'david@merqurius.ca')
         
         # Get base URL for admin link
@@ -743,7 +744,7 @@ def submit_feedback(current_user):
         admin_user_url = f"{base_url}/admin/user/{current_user.id}/dashboard"
         
         # Create email content
-        email_subject = f"[Trace Feedback] {feedback_type.capitalize()} from {current_user.name}"
+        email_subject = f"[Trace Feedback] {feedback_type.capitalize()} from {current_user.name} ({current_user.email})"
         
         email_body = f"""
         <html>
@@ -792,6 +793,7 @@ def submit_feedback(current_user):
         print(f"   Port: {smtp_port}")
         print(f"   User: {smtp_user}")
         print(f"   Pass: {'*' * len(smtp_pass) if smtp_pass else 'None'}")
+        print(f"   From: {smtp_from}")
         print(f"   Admin Email: {admin_email}")
         
         if smtp_user and smtp_pass:
@@ -799,7 +801,7 @@ def submit_feedback(current_user):
                 print(f"📧 Preparing email message...")
                 msg = MIMEMultipart('alternative')
                 msg['Subject'] = email_subject
-                msg['From'] = smtp_user
+                msg['From'] = smtp_from
                 msg['To'] = admin_email
                 
                 html_part = MIMEText(email_body, 'html')
