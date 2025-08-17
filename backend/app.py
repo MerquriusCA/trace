@@ -2250,6 +2250,14 @@ def create_tables():
 create_tables()
 
 if __name__ == '__main__':
+    # Create database tables if they don't exist
+    with app.app_context():
+        try:
+            db.create_all()
+            print("✅ Database tables verified/created")
+        except Exception as e:
+            print(f"⚠️ Error creating tables: {e}")
+    
     # Get port from environment, default to 8000 to avoid AirPlay conflict
     port = int(os.environ.get('PORT', 8000))
     
