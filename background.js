@@ -148,8 +148,8 @@ async function callOpenAI(prompt, apiKey) {
 async function getBackendBaseUrl() {
   return new Promise((resolve) => {
     chrome.storage.local.get(['backendUrl'], (result) => {
-      // Default to local development URL
-      const defaultUrl = 'http://localhost:8000/api';
+      // Default to Railway production URL
+      const defaultUrl = 'https://trace-production-79d5.up.railway.app/api';
       
       if (result.backendUrl) {
         // Extract base URL from the stored URL
@@ -461,7 +461,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }
       
       // Always use backend service for all URLs
-      const backendUrl = result.backendUrl || 'http://localhost:8000/api/summarize';
+      const backendUrl = result.backendUrl || 'https://trace-production-79d5.up.railway.app/api/summarize';
       
       try {
         console.log('🔗 API CALL: Backend Service');
@@ -551,7 +551,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }
       
       // Always use backend service for all URLs
-      const backendUrl = result.backendUrl || 'http://localhost:8000/api/summarize';
+      const backendUrl = result.backendUrl || 'https://trace-production-79d5.up.railway.app/api/summarize';
       
       try {
         console.log('🔗 API CALL: Backend Service');
@@ -638,7 +638,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.action === 'testBackend') {
     // Simple test endpoint to check if backend is working
     (async () => {
-      const testUrl = 'http://localhost:8000/api/test';
+      const testUrl = 'https://trace-production-79d5.up.railway.app/api/test';
       
       try {
         console.log('🔗 API CALL: Backend Test');
@@ -708,6 +708,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // Load user preferences from backend
     loadUserPreferences(sendResponse);
     return true;
+  } else if (request.action === 'sendFeedback') {
+    // Send feedback to backend
+    console.log('📧 Background: Received feedback request');
+    sendFeedback(request.feedback, sendResponse);
+    return true;
   }
 });
 
@@ -728,7 +733,7 @@ async function saveUserPreferences(preferences, sendResponse) {
     }
 
     chrome.storage.local.get(['backendUrl'], async (result) => {
-      const backendUrl = result.backendUrl || 'http://localhost:8000';
+      const backendUrl = result.backendUrl || 'https://trace-production-79d5.up.railway.app';
       const endpoint = `${backendUrl}/api/preferences`;
 
       console.log('💾 Saving user preferences to backend:', preferences);
@@ -791,7 +796,7 @@ async function loadUserPreferences(sendResponse) {
     }
 
     chrome.storage.local.get(['backendUrl'], async (result) => {
-      const backendUrl = result.backendUrl || 'http://localhost:8000';
+      const backendUrl = result.backendUrl || 'https://trace-production-79d5.up.railway.app';
       const endpoint = `${backendUrl}/api/preferences`;
 
       console.log('📥 Loading user preferences from backend');
@@ -845,6 +850,70 @@ async function loadUserPreferences(sendResponse) {
     sendResponse({
       success: false,
       error: 'Failed to load preferences'
+    });
+  }
+}
+
+// Send Feedback Function
+async function sendFeedback(feedbackData, sendResponse) {
+  console.log("📧 Sending feedback to backend");
+  
+  try {
+    if (\!authToken) {
+      console.log("❌ No auth token - cannot send feedback");
+      sendResponse({
+        success: false,
+        error: "Authentication required"
+      });
+      return;
+    }
+    
+    chrome.storage.local.get(["backendUrl"], async function(result) {
+      const baseUrl = result.backendUrl ? 
+        result.backendUrl.replace("/api/summarize", "") : 
+        "https://trace-production-79d5.up.railway.app";
+      const endpoint = `${baseUrl}/api/feedback`;
+      
+      console.log("📮 Sending feedback to:", endpoint);
+      
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${authToken}`
+          },
+          body: JSON.stringify(feedbackData)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+          console.log("✅ Feedback sent successfully");
+          sendResponse({
+            success: true,
+            message: "Feedback sent successfully"
+          });
+        } else {
+          console.error("❌ Failed to send feedback:", data.error);
+          sendResponse({
+            success: false,
+            error: data.error || "Failed to send feedback"
+          });
+        }
+      } catch (error) {
+        console.error("❌ Network error sending feedback:", error);
+        sendResponse({
+          success: false,
+          error: "Network error while sending feedback"
+        });
+      }
+    });
+  } catch (error) {
+    console.error("❌ Error in sendFeedback:", error);
+    sendResponse({
+      success: false,
+      error: "Failed to send feedback"
     });
   }
 }

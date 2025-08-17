@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const summarizeButton = document.getElementById('summarizeButton');
   const testBackendButton = document.getElementById('testBackendButton');
   const checkPageButton = document.getElementById('checkPageButton');
+  const feedbackButton = document.getElementById('feedbackButton');
   const messageDiv = document.getElementById('message');
   const toggleSwitch = document.getElementById('toggleSwitch');
   const statusText = document.getElementById('statusText');
@@ -503,6 +504,149 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => { messageDiv.textContent = ''; }, 5000);
       });
     });
+  });
+  
+  // Feedback Modal Elements
+  const feedbackModal = document.getElementById('feedbackModal');
+  const closeFeedbackModal = document.getElementById('closeFeedbackModal');
+  const cancelFeedback = document.getElementById('cancelFeedback');
+  const submitFeedback = document.getElementById('submitFeedback');
+  const feedbackMessage = document.getElementById('feedbackMessage');
+  const charCount = document.getElementById('charCount');
+  const submitText = document.getElementById('submitText');
+  const submitLoader = document.getElementById('submitLoader');
+  
+  // Feedback button event listener - Open modal
+  feedbackButton.addEventListener('click', function() {
+    console.log('🗨️ Opening feedback modal');
+    
+    if (!isAuthenticated || !currentUser) {
+      messageDiv.textContent = 'Please sign in to send feedback';
+      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+      setTimeout(() => { messageDiv.textContent = ''; }, 3000);
+      return;
+    }
+    
+    // Show modal
+    feedbackModal.classList.remove('hidden');
+    feedbackMessage.focus();
+  });
+  
+  // Close modal handlers
+  closeFeedbackModal.addEventListener('click', function() {
+    feedbackModal.classList.add('hidden');
+    feedbackMessage.value = '';
+    charCount.textContent = '0';
+  });
+  
+  cancelFeedback.addEventListener('click', function() {
+    feedbackModal.classList.add('hidden');
+    feedbackMessage.value = '';
+    charCount.textContent = '0';
+  });
+  
+  // Character counter
+  feedbackMessage.addEventListener('input', function() {
+    const length = feedbackMessage.value.length;
+    charCount.textContent = length;
+    
+    if (length > 900) {
+      charCount.style.color = '#dc3545';
+    } else if (length > 700) {
+      charCount.style.color = '#ffc107';
+    } else {
+      charCount.style.color = '#6c757d';
+    }
+  });
+  
+  // Submit feedback
+  submitFeedback.addEventListener('click', async function() {
+    const message = feedbackMessage.value.trim();
+    
+    // Validate
+    if (!message) {
+      feedbackMessage.focus();
+      return;
+    }
+    
+    if (message.length > 1000) {
+      alert('Feedback must be less than 1000 characters');
+      return;
+    }
+    
+    // Get feedback type
+    const feedbackType = document.querySelector('input[name="feedbackType"]:checked').value;
+    
+    // Get current page context
+    let currentPageUrl = 'Unknown';
+    let currentPageTitle = 'Unknown';
+    
+    try {
+      const tabs = await chrome.tabs.query({active: true, currentWindow: true});
+      if (tabs[0]) {
+        currentPageUrl = tabs[0].url || 'Unknown';
+        currentPageTitle = tabs[0].title || 'Unknown';
+      }
+    } catch (error) {
+      console.error('Error getting current tab:', error);
+    }
+    
+    // Disable submit button
+    submitFeedback.disabled = true;
+    submitText.classList.add('hidden');
+    submitLoader.classList.remove('hidden');
+    
+    // Prepare feedback data (with XSS prevention)
+    const feedbackData = {
+      type: feedbackType,
+      message: message, // Will be sanitized on backend
+      page_url: currentPageUrl,
+      page_title: currentPageTitle,
+      user_id: currentUser.id,
+      user_email: currentUser.email,
+      user_name: currentUser.name,
+      timestamp: new Date().toISOString()
+    };
+    
+    try {
+      // Send to backend
+      chrome.runtime.sendMessage({
+        action: 'sendFeedback',
+        feedback: feedbackData
+      }, function(response) {
+        if (response && response.success) {
+          // Success
+          feedbackModal.classList.add('hidden');
+          feedbackMessage.value = '';
+          charCount.textContent = '0';
+          
+          messageDiv.textContent = '✅ Feedback sent successfully!';
+          setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
+        } else {
+          // Error
+          messageDiv.textContent = '❌ Failed to send feedback. Please try again.';
+          setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+        }
+        
+        // Re-enable button
+        submitFeedback.disabled = false;
+        submitText.classList.remove('hidden');
+        submitLoader.classList.add('hidden');
+        
+        setTimeout(() => { messageDiv.textContent = ''; }, 5000);
+      });
+    } catch (error) {
+      console.error('Error sending feedback:', error);
+      
+      // Re-enable button
+      submitFeedback.disabled = false;
+      submitText.classList.remove('hidden');
+      submitLoader.classList.add('hidden');
+      
+      messageDiv.textContent = '❌ Error sending feedback';
+      setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+      setTimeout(() => { messageDiv.textContent = ''; }, 5000);
+    }
   });
   
   // Authentication Functions

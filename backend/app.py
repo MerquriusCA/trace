@@ -703,6 +703,131 @@ def save_preferences(current_user):
             'error': f'Failed to save preferences: {str(e)}'
         }), 500
 
+@app.route('/api/feedback', methods=['POST'])
+@require_auth
+def submit_feedback(current_user):
+    """Submit user feedback with email notification"""
+    import html
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+    
+    print(f"\n📧 FEEDBACK SUBMISSION")
+    print(f"👤 User: {current_user.email}")
+    
+    try:
+        data = request.get_json()
+        
+        # Sanitize input to prevent XSS attacks
+        feedback_type = html.escape(data.get('type', 'general'))
+        message = html.escape(data.get('message', ''))
+        page_url = html.escape(data.get('page_url', 'Unknown'))
+        page_title = html.escape(data.get('page_title', 'Unknown'))
+        
+        # Validate message length
+        if not message or len(message) > 1000:
+            return jsonify({
+                'success': False,
+                'error': 'Message must be between 1 and 1000 characters'
+            }), 400
+        
+        # Get environment variables for email
+        smtp_host = os.getenv('SMTP_HOST', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_user = os.getenv('SMTP_USER', '')
+        smtp_pass = os.getenv('SMTP_PASS', '')
+        admin_email = os.getenv('ADMIN_EMAIL', 'david@merqurius.ca')
+        
+        # Get base URL for admin link
+        base_url = os.getenv('BACKEND_URL', 'https://trace-production-79d5.up.railway.app')
+        admin_user_url = f"{base_url}/admin/user/{current_user.id}/dashboard"
+        
+        # Create email content
+        email_subject = f"[Trace Feedback] {feedback_type.capitalize()} from {current_user.name}"
+        
+        email_body = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+            <h2>New Feedback Received</h2>
+            
+            <h3>User Information:</h3>
+            <ul>
+                <li><strong>Name:</strong> {current_user.name}</li>
+                <li><strong>Email:</strong> {current_user.email}</li>
+                <li><strong>User ID:</strong> {current_user.id}</li>
+                <li><strong>Subscription:</strong> {current_user.subscription_status}</li>
+            </ul>
+            
+            <h3>Feedback Details:</h3>
+            <ul>
+                <li><strong>Type:</strong> {feedback_type}</li>
+                <li><strong>Current Page:</strong> {page_title}</li>
+                <li><strong>Page URL:</strong> {page_url}</li>
+                <li><strong>Timestamp:</strong> {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}</li>
+            </ul>
+            
+            <h3>Message:</h3>
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                {message.replace(chr(10), '<br>')}
+            </div>
+            
+            <h3>Admin Actions:</h3>
+            <p>
+                <a href="{admin_user_url}" style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                    View User Dashboard
+                </a>
+            </p>
+            
+            <hr style="margin-top: 30px;">
+            <p style="color: #666; font-size: 12px;">
+                This feedback was submitted through the Trace Chrome Extension.
+            </p>
+        </body>
+        </html>
+        """
+        
+        # Send email if SMTP is configured
+        if smtp_user and smtp_pass:
+            try:
+                msg = MIMEMultipart('alternative')
+                msg['Subject'] = email_subject
+                msg['From'] = smtp_user
+                msg['To'] = admin_email
+                
+                html_part = MIMEText(email_body, 'html')
+                msg.attach(html_part)
+                
+                with smtplib.SMTP(smtp_host, smtp_port) as server:
+                    server.starttls()
+                    server.login(smtp_user, smtp_pass)
+                    server.send_message(msg)
+                
+                print(f"✅ Feedback email sent to {admin_email}")
+            except Exception as e:
+                print(f"⚠️ Failed to send email: {e}")
+                # Continue even if email fails
+        else:
+            print(f"⚠️ SMTP not configured - email not sent")
+            print(f"📧 Would have sent to: {admin_email}")
+            print(f"📝 Feedback: {message}")
+        
+        # Log feedback to database (optional - you could create a Feedback table)
+        print(f"✅ Feedback received from {current_user.email}")
+        print(f"   Type: {feedback_type}")
+        print(f"   Message: {message[:100]}...")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Feedback sent successfully'
+        })
+        
+    except Exception as e:
+        print(f"❌ Feedback submission error: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to send feedback'
+        }), 500
+
 # Stripe Webhooks
 @app.route('/api/webhooks/stripe', methods=['POST'])
 def stripe_webhook():

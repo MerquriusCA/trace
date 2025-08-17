@@ -81,6 +81,12 @@
       
       <button id="testBackendButton" class="btn-secondary btn-small">Test Backend</button>
       <button id="checkPageButton" class="btn-secondary btn-small">Check Page</button>
+      
+      <!-- Feedback Button -->
+      <button id="feedbackButton" class="btn-secondary" style="margin-top: 8px; display: flex; align-items: center; gap: 6px;">
+        <span>💬</span>
+        <span>Send Feedback</span>
+      </button>
     </div>
     
     <!-- Analysis Result -->
@@ -202,6 +208,67 @@
         </div>
       </div>
       <button id="logoutButtonBottom" class="btn-small btn-secondary">Logout</button>
+    </div>
+  </div>
+  
+  <!-- Feedback Modal -->
+  <div id="feedbackModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Send Feedback</h3>
+        <button id="closeFeedbackModal" class="modal-close">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="feedback-type-selector">
+          <label class="feedback-type-option">
+            <input type="radio" name="feedbackType" value="bug" checked>
+            <span class="feedback-type-label">
+              <span class="type-icon">🐛</span>
+              <span>Bug Report</span>
+            </span>
+          </label>
+          <label class="feedback-type-option">
+            <input type="radio" name="feedbackType" value="feature">
+            <span class="feedback-type-label">
+              <span class="type-icon">✨</span>
+              <span>Feature Request</span>
+            </span>
+          </label>
+          <label class="feedback-type-option">
+            <input type="radio" name="feedbackType" value="general">
+            <span class="feedback-type-label">
+              <span class="type-icon">💭</span>
+              <span>General Feedback</span>
+            </span>
+          </label>
+        </div>
+        
+        <div class="feedback-form">
+          <label for="feedbackMessage">Your Feedback</label>
+          <textarea 
+            id="feedbackMessage" 
+            placeholder="Please share your thoughts, issues, or suggestions..."
+            rows="6"
+            maxlength="1000"
+            required></textarea>
+          <div class="char-counter">
+            <span id="charCount">0</span> / 1000
+          </div>
+        </div>
+        
+        <div class="feedback-context">
+          <p class="context-info">📍 Current page will be included for context</p>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button id="cancelFeedback" class="btn-secondary">Cancel</button>
+        <button id="submitFeedback" class="btn-primary">
+          <span id="submitText">Send Feedback</span>
+          <span id="submitLoader" class="loader hidden"></span>
+        </button>
+      </div>
     </div>
   </div>
   
