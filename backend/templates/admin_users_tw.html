@@ -45,6 +45,9 @@
                         <a href="/admin/dashboard" id="adminLink" class="border-primary-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Dashboard
                         </a>
+                        <a href="/admin/feedback" id="adminFeedbackLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Feedback
+                        </a>
                         <a href="/admin/products" id="adminProductsLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Products
                         </a>
@@ -162,10 +165,14 @@
             
             if (token) {
                 const adminLink = document.getElementById('adminLink');
+                const adminFeedbackLink = document.getElementById('adminFeedbackLink');
                 const adminProductsLink = document.getElementById('adminProductsLink');
                 
                 if (adminLink) {
                     adminLink.href = `/admin/dashboard?token=${token}`;
+                }
+                if (adminFeedbackLink) {
+                    adminFeedbackLink.href = `/admin/feedback?token=${token}`;
                 }
                 if (adminProductsLink) {
                     adminProductsLink.href = `/admin/products?token=${token}`;

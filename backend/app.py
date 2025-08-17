@@ -213,6 +213,31 @@ class Cnter(db.Model):
             'updated_at': self.updated_at.isoformat()
         }
 
+class Feedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    feedback_type = db.Column(db.String(20), nullable=False)  # bug, feature, general
+    message = db.Column(db.Text, nullable=False)
+    page_url = db.Column(db.String(500))
+    page_title = db.Column(db.String(200))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationship to user
+    user = db.relationship('User', backref=db.backref('feedback', lazy=True))
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'user_name': self.user.name if self.user else None,
+            'user_email': self.user.email if self.user else None,
+            'feedback_type': self.feedback_type,
+            'message': self.message,
+            'page_url': self.page_url,
+            'page_title': self.page_title,
+            'created_at': self.created_at.isoformat()
+        }
+
 # Authentication decorator
 def require_admin_token(f):
     """Decorator for admin template routes - checks for valid admin JWT token in query params"""
@@ -873,7 +898,24 @@ def submit_feedback(current_user):
             print(f"📧 Would have sent to: {admin_email}")
             print(f"📝 Feedback: {message}")
         
-        # Log feedback to database (optional - you could create a Feedback table)
+        # Save feedback to database
+        try:
+            feedback = Feedback(
+                user_id=current_user.id,
+                feedback_type=feedback_type,
+                message=message,
+                page_url=data.get('page_url', ''),
+                page_title=data.get('page_title', '')
+            )
+            db.session.add(feedback)
+            db.session.commit()
+            
+            print(f"✅ Feedback saved to database with ID: {feedback.id}")
+        except Exception as db_error:
+            print(f"⚠️ Failed to save feedback to database: {db_error}")
+            # Continue even if database save fails
+        
+        # Log feedback details
         print(f"✅ Feedback received from {current_user.email}")
         print(f"   Type: {feedback_type}")
         print(f"   Message: {message[:100]}...")
@@ -1186,6 +1228,12 @@ def admin_user_dashboard(user_id):
     """Serve the individual user dashboard page"""
     return render_template('user_dashboard_tw.html')
 
+@app.route('/admin/feedback')
+@require_admin_token
+def admin_feedback():
+    """Serve the admin feedback page"""
+    return render_template('admin_feedback_tw.html')
+
 @app.route('/admin/products')
 @require_admin_token
 def admin_products():
@@ -1332,6 +1380,50 @@ def admin_get_user(current_user, user_id):
     except Exception as e:
         print(f"Admin get user error: {e}")
         return jsonify({'success': False, 'error': 'Failed to get user data'}), 500
+
+@app.route('/api/admin/feedback', methods=['GET'])
+@require_auth
+def admin_get_feedback(current_user):
+    """Get all feedback submissions (admin endpoint)"""
+    try:
+        # Get pagination parameters
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        feedback_type = request.args.get('type')  # Optional filter by type
+        
+        # Build query
+        query = Feedback.query.join(User)
+        
+        # Filter by type if specified
+        if feedback_type and feedback_type in ['bug', 'feature', 'general']:
+            query = query.filter(Feedback.feedback_type == feedback_type)
+        
+        # Order by most recent first and paginate
+        query = query.order_by(Feedback.created_at.desc())
+        pagination = query.paginate(
+            page=page, 
+            per_page=per_page, 
+            error_out=False
+        )
+        
+        feedback_list = [feedback.to_dict() for feedback in pagination.items]
+        
+        return jsonify({
+            'success': True,
+            'feedback': feedback_list,
+            'pagination': {
+                'page': page,
+                'pages': pagination.pages,
+                'per_page': per_page,
+                'total': pagination.total,
+                'has_next': pagination.has_next,
+                'has_prev': pagination.has_prev
+            }
+        })
+        
+    except Exception as e:
+        print(f"❌ Error fetching feedback: {e}")
+        return jsonify({'error': f'Failed to fetch feedback: {str(e)}'}), 500
 
 @app.route('/api/admin/users', methods=['GET'])
 @require_auth

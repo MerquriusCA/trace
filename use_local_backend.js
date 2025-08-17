@@ -2,24 +2,24 @@
 // Run this in Chrome DevTools console on the extension's background page
 
 console.log('🔧 Backend URL Helper Script');
-console.log('Current default: LOCAL (http://localhost:8000)');
+console.log('Current default: PRODUCTION (https://trace-production-79d5.up.railway.app)');
 
-// Use local backend (this is now the default)
+// Use local backend (for development)
 function useLocalBackend() {
-  chrome.storage.local.remove(['backendUrl'], () => {
-    console.log('✅ Using LOCAL backend (default)');
+  chrome.storage.local.set({
+    backendUrl: 'http://localhost:8000/api/summarize'
+  }, () => {
+    console.log('✅ Switched to LOCAL backend');
     console.log('📍 Backend URL: http://localhost:8000');
     console.log('🔄 Reload the extension to apply changes');
   });
 }
 
-// Use production backend
+// Use production backend (this is now the default)
 function useProductionBackend() {
-  chrome.storage.local.set({
-    backendUrl: 'https://trace-api-production.up.railway.app/api/summarize'
-  }, () => {
-    console.log('✅ Backend URL set to PRODUCTION server');
-    console.log('📍 Backend URL: https://trace-api-production.up.railway.app');
+  chrome.storage.local.remove(['backendUrl'], () => {
+    console.log('✅ Using PRODUCTION backend (default)');
+    console.log('📍 Backend URL: https://trace-production-79d5.up.railway.app');
     console.log('🔄 Reload the extension to apply changes');
   });
 }
@@ -27,7 +27,13 @@ function useProductionBackend() {
 // Quick commands
 console.log('Available commands:');
 console.log('useLocalBackend()      - Switch to local development');
-console.log('useProductionBackend() - Switch to Railway production');
+console.log('useProductionBackend() - Switch back to Railway production (default)');
 
-// Auto-run local backend setup
-useLocalBackend();
+// Show current backend setting
+chrome.storage.local.get(['backendUrl'], (result) => {
+  if (result.backendUrl) {
+    console.log('📍 Currently using custom backend:', result.backendUrl);
+  } else {
+    console.log('📍 Currently using default: PRODUCTION');
+  }
+});
