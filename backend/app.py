@@ -787,8 +787,16 @@ def submit_feedback(current_user):
         """
         
         # Send email if SMTP is configured
+        print(f"🔧 SMTP Configuration Check:")
+        print(f"   Host: {smtp_host}")
+        print(f"   Port: {smtp_port}")
+        print(f"   User: {smtp_user}")
+        print(f"   Pass: {'*' * len(smtp_pass) if smtp_pass else 'None'}")
+        print(f"   Admin Email: {admin_email}")
+        
         if smtp_user and smtp_pass:
             try:
+                print(f"📧 Preparing email message...")
                 msg = MIMEMultipart('alternative')
                 msg['Subject'] = email_subject
                 msg['From'] = smtp_user
@@ -796,15 +804,41 @@ def submit_feedback(current_user):
                 
                 html_part = MIMEText(email_body, 'html')
                 msg.attach(html_part)
+                print(f"✅ Email message prepared")
                 
-                with smtplib.SMTP(smtp_host, smtp_port) as server:
-                    server.starttls()
-                    server.login(smtp_user, smtp_pass)
-                    server.send_message(msg)
+                # Use SSL for port 465, TLS for port 587
+                if smtp_port == 465:
+                    print(f"🔒 Using SMTP_SSL on port {smtp_port}")
+                    with smtplib.SMTP_SSL(smtp_host, smtp_port) as server:
+                        print(f"✅ Connected to {smtp_host}:{smtp_port} via SSL")
+                        server.set_debuglevel(1)  # Enable SMTP debug logging
+                        print(f"🔑 Attempting login with user: {smtp_user}")
+                        server.login(smtp_user, smtp_pass)
+                        print(f"✅ Login successful")
+                        print(f"📤 Sending message...")
+                        server.send_message(msg)
+                        print(f"✅ Message sent via SSL")
+                else:
+                    print(f"🔒 Using SMTP with STARTTLS on port {smtp_port}")
+                    with smtplib.SMTP(smtp_host, smtp_port) as server:
+                        print(f"✅ Connected to {smtp_host}:{smtp_port}")
+                        server.set_debuglevel(1)  # Enable SMTP debug logging
+                        print(f"🔒 Starting TLS...")
+                        server.starttls()
+                        print(f"✅ TLS started")
+                        print(f"🔑 Attempting login with user: {smtp_user}")
+                        server.login(smtp_user, smtp_pass)
+                        print(f"✅ Login successful")
+                        print(f"📤 Sending message...")
+                        server.send_message(msg)
+                        print(f"✅ Message sent via TLS")
                 
                 print(f"✅ Feedback email sent to {admin_email}")
             except Exception as e:
                 print(f"⚠️ Failed to send email: {e}")
+                print(f"⚠️ Error type: {type(e).__name__}")
+                import traceback
+                print(f"⚠️ Full traceback: {traceback.format_exc()}")
                 # Continue even if email fails
         else:
             print(f"⚠️ SMTP not configured - email not sent")
