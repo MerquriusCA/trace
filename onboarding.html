@@ -45,6 +45,130 @@
       </div>
     </div>
 
+    <!-- Reader Type Step -->
+    <div id="readerTypeStep" class="onboarding-step">
+      <div class="onboarding-header">
+        <h2>What best describes you?</h2>
+        <p class="subtitle">This helps us personalize your experience</p>
+      </div>
+      
+      <div class="preferences-content">
+        <div class="preference-options">
+          <label class="preference-option">
+            <input type="radio" name="readerType" value="student" id="studentType">
+            <div class="preference-content">
+              <span class="option-icon">🎓</span>
+              <strong>Student</strong>
+              <p>K-12 or university student doing research and learning</p>
+            </div>
+          </label>
+          
+          <label class="preference-option">
+            <input type="radio" name="readerType" value="business" id="businessType">
+            <div class="preference-content">
+              <span class="option-icon">💼</span>
+              <strong>Business Professional</strong>
+              <p>Working professional staying informed in my industry</p>
+            </div>
+          </label>
+          
+          <label class="preference-option">
+            <input type="radio" name="readerType" value="researcher" id="researcherType">
+            <div class="preference-content">
+              <span class="option-icon">🔬</span>
+              <strong>Researcher/Academic</strong>
+              <p>Academic or professional researcher analyzing information</p>
+            </div>
+          </label>
+          
+          <label class="preference-option">
+            <input type="radio" name="readerType" value="tech" id="techType">
+            <div class="preference-content">
+              <span class="option-icon">💻</span>
+              <strong>Tech Professional</strong>
+              <p>Developer or tech professional reading documentation</p>
+            </div>
+          </label>
+          
+          <label class="preference-option">
+            <input type="radio" name="readerType" value="lifelong_learner" id="lifelongType" checked>
+            <div class="preference-content">
+              <span class="option-icon">📖</span>
+              <strong>Lifelong Learner</strong>
+              <p>Curious reader exploring diverse topics and ideas</p>
+            </div>
+          </label>
+          
+          <label class="preference-option">
+            <input type="radio" name="readerType" value="creative" id="creativeType">
+            <div class="preference-content">
+              <span class="option-icon">🎨</span>
+              <strong>Creative Professional</strong>
+              <p>Writer, designer, or creative seeking inspiration</p>
+            </div>
+          </label>
+        </div>
+        
+        <div class="onboarding-actions">
+          <button id="backToWelcomeBtn" class="btn-secondary">Back</button>
+          <button id="continueToLevelBtn" class="btn-primary">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reading Level Step -->
+    <div id="readingLevelStep" class="onboarding-step">
+      <div class="onboarding-header">
+        <h2>How do you prefer your content?</h2>
+        <p class="subtitle">We'll adjust the complexity to match your preference</p>
+      </div>
+      
+      <div class="preferences-content">
+        <div class="preference-options">
+          <label class="preference-option">
+            <input type="radio" name="readingLevel" value="simple" id="simpleLevel">
+            <div class="preference-content">
+              <span class="option-icon">🟢</span>
+              <strong>Quick & Simple</strong>
+              <p>Key points only - easy to scan and understand quickly</p>
+            </div>
+          </label>
+          
+          <label class="preference-option">
+            <input type="radio" name="readingLevel" value="balanced" id="balancedLevel" checked>
+            <div class="preference-content">
+              <span class="option-icon">🟡</span>
+              <strong>Clear & Balanced</strong>
+              <p>Well-explained essentials with helpful context</p>
+            </div>
+          </label>
+          
+          <label class="preference-option">
+            <input type="radio" name="readingLevel" value="detailed" id="detailedLevel">
+            <div class="preference-content">
+              <span class="option-icon">🔵</span>
+              <strong>Detailed & Thorough</strong>
+              <p>Complete understanding with nuance and depth</p>
+            </div>
+          </label>
+          
+          <label class="preference-option">
+            <input type="radio" name="readingLevel" value="technical" id="technicalLevel">
+            <div class="preference-content">
+              <span class="option-icon">🟣</span>
+              <strong>Technical & Expert</strong>
+              <p>Full complexity with industry terms and technical details</p>
+            </div>
+          </label>
+        </div>
+        
+        <div class="onboarding-actions">
+          <button id="backToTypeBtn" class="btn-secondary">Back</button>
+          <button id="continueToPrefsBtn" class="btn-primary">Continue</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Preferences Step -->
     <div id="preferencesStep" class="onboarding-step">
       <div class="onboarding-header">
@@ -80,7 +204,7 @@
         </div>
         
         <div class="onboarding-actions">
-          <button id="backBtn" class="btn-secondary">Back</button>
+          <button id="backToLevelBtn" class="btn-secondary">Back</button>
           <button id="finishOnboardingBtn" class="btn-primary">Complete Setup</button>
         </div>
       </div>

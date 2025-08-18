@@ -1,160 +1,135 @@
 // Onboarding workflow logic
 document.addEventListener('DOMContentLoaded', function() {
-  // Get elements
+  // Get step elements
   const welcomeStep = document.getElementById('welcomeStep');
+  const readerTypeStep = document.getElementById('readerTypeStep');
+  const readingLevelStep = document.getElementById('readingLevelStep');
   const preferencesStep = document.getElementById('preferencesStep');
   const completionStep = document.getElementById('completionStep');
   
+  // Get button elements
   const getStartedBtn = document.getElementById('getStartedBtn');
-  const backBtn = document.getElementById('backBtn');
+  const backToWelcomeBtn = document.getElementById('backToWelcomeBtn');
+  const continueToLevelBtn = document.getElementById('continueToLevelBtn');
+  const backToTypeBtn = document.getElementById('backToTypeBtn');
+  const continueToPrefsBtn = document.getElementById('continueToPrefsBtn');
+  const backToLevelBtn = document.getElementById('backToLevelBtn');
   const finishOnboardingBtn = document.getElementById('finishOnboardingBtn');
   const startUsingBtn = document.getElementById('startUsingBtn');
   
   // Step management
   let currentStep = 1;
+  const steps = [welcomeStep, readerTypeStep, readingLevelStep, preferencesStep, completionStep];
   
   function showStep(stepNumber) {
     // Hide all steps
-    welcomeStep.classList.remove('active');
-    preferencesStep.classList.remove('active');
-    completionStep.classList.remove('active');
+    steps.forEach(step => step.classList.remove('active'));
     
     // Show current step
-    switch(stepNumber) {
-      case 1:
-        welcomeStep.classList.add('active');
-        break;
-      case 2:
-        preferencesStep.classList.add('active');
-        break;
-      case 3:
-        completionStep.classList.add('active');
-        break;
+    if (steps[stepNumber - 1]) {
+      steps[stepNumber - 1].classList.add('active');
     }
     
     currentStep = stepNumber;
   }
   
-  // Event listeners
+  // Navigation event listeners
   getStartedBtn.addEventListener('click', function() {
-    showStep(2);
+    showStep(2); // Go to reader type
   });
   
-  backBtn.addEventListener('click', function() {
-    showStep(1);
+  backToWelcomeBtn.addEventListener('click', function() {
+    showStep(1); // Back to welcome
   });
   
-  finishOnboardingBtn.addEventListener('click', function() {
-    saveOnboardingPreferences();
+  continueToLevelBtn.addEventListener('click', function() {
+    showStep(3); // Go to reading level
+  });
+  
+  backToTypeBtn.addEventListener('click', function() {
+    showStep(2); // Back to reader type
+  });
+  
+  continueToPrefsBtn.addEventListener('click', function() {
+    showStep(4); // Go to preferences
+  });
+  
+  backToLevelBtn.addEventListener('click', function() {
+    showStep(3); // Back to reading level
+  });
+  
+  finishOnboardingBtn.addEventListener('click', async function() {
+    // Collect all preferences
+    const selectedStyle = document.querySelector('input[name="summaryStyle"]:checked')?.value || 'eli8';
+    const selectedReaderType = document.querySelector('input[name="readerType"]:checked')?.value || 'lifelong_learner';
+    const selectedReadingLevel = document.querySelector('input[name="readingLevel"]:checked')?.value || 'balanced';
+    
+    const preferences = {
+      summary_style: selectedStyle,
+      auto_summarize_enabled: false,
+      notifications_enabled: true,
+      reader_type: selectedReaderType,
+      reading_level: selectedReadingLevel
+    };
+    
+    console.log('💾 Saving onboarding preferences:', preferences);
+    
+    try {
+      // Save preferences to chrome storage first
+      chrome.storage.local.set({
+        summaryStyle: selectedStyle,
+        autoSummarizeEnabled: false,
+        notificationsEnabled: true,
+        readerType: selectedReaderType,
+        readingLevel: selectedReadingLevel,
+        onboardingCompleted: true
+      }, function() {
+        console.log('✅ Preferences saved to local storage');
+      });
+      
+      // Send preferences to backend via background script
+      chrome.runtime.sendMessage({
+        action: 'savePreferences',
+        preferences: preferences
+      }, function(response) {
+        if (response && response.success) {
+          console.log('✅ Preferences saved to backend:', response.preferences);
+        } else {
+          console.log('⚠️ Failed to save to backend:', response ? response.error : 'No response');
+        }
+      });
+      
+      // Show completion step
+      showStep(5);
+      
+    } catch (error) {
+      console.error('❌ Error saving preferences:', error);
+      // Still show completion even if save fails
+      showStep(5);
+    }
   });
   
   startUsingBtn.addEventListener('click', function() {
-    completeOnboarding();
+    // Close the onboarding window
+    window.close();
   });
   
-  function saveOnboardingPreferences() {
-    const selectedStyle = document.querySelector('input[name="summaryStyle"]:checked').value;
-    
-    // Save preferences to Chrome storage
-    const preferences = {
-      summaryStyle: selectedStyle,
-      onboardingCompleted: true,
-      onboardingDate: new Date().toISOString()
-    };
-    
-    // First save to Chrome storage
-    chrome.storage.sync.set({ 
-      userPreferences: preferences,
-      onboardingCompleted: true
-    }, function() {
-      console.log('Onboarding preferences saved to Chrome storage:', preferences);
-      
-      // Also save to local storage for immediate access
-      chrome.storage.local.set({ 
-        lastOnboardingPreferences: preferences,
-        summaryStyle: selectedStyle,
-        autoSummarizeEnabled: false,  // Default settings
-        notificationsEnabled: true
-      }, function() {
-        // Save to backend through background script
-        console.log('Saving preferences to backend...');
-        chrome.runtime.sendMessage({
-          action: 'savePreferences',
-          preferences: {
-            summary_style: selectedStyle,  // Backend expects snake_case
-            auto_summarize_enabled: false,
-            notifications_enabled: true
-          }
-        }, function(response) {
-          if (response && response.success) {
-            console.log('✅ Preferences saved to backend successfully');
-          } else {
-            console.log('⚠️ Could not save to backend, will retry on next login:', response?.error);
-          }
-          // Move to completion step regardless of backend save result
-          showStep(3);
-        });
-      });
-    });
-  }
-  
-  function completeOnboarding() {
-    // Mark onboarding as completed
-    chrome.storage.sync.set({ 
-      onboardingCompleted: true 
-    }, function() {
-      console.log('Onboarding completed');
-      
-      // Close onboarding and return to main extension
-      window.close();
-      
-      // Send message to background to refresh sidepanel
-      chrome.runtime.sendMessage({
-        action: 'onboardingCompleted'
-      });
-    });
-  }
-  
-  // Initialize onboarding
-  function initializeOnboarding() {
-    // Check if we're resuming from a specific step
-    chrome.storage.local.get(['onboardingStep'], function(result) {
-      const step = result.onboardingStep || 1;
-      showStep(step);
-    });
-    
-    // Load any existing preferences to pre-select options
-    chrome.storage.sync.get(['userPreferences'], function(result) {
-      if (result.userPreferences && result.userPreferences.summaryStyle) {
-        const styleInput = document.getElementById(result.userPreferences.summaryStyle + 'SummaryOnboard');
-        if (styleInput) {
-          styleInput.checked = true;
-        }
+  // Handle radio button changes for visual feedback
+  const radioButtons = document.querySelectorAll('input[type="radio"]');
+  radioButtons.forEach(radio => {
+    radio.addEventListener('change', function() {
+      // Update visual state when selection changes
+      const parent = this.closest('.preference-option');
+      if (parent) {
+        // Remove selected class from siblings
+        const siblings = parent.parentElement.querySelectorAll('.preference-option');
+        siblings.forEach(sibling => sibling.classList.remove('selected'));
+        // Add selected class to current
+        parent.classList.add('selected');
       }
     });
-  }
-  
-  // Save current step when navigating (for persistence)
-  function saveCurrentStep() {
-    chrome.storage.local.set({ onboardingStep: currentStep });
-  }
-  
-  // Add step saving to navigation buttons
-  getStartedBtn.addEventListener('click', saveCurrentStep);
-  backBtn.addEventListener('click', saveCurrentStep);
-  
-  // Initialize when DOM is ready
-  initializeOnboarding();
-  
-  // Handle messages from parent extension
-  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.action === 'resetOnboarding') {
-      // Reset to first step
-      chrome.storage.local.remove(['onboardingStep'], function() {
-        showStep(1);
-        sendResponse({ success: true });
-      });
-      return true;
-    }
   });
+  
+  // Initialize - show welcome step
+  showStep(1);
 });

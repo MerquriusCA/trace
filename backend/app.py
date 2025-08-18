@@ -153,6 +153,8 @@ class User(db.Model):
     summary_style = db.Column(db.String(20), default='eli8')  # quick, eli8, detailed
     auto_summarize_enabled = db.Column(db.Boolean, default=False)
     notifications_enabled = db.Column(db.Boolean, default=True)
+    reader_type = db.Column(db.String(50), default='lifelong_learner')  # student, business, researcher, tech, lifelong_learner, creative
+    reading_level = db.Column(db.String(20), default='balanced')  # simple, balanced, detailed, technical
     
     def to_dict(self):
         return {
@@ -166,7 +168,9 @@ class User(db.Model):
             'preferences': {
                 'summary_style': self.summary_style,
                 'auto_summarize_enabled': self.auto_summarize_enabled,
-                'notifications_enabled': self.notifications_enabled
+                'notifications_enabled': self.notifications_enabled,
+                'reader_type': self.reader_type,
+                'reading_level': self.reading_level
             }
         }
 
@@ -695,7 +699,9 @@ def get_preferences(current_user):
             'preferences': {
                 'summary_style': current_user.summary_style or 'eli8',
                 'auto_summarize_enabled': current_user.auto_summarize_enabled or False,
-                'notifications_enabled': current_user.notifications_enabled if current_user.notifications_enabled is not None else True
+                'notifications_enabled': current_user.notifications_enabled if current_user.notifications_enabled is not None else True,
+                'reader_type': current_user.reader_type or 'lifelong_learner',
+                'reading_level': current_user.reading_level or 'balanced'
             }
         })
     except Exception as e:
@@ -725,10 +731,24 @@ def save_preferences(current_user):
                 'error': f'Invalid summary_style. Must be one of: {valid_styles}'
             }), 400
         
+        # Validate reader_type
+        valid_reader_types = ['student', 'business', 'researcher', 'tech', 'lifelong_learner', 'creative']
+        reader_type = data.get('reader_type', 'lifelong_learner')
+        if reader_type not in valid_reader_types:
+            reader_type = 'lifelong_learner'  # Default fallback
+        
+        # Validate reading_level
+        valid_reading_levels = ['simple', 'balanced', 'detailed', 'technical']
+        reading_level = data.get('reading_level', 'balanced')
+        if reading_level not in valid_reading_levels:
+            reading_level = 'balanced'  # Default fallback
+        
         # Update user preferences
         current_user.summary_style = summary_style
         current_user.auto_summarize_enabled = bool(data.get('auto_summarize_enabled', False))
         current_user.notifications_enabled = bool(data.get('notifications_enabled', True))
+        current_user.reader_type = reader_type
+        current_user.reading_level = reading_level
         current_user.updated_at = datetime.utcnow()
         
         # Save to database
@@ -742,7 +762,9 @@ def save_preferences(current_user):
             'preferences': {
                 'summary_style': current_user.summary_style,
                 'auto_summarize_enabled': current_user.auto_summarize_enabled,
-                'notifications_enabled': current_user.notifications_enabled
+                'notifications_enabled': current_user.notifications_enabled,
+                'reader_type': current_user.reader_type,
+                'reading_level': current_user.reading_level
             }
         })
         
