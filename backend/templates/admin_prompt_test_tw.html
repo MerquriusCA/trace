@@ -63,165 +63,150 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div class="px-4 py-6 sm:px-0">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Left Panel: Configuration -->
-                <div class="space-y-6">
+            <!-- Configuration Panel - Horizontal Layout -->
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     <!-- Test Articles -->
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Select Test Article</h2>
-                        <div class="space-y-2">
-                            <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                                <input type="radio" name="article" value="tech" class="mt-1 mr-3" checked>
-                                <div class="flex-1">
-                                    <div class="font-medium">TechCrunch: AI Breakthrough</div>
-                                    <div class="text-sm text-gray-500">https://techcrunch.com/2024/ai-breakthrough-llm</div>
-                                    <div class="text-xs text-gray-400 mt-1">Technical article about latest AI developments</div>
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-900 mb-3">Select Test Article</h3>
+                        <div class="space-y-1">
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="article" value="tech" class="mr-2" checked>
+                                <div>
+                                    <div class="font-medium">TechCrunch: AI</div>
+                                    <div class="text-xs text-gray-500">AI developments</div>
                                 </div>
                             </label>
                             
-                            <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                                <input type="radio" name="article" value="science" class="mt-1 mr-3">
-                                <div class="flex-1">
-                                    <div class="font-medium">Nature: Climate Change Study</div>
-                                    <div class="text-sm text-gray-500">https://nature.com/articles/climate-ocean-currents</div>
-                                    <div class="text-xs text-gray-400 mt-1">Scientific research on ocean current changes</div>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="article" value="science" class="mr-2">
+                                <div>
+                                    <div class="font-medium">Nature: Climate</div>
+                                    <div class="text-xs text-gray-500">Ocean currents</div>
                                 </div>
                             </label>
                             
-                            <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                                <input type="radio" name="article" value="business" class="mt-1 mr-3">
-                                <div class="flex-1">
-                                    <div class="font-medium">WSJ: Market Analysis</div>
-                                    <div class="text-sm text-gray-500">https://wsj.com/tech-stocks-q4-analysis</div>
-                                    <div class="text-xs text-gray-400 mt-1">Financial analysis of tech sector performance</div>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="article" value="business" class="mr-2">
+                                <div>
+                                    <div class="font-medium">WSJ: Markets</div>
+                                    <div class="text-xs text-gray-500">Tech stocks analysis</div>
                                 </div>
                             </label>
                             
-                            <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                                <input type="radio" name="article" value="health" class="mt-1 mr-3">
-                                <div class="flex-1">
-                                    <div class="font-medium">Harvard Health: Sleep Research</div>
-                                    <div class="text-sm text-gray-500">https://health.harvard.edu/sleep-immune-system</div>
-                                    <div class="text-xs text-gray-400 mt-1">Medical research on sleep and immunity</div>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="article" value="health" class="mr-2">
+                                <div>
+                                    <div class="font-medium">Harvard: Sleep</div>
+                                    <div class="text-xs text-gray-500">Sleep research</div>
                                 </div>
                             </label>
                             
-                            <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                                <input type="radio" name="article" value="history" class="mt-1 mr-3">
-                                <div class="flex-1">
-                                    <div class="font-medium">Smithsonian: Ancient Civilizations</div>
-                                    <div class="text-sm text-gray-500">https://smithsonianmag.com/maya-discovery-2024</div>
-                                    <div class="text-xs text-gray-400 mt-1">Archaeological discovery about Maya civilization</div>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="article" value="history" class="mr-2">
+                                <div>
+                                    <div class="font-medium">Smithsonian</div>
+                                    <div class="text-xs text-gray-500">Maya discovery</div>
                                 </div>
                             </label>
                         </div>
                     </div>
 
-                    <!-- User Profile Settings -->
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-4">User Profile Settings</h2>
+                    <!-- Reader Type -->
+                    <div>
+                        <label class="block text-md font-semibold text-gray-900 mb-3">Reader Type</label>
+                        <select id="readerType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm">
+                            <option value="student">🎓 Student</option>
+                            <option value="business">💼 Business Professional</option>
+                            <option value="researcher">🔬 Researcher/Academic</option>
+                            <option value="tech">💻 Tech Professional</option>
+                            <option value="lifelong_learner" selected>📖 Lifelong Learner</option>
+                            <option value="creative">🎨 Creative Professional</option>
+                        </select>
+                    </div>
+
+                    <!-- Reading Level -->
+                    <div>
+                        <label class="block text-md font-semibold text-gray-900 mb-3">Reading Level</label>
+                        <select id="readingLevel" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm">
+                            <option value="simple">🟢 Quick & Simple</option>
+                            <option value="balanced" selected>🟡 Clear & Balanced</option>
+                            <option value="detailed">🔵 Detailed & Thorough</option>
+                            <option value="technical">🟣 Technical & Expert</option>
+                        </select>
+                    </div>
+
+                    <!-- Summary Style & Actions -->
+                    <div>
+                        <label class="block text-md font-semibold text-gray-900 mb-3">Summary Style</label>
+                        <select id="summaryStyle" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm mb-3">
+                            <option value="quick">Quick Summary (1 sentence)</option>
+                            <option value="eli8" selected>Explain Like I'm 8</option>
+                            <option value="detailed">Detailed Summary (5 bullets)</option>
+                        </select>
                         
-                        <!-- Reader Type -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Reader Type</label>
-                            <select id="readerType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
-                                <option value="student">🎓 Student</option>
-                                <option value="business">💼 Business Professional</option>
-                                <option value="researcher">🔬 Researcher/Academic</option>
-                                <option value="tech">💻 Tech Professional</option>
-                                <option value="lifelong_learner" selected>📖 Lifelong Learner</option>
-                                <option value="creative">🎨 Creative Professional</option>
-                            </select>
-                        </div>
-
-                        <!-- Reading Level -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Reading Level</label>
-                            <select id="readingLevel" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
-                                <option value="simple">🟢 Quick & Simple</option>
-                                <option value="balanced" selected>🟡 Clear & Balanced</option>
-                                <option value="detailed">🔵 Detailed & Thorough</option>
-                                <option value="technical">🟣 Technical & Expert</option>
-                            </select>
-                        </div>
-
-                        <!-- Summary Style -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Summary Style</label>
-                            <select id="summaryStyle" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
-                                <option value="quick">Quick Summary (1 sentence)</option>
-                                <option value="eli8" selected>Explain Like I'm 8</option>
-                                <option value="detailed">Detailed Summary (5 bullets)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <div class="space-y-3">
-                            <button id="showPromptBtn" class="w-full px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500">
-                                🔍 Show Generated Prompt
+                        <!-- Action Buttons -->
+                        <div class="space-y-2">
+                            <button id="showPromptBtn" class="w-full px-3 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm">
+                                🔍 Show Prompt
                             </button>
-                            <button id="summarizeBtn" class="w-full px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500">
-                                ⚡ Summarize Article
+                            <button id="summarizeBtn" class="w-full px-3 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm">
+                                ⚡ Summarize
                             </button>
-                            <button id="clearBtn" class="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
-                                🗑️ Clear Results
+                            <button id="clearBtn" class="w-full px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                                🗑️ Clear
                             </button>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Right Panel: Results -->
-                <div class="space-y-6">
-                    <!-- Generated Prompt -->
-                    <div id="promptSection" class="bg-white rounded-lg shadow p-6 hidden">
-                        <div class="flex justify-between items-start mb-4">
-                            <h2 class="text-lg font-semibold text-gray-900">Generated Prompt</h2>
-                            <button id="copyPromptBtn" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
-                                📋 Copy
-                            </button>
-                        </div>
-                        <pre id="promptDisplay" class="bg-gray-50 p-4 rounded-md text-sm text-gray-700 whitespace-pre-wrap font-mono overflow-x-auto"></pre>
-                        <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Edit Prompt (Optional)</label>
-                            <textarea id="customPrompt" rows="10" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 font-mono text-sm"></textarea>
-                        </div>
+            <!-- Results Section -->
+            <div class="space-y-6">
+                <!-- Loading Section -->
+                <div id="loadingSection" class="bg-white rounded-lg shadow p-6 hidden">
+                    <div class="flex items-center justify-center py-4">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+                        <span class="ml-3 text-gray-700">Processing...</span>
                     </div>
+                </div>
 
-                    <!-- Summary Result -->
-                    <div id="resultSection" class="bg-white rounded-lg shadow p-6 hidden">
-                        <div class="flex justify-between items-start mb-4">
-                            <h2 class="text-lg font-semibold text-gray-900">Summary Result</h2>
-                            <div class="flex space-x-2">
-                                <span id="tokenCount" class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">Tokens: 0</span>
-                                <span id="responseTime" class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">Time: 0ms</span>
-                            </div>
-                        </div>
-                        <div id="summaryResult" class="prose prose-sm max-w-none"></div>
-                    </div>
-
-                    <!-- Error Display -->
-                    <div id="errorSection" class="bg-red-50 border border-red-200 rounded-lg p-4 hidden">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <p id="errorMessage" class="text-sm text-red-700"></p>
+                <!-- Error Section -->
+                <div id="errorSection" class="bg-red-50 border border-red-200 rounded-lg p-6 hidden">
+                    <div class="flex">
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">Error</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <p id="errorMessage"></p>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Loading State -->
-                    <div id="loadingSection" class="bg-white rounded-lg shadow p-6 hidden">
-                        <div class="text-center">
-                            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-                            <p class="mt-2 text-gray-600">Processing...</p>
+                <!-- Generated Prompt -->
+                <div id="promptSection" class="bg-white rounded-lg shadow p-6 hidden">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900">Generated Prompt</h2>
+                        <button id="copyPromptBtn" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
+                            📋 Copy
+                        </button>
+                    </div>
+                    <pre id="promptDisplay" class="bg-gray-50 p-4 rounded-md text-sm text-gray-700 whitespace-pre-wrap font-mono overflow-x-auto"></pre>
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Edit Prompt (Optional)</label>
+                        <textarea id="customPrompt" rows="10" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 font-mono text-sm"></textarea>
+                    </div>
+                </div>
+
+                <!-- Summary Result -->
+                <div id="resultSection" class="bg-white rounded-lg shadow p-6 hidden">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900">Summary Result</h2>
+                        <div class="text-sm text-gray-500">
+                            <span id="tokenCount"></span> | <span id="responseTime"></span>
                         </div>
                     </div>
+                    <div id="summaryContent" class="prose max-w-none text-gray-700"></div>
                 </div>
             </div>
         </div>
@@ -266,200 +251,138 @@
                 url: "https://techcrunch.com/2024/ai-breakthrough-llm",
                 content: `Researchers at leading AI labs have announced a breakthrough in artificial intelligence that brings machines closer to human-level reasoning capabilities. The new model, dubbed "ReasonNet," demonstrates unprecedented ability to solve complex logical problems and engage in multi-step reasoning tasks that were previously thought to be decades away.
 
-                The breakthrough came through a novel architecture that combines traditional transformer models with a new type of reasoning module inspired by cognitive science. Unlike previous models that relied primarily on pattern matching in vast datasets, ReasonNet can construct logical chains of thought and validate its own reasoning process.
+The breakthrough comes after years of research into transformer architectures and represents a significant leap forward in artificial general intelligence (AGI) development. Unlike previous models that relied heavily on pattern matching and statistical inference, ReasonNet appears to engage in genuine logical reasoning, showing the ability to work through problems step-by-step and explain its reasoning process.
 
-                In benchmark tests, the model scored 95% on advanced mathematical reasoning tasks, surpassing the previous best of 67%. More impressively, it showed the ability to explain its reasoning in natural language, making its decision-making process transparent and auditable. This transparency is crucial for applications in sensitive fields like healthcare and finance.
+Key capabilities include solving mathematical proofs, engaging in complex scientific reasoning, and demonstrating common-sense understanding that has long eluded AI systems. The model scored 94% on advanced reasoning benchmarks, compared to previous state-of-the-art models that achieved only 67%.
 
-                Industry experts are calling this a pivotal moment in AI development. The implications extend far beyond academic achievements, potentially revolutionizing fields from scientific research to legal analysis. However, researchers caution that significant challenges remain, particularly in ensuring the model's reliability and preventing potential misuse.
-
-                The team plans to release a limited version for research purposes while working with ethicists and policymakers to establish guidelines for responsible deployment. This measured approach reflects growing awareness in the AI community about the need to balance innovation with safety considerations.`
+The implications for industries ranging from healthcare and education to scientific research and software development are profound. However, researchers emphasize the importance of careful deployment and ongoing safety research as these capabilities approach human-level performance.`
             },
             science: {
-                title: "Ocean Currents Show Unprecedented Changes, Study Reveals",
+                title: "Major Ocean Current System Shows Signs of Critical Slowdown",
                 url: "https://nature.com/articles/climate-ocean-currents",
-                content: `A comprehensive analysis of global ocean currents has revealed changes occurring at a pace not seen in over 1,000 years, according to a new study published in Nature Climate Change. The research, conducted by an international team of oceanographers, provides the most detailed picture yet of how climate change is affecting the planet's ocean circulation systems.
+                content: `A comprehensive new study published in Nature Climate Change reveals that the Atlantic Meridional Overturning Circulation (AMOC), a crucial ocean current system that helps regulate global climate, is showing unprecedented signs of weakening that could trigger abrupt climate changes within decades.
 
-                The study analyzed data from a network of deep-sea monitoring stations, satellite observations, and historical records dating back to the medieval period. Researchers found that the Atlantic Meridional Overturning Circulation (AMOC), often called the ocean's conveyor belt, has weakened by approximately 15% since the mid-20th century.
+The AMOC acts as a massive conveyor belt, transporting warm water northward along the surface and cold water southward at depth. This circulation pattern plays a critical role in maintaining Europe's relatively mild climate and influences weather patterns across the globe.
 
-                This slowdown has far-reaching implications for global climate patterns. The AMOC plays a crucial role in distributing heat from the tropics to northern latitudes, influencing weather patterns across Europe and North America. The weakening could lead to more extreme weather events, including harsher winters in Europe and more intense hurricanes in the Atlantic.
+Researchers analyzed 150 years of temperature and salinity data from across the Atlantic Ocean, using advanced machine learning techniques to identify early warning signals of potential collapse. The study found that key indicators suggest the system may be approaching a critical tipping point, with current strength at its weakest level in over 1,000 years.
 
-                The research also identified accelerating changes in the Pacific and Indian Ocean currents, with implications for monsoon patterns and marine ecosystems. Coral reefs and fish populations are already showing stress from altered current patterns, which affect nutrient distribution and water temperatures.
+If the AMOC were to shut down or significantly weaken, the consequences would include rapid cooling in Europe, rising sea levels along the US East Coast, altered precipitation patterns affecting agriculture globally, and disruption of monsoon systems that billions depend on for freshwater.
 
-                Scientists emphasize that while some change in ocean currents is natural, the current rate of change is unprecedented in the historical record. The findings underscore the urgency of climate action and the need for adaptive strategies in coastal communities worldwide. The team is now working on improved models to predict regional impacts over the coming decades.`
+The findings underscore the urgent need for aggressive climate action to prevent crossing irreversible tipping points in Earth's climate system.`
             },
             business: {
-                title: "Tech Sector Drives Market Recovery Despite Economic Headwinds",
+                title: "Tech Sector Defies Market Volatility with Strong Q4 Performance",
                 url: "https://wsj.com/tech-stocks-q4-analysis",
-                content: `Technology stocks led a broad market rally in the fourth quarter, with the Nasdaq composite gaining 12% despite persistent concerns about inflation and interest rates. The surge was driven by better-than-expected earnings from major tech companies and growing optimism about artificial intelligence applications driving future growth.
+                content: `Despite broader market uncertainty and economic headwinds, major technology companies delivered robust fourth-quarter earnings that exceeded analyst expectations, driving a late-year rally in tech stocks and reinforcing the sector's resilience.
 
-                Leading the charge were semiconductor manufacturers, with chip stocks posting gains of over 20% as demand for AI processors exceeded analyst expectations. Companies investing heavily in AI infrastructure saw their valuations soar, with some reaching all-time highs. This performance stands in stark contrast to the broader market, where traditional sectors struggled with rising costs and supply chain disruptions.
+Leading the charge were cloud computing giants, with Amazon Web Services reporting 35% year-over-year growth and Microsoft Azure posting 42% growth. The artificial intelligence boom continued to fuel enterprise spending on cloud infrastructure, with companies investing heavily in AI capabilities and data processing capacity.
 
-                Cloud computing giants reported robust growth in their AI-related services, with enterprise adoption accelerating faster than predicted. Revenue from AI services grew by an average of 150% year-over-year across major providers, suggesting that businesses are rapidly integrating these technologies into their operations.
+Semiconductor companies also showed surprising strength, with NVIDIA reporting record quarterly revenue driven by demand for AI chips. Despite earlier concerns about supply chain disruptions and geopolitical tensions affecting chip manufacturing, the sector demonstrated remarkable adaptability and innovation.
 
-                However, analysts warn that valuations may be getting ahead of fundamentals. The price-to-earnings ratios for many tech stocks now exceed levels seen during the dot-com boom, raising concerns about a potential correction. Some investors are rotating into value stocks, seeking opportunities in overlooked sectors.
+Consumer technology companies faced a more mixed landscape, with streaming services and social media platforms grappling with market saturation and increased competition. However, companies that successfully pivoted to AI-enhanced services and productivity tools saw significant user growth and engagement.
 
-                Looking ahead, the tech sector's performance will likely depend on the Federal Reserve's interest rate decisions and the pace of AI monetization. Companies that can demonstrate clear paths to profitability from their AI investments are expected to outperform, while those with more speculative business models may face increased scrutiny from investors.`
+The strong performance has led to upgraded outlook forecasts for 2024, with analysts predicting continued growth driven by enterprise AI adoption, edge computing expansion, and the rollout of 5G applications. However, experts caution that regulatory scrutiny and potential economic recession risks could impact the sector's momentum in the coming year.`
             },
             health: {
-                title: "Sleep Quality Directly Impacts Immune System Function, Harvard Study Shows",
+                title: "Groundbreaking Sleep Study Reveals Critical Links to Immune Function",
                 url: "https://health.harvard.edu/sleep-immune-system",
-                content: `A groundbreaking study from Harvard Medical School has established a direct biological link between sleep quality and immune system effectiveness, providing new insights into why poor sleep makes people more susceptible to illness. The research, involving over 5,000 participants tracked over three years, offers the most comprehensive evidence yet of sleep's critical role in maintaining immune health.
+                content: `A landmark longitudinal study conducted by Harvard Medical School researchers has uncovered profound connections between sleep quality and immune system function, revealing that even minor sleep disruptions can significantly compromise the body's ability to fight infections and maintain health.
 
-                Researchers discovered that individuals getting less than six hours of sleep per night showed a 40% reduction in antibody response to vaccines compared to those sleeping seven to nine hours. The study identified specific immune cells, called T cells, that require deep sleep phases to function optimally. During deep sleep, these cells undergo a "reprogramming" process that enhances their ability to recognize and respond to pathogens.
+The 10-year study followed 50,000 participants across diverse demographics, tracking their sleep patterns, immune biomarkers, and health outcomes. Using advanced wearable technology and regular blood sampling, researchers discovered that individuals who consistently slept less than 6 hours per night showed 70% higher rates of respiratory infections and took 50% longer to recover from illness.
 
-                The findings go beyond previous correlational studies by identifying the biological mechanisms at work. Using advanced imaging techniques, researchers observed that sleep deprivation disrupts the production of cytokines, proteins crucial for immune signaling. This disruption can persist for weeks after sleep patterns normalize, suggesting that chronic sleep debt has long-lasting effects on immune function.
+Perhaps most striking was the discovery that sleep quality matters as much as quantity. Participants with fragmented sleep—frequent awakenings even if total sleep time was adequate—showed similar immune impairments to those with insufficient sleep duration. The study identified specific sleep stages crucial for immune function, particularly deep sleep phases when the body produces infection-fighting cells.
 
-                Particularly concerning was the impact on the body's ability to form immunological memory. Participants with poor sleep quality showed reduced ability to maintain long-term immunity after vaccination or infection, potentially explaining why some individuals are more prone to recurring illnesses.
+The research team also investigated sleep's role in vaccine effectiveness, finding that people who slept poorly in the weeks following vaccination produced 50% fewer antibodies than well-rested individuals. This finding has significant implications for public health policy and vaccination strategies.
 
-                The study also found that sleep quality matters as much as quantity. Participants who experienced frequent sleep interruptions, even while getting eight hours in bed, showed similar immune impairments to those with shorter sleep duration. The researchers recommend prioritizing consistent sleep schedules and addressing sleep disorders as essential components of preventive healthcare.`
+The study's findings support implementing sleep hygiene as a critical component of preventive healthcare, with researchers recommending 7-9 hours of uninterrupted sleep for optimal immune function.`
             },
             history: {
-                title: "Lost Maya Metropolis Discovered Using Lidar Technology",
+                title: "Advanced LiDAR Survey Reveals Massive Maya Civilization Hidden in Guatemala",
                 url: "https://smithsonianmag.com/maya-discovery-2024",
-                content: `Archaeologists have discovered a massive Maya metropolis hidden beneath the jungle canopy in northern Guatemala, revolutionizing our understanding of ancient Maya civilization. Using cutting-edge lidar technology, researchers revealed a sprawling urban complex that may have housed over 100,000 people at its peak around 800 CE.
+                content: `An international team of archaeologists using cutting-edge LiDAR technology has discovered what may be the largest Maya settlement ever found, hidden beneath dense jungle canopy in northern Guatemala. The revelation fundamentally challenges our understanding of ancient Maya civilization's scope and sophistication.
 
-                The site, tentatively named Yax Mutal after inscriptions found on stone monuments, covers approximately 650 square miles and includes pyramids, palaces, elevated highways, and sophisticated water management systems. The discovery challenges previous assumptions about Maya population density and urban planning capabilities.
+The survey, conducted over 2,100 square kilometers of the Mirador-Calakmul Karst Basin, revealed a massive network of interconnected cities, agricultural systems, and monumental architecture dating from 1000 BCE to 150 CE. The newly mapped settlement includes over 1,000 sites connected by 177 kilometers of raised stone roadways, suggesting a level of regional integration previously unknown in ancient Mesoamerica.
 
-                Most remarkably, the lidar scans revealed an extensive network of raised causeways connecting different sectors of the city and linking it to outlying settlements. These highways, some up to 40 feet wide, suggest a level of regional integration and infrastructure development previously unknown for this period. The causeways appear to have been engineered to remain passable during the rainy season, demonstrating advanced understanding of hydraulic engineering.
+Most remarkably, the LiDAR data revealed sophisticated water management systems, including complex networks of canals, reservoirs, and dams that allowed the Maya to thrive in an otherwise challenging environment. These innovations enabled sustainable agriculture that supported population densities far exceeding previous estimates.
 
-                The city's layout indicates careful urban planning, with distinct residential, commercial, and ceremonial districts. Researchers identified what appears to be a massive central market complex, surrounded by workshops for pottery, obsidian tool-making, and textile production. This suggests Yax Mutal was a major economic hub in the Maya world.
+The discovery includes several pyramids larger than those at the famous site of Tikal, with the largest structure measuring over 72 meters in height. Complex palace structures, ball courts, and defensive fortifications indicate a highly organized society with advanced architectural knowledge.
 
-                Initial excavations have yielded remarkable artifacts, including jade masks, ceramic vessels with hieroglyphic inscriptions, and murals depicting unknown Maya deities. The inscriptions reference previously unknown Maya rulers and suggest complex political alliances with other city-states. The discovery promises to rewrite chapters of Maya history and provides new insights into how this sophisticated civilization adapted to and thrived in a challenging tropical environment.`
+Carbon dating and ceramic analysis suggest this civilization flourished for over a millennium, contradicting theories about early Maya society being composed of scattered, small-scale communities. The findings provide crucial insights into how ancient civilizations managed environmental challenges and organized complex societies.`
             }
         };
 
-        // Generate prompt based on settings
-        function generatePrompt(article, readerType, readingLevel, summaryStyle) {
-            let prompt = "";
-            
-            // Base instruction based on summary style
-            if (summaryStyle === 'quick') {
-                prompt = "Summarize this article in exactly one clear, comprehensive sentence that captures the main point and why it matters.";
-            } else if (summaryStyle === 'eli8') {
-                prompt = "Explain this article in simple terms that anyone can understand, as if explaining to someone with no background knowledge. Use 2-3 short paragraphs.";
-            } else if (summaryStyle === 'detailed') {
-                prompt = "Provide a detailed summary of this article in exactly 5 bullet points, each capturing a key aspect or finding.";
-            }
-
-            // Add reader type context
-            prompt += "\n\n";
-            if (readerType === 'student') {
-                prompt += "Tailor the summary for a student who needs to understand key concepts and their educational significance.";
-            } else if (readerType === 'business') {
-                prompt += "Focus on business implications, ROI, market impact, and strategic considerations.";
-            } else if (readerType === 'researcher') {
-                prompt += "Emphasize methodology, evidence, research implications, and areas for further study.";
-            } else if (readerType === 'tech') {
-                prompt += "Highlight technical details, implementation considerations, and practical applications.";
-            } else if (readerType === 'creative') {
-                prompt += "Focus on creative insights, inspiration, and how this could influence creative work.";
-            } else {
-                prompt += "Provide a well-rounded perspective suitable for a curious general reader.";
-            }
-
-            // Add reading level guidance
-            prompt += "\n\n";
-            if (readingLevel === 'simple') {
-                prompt += "Use very simple language, short sentences, and avoid any jargon or technical terms.";
-            } else if (readingLevel === 'balanced') {
-                prompt += "Use clear, accessible language with explanations for any technical terms.";
-            } else if (readingLevel === 'detailed') {
-                prompt += "Provide comprehensive coverage with nuanced explanations and context.";
-            } else if (readingLevel === 'technical') {
-                prompt += "Use precise technical language and assume familiarity with domain-specific concepts.";
-            }
-
-            prompt += "\n\nArticle to summarize:\n\n" + article.content;
-            
-            return prompt;
-        }
-
-        // Show prompt
+        // Show prompt generation
         document.getElementById('showPromptBtn').addEventListener('click', function() {
             const selectedArticle = document.querySelector('input[name="article"]:checked').value;
             const readerType = document.getElementById('readerType').value;
             const readingLevel = document.getElementById('readingLevel').value;
             const summaryStyle = document.getElementById('summaryStyle').value;
-            
+
             const article = testArticles[selectedArticle];
-            const prompt = generatePrompt(article, readerType, readingLevel, summaryStyle);
+            const settings = {
+                reader_type: readerType,
+                reading_level: readingLevel,
+                summary_style: summaryStyle
+            };
+
+            // Generate prompt based on settings
+            let prompt = generatePrompt(settings, article);
             
             document.getElementById('promptDisplay').textContent = prompt;
             document.getElementById('customPrompt').value = prompt;
             document.getElementById('promptSection').classList.remove('hidden');
-            document.getElementById('resultSection').classList.add('hidden');
-            document.getElementById('errorSection').classList.add('hidden');
         });
 
-        // Copy prompt
-        document.getElementById('copyPromptBtn').addEventListener('click', function() {
-            const prompt = document.getElementById('customPrompt').value || document.getElementById('promptDisplay').textContent;
-            navigator.clipboard.writeText(prompt).then(() => {
-                this.textContent = '✅ Copied!';
-                setTimeout(() => {
-                    this.textContent = '📋 Copy';
-                }, 2000);
-            });
-        });
-
-        // Summarize article
+        // Summarize with current settings
         document.getElementById('summarizeBtn').addEventListener('click', async function() {
             const selectedArticle = document.querySelector('input[name="article"]:checked').value;
-            const readerType = document.getElementById('readerType').value;
-            const readingLevel = document.getElementById('readingLevel').value;
-            const summaryStyle = document.getElementById('summaryStyle').value;
-            
             const article = testArticles[selectedArticle];
+            const settings = {
+                reader_type: document.getElementById('readerType').value,
+                reading_level: document.getElementById('readingLevel').value,
+                summary_style: document.getElementById('summaryStyle').value
+            };
+
+            // Use custom prompt if available, otherwise generate
             let prompt = document.getElementById('customPrompt').value;
-            
             if (!prompt) {
-                prompt = generatePrompt(article, readerType, readingLevel, summaryStyle);
+                prompt = generatePrompt(settings, article);
             }
-            
-            // Show loading
-            document.getElementById('loadingSection').classList.remove('hidden');
-            document.getElementById('resultSection').classList.add('hidden');
-            document.getElementById('errorSection').classList.add('hidden');
-            
-            const startTime = Date.now();
-            
+
             try {
+                document.getElementById('loadingSection').classList.remove('hidden');
+                document.getElementById('errorSection').classList.add('hidden');
+                document.getElementById('resultSection').classList.add('hidden');
+
+                const startTime = Date.now();
+                
                 const response = await fetch('/api/admin/test-prompt', {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({
                         prompt: prompt,
                         article_url: article.url,
                         article_title: article.title,
-                        settings: {
-                            reader_type: readerType,
-                            reading_level: readingLevel,
-                            summary_style: summaryStyle
-                        }
+                        settings: settings
                     })
                 });
-                
+
                 const data = await response.json();
-                const endTime = Date.now();
-                
+                const responseTime = Date.now() - startTime;
+
                 if (data.success) {
-                    // Display result
-                    document.getElementById('summaryResult').innerHTML = `
-                        <h3 class="font-semibold mb-2">${article.title}</h3>
-                        <div class="text-gray-700">${data.summary.replace(/\n/g, '<br>')}</div>
-                    `;
-                    
-                    document.getElementById('tokenCount').textContent = `Tokens: ${data.token_count || 'N/A'}`;
-                    document.getElementById('responseTime').textContent = `Time: ${endTime - startTime}ms`;
-                    
+                    document.getElementById('summaryContent').innerHTML = data.summary.replace(/\n/g, '<br>');
+                    document.getElementById('tokenCount').textContent = `${data.token_count || 'N/A'} tokens`;
+                    document.getElementById('responseTime').textContent = `${responseTime}ms`;
                     document.getElementById('resultSection').classList.remove('hidden');
                 } else {
-                    throw new Error(data.error || 'Failed to generate summary');
+                    throw new Error(data.error || 'Unknown error occurred');
                 }
             } catch (error) {
+                console.error('Summarization error:', error);
                 document.getElementById('errorMessage').textContent = error.message;
                 document.getElementById('errorSection').classList.remove('hidden');
             } finally {
@@ -474,6 +397,51 @@
             document.getElementById('errorSection').classList.add('hidden');
             document.getElementById('customPrompt').value = '';
         });
+
+        // Copy prompt to clipboard
+        document.getElementById('copyPromptBtn').addEventListener('click', function() {
+            const promptText = document.getElementById('promptDisplay').textContent;
+            navigator.clipboard.writeText(promptText).then(() => {
+                this.textContent = '✅ Copied';
+                setTimeout(() => {
+                    this.textContent = '📋 Copy';
+                }, 2000);
+            });
+        });
+
+        function generatePrompt(settings, article) {
+            // Generate prompt based on user settings and article
+            const readerTypePrompts = {
+                student: "You are helping a student understand this content for academic purposes.",
+                business: "You are helping a business professional quickly grasp key insights for decision-making.",
+                researcher: "You are helping a researcher understand this content with academic rigor and detail.",
+                tech: "You are helping a technical professional understand this content with focus on implementation and technical details.",
+                lifelong_learner: "You are helping a curious lifelong learner explore and understand this topic.",
+                creative: "You are helping a creative professional find inspiration and unique perspectives in this content."
+            };
+
+            const readingLevelPrompts = {
+                simple: "Use simple language and explain concepts in the most straightforward way possible.",
+                balanced: "Use clear, accessible language while maintaining accuracy and depth.",
+                detailed: "Provide comprehensive explanations with supporting details and context.",
+                technical: "Use precise technical language and detailed explanations for expert-level understanding."
+            };
+
+            const summaryStylePrompts = {
+                quick: "Provide a concise one-sentence summary that captures the main point.",
+                eli8: "Explain the key points as if talking to an 8-year-old, using simple words and relatable examples.",
+                detailed: "Create a detailed summary with 5 key bullet points covering the most important aspects."
+            };
+
+            return `${readerTypePrompts[settings.reader_type]} ${readingLevelPrompts[settings.reading_level]} ${summaryStylePrompts[settings.summary_style]}
+
+Article Title: ${article.title}
+Article URL: ${article.url}
+
+Please summarize the following article content:
+
+${article.content}`;
+        }
     </script>
 </body>
 </html>
