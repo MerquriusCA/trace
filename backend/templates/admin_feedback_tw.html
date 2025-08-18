@@ -150,6 +150,29 @@
             window.location.href = '/admin/login';
         }
 
+        document.addEventListener('DOMContentLoaded', function() {
+            // Preserve token in navigation links
+            if (token) {
+                const adminLink = document.getElementById('adminLink');
+                const adminFeedbackLink = document.getElementById('adminFeedbackLink');
+                const adminProductsLink = document.getElementById('adminProductsLink');
+                const adminPromptTestLink = document.getElementById('adminPromptTestLink');
+                
+                if (adminLink) {
+                    adminLink.href = `/admin/dashboard?token=${token}`;
+                }
+                if (adminFeedbackLink) {
+                    adminFeedbackLink.href = `/admin/feedback?token=${token}`;
+                }
+                if (adminProductsLink) {
+                    adminProductsLink.href = `/admin/products?token=${token}`;
+                }
+                if (adminPromptTestLink) {
+                    adminPromptTestLink.href = `/admin/prompt-test?token=${token}`;
+                }
+            }
+        });
+
         async function loadFeedback(page = 1, type = '') {
             try {
                 document.getElementById('loading').classList.remove('hidden');
