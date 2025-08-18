@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Testing - Trace Admin</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe', 
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center">
+                    <h1 class="text-3xl font-bold text-gray-900">Trace Admin</h1>
+                    <span class="ml-3 px-3 py-1 bg-primary-100 text-primary-800 text-sm font-medium rounded-full">
+                        Prompt Testing
+                    </span>
+                </div>
+                <nav class="flex space-x-8">
+                    <a href="/admin/dashboard" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                        Users
+                    </a>
+                    <a href="/admin/feedback" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                        Feedback
+                    </a>
+                    <a href="/admin/products" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                        Products
+                    </a>
+                    <a href="/admin/prompt-test" class="bg-primary-100 text-primary-700 px-3 py-2 rounded-md text-sm font-medium">
+                        Prompt Test
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Left Panel: Configuration -->
+                <div class="space-y-6">
+                    <!-- Test Articles -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Select Test Article</h2>
+                        <div class="space-y-2">
+                            <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="article" value="tech" class="mt-1 mr-3" checked>
+                                <div class="flex-1">
+                                    <div class="font-medium">TechCrunch: AI Breakthrough</div>
+                                    <div class="text-sm text-gray-500">https://techcrunch.com/2024/ai-breakthrough-llm</div>
+                                    <div class="text-xs text-gray-400 mt-1">Technical article about latest AI developments</div>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="article" value="science" class="mt-1 mr-3">
+                                <div class="flex-1">
+                                    <div class="font-medium">Nature: Climate Change Study</div>
+                                    <div class="text-sm text-gray-500">https://nature.com/articles/climate-ocean-currents</div>
+                                    <div class="text-xs text-gray-400 mt-1">Scientific research on ocean current changes</div>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="article" value="business" class="mt-1 mr-3">
+                                <div class="flex-1">
+                                    <div class="font-medium">WSJ: Market Analysis</div>
+                                    <div class="text-sm text-gray-500">https://wsj.com/tech-stocks-q4-analysis</div>
+                                    <div class="text-xs text-gray-400 mt-1">Financial analysis of tech sector performance</div>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="article" value="health" class="mt-1 mr-3">
+                                <div class="flex-1">
+                                    <div class="font-medium">Harvard Health: Sleep Research</div>
+                                    <div class="text-sm text-gray-500">https://health.harvard.edu/sleep-immune-system</div>
+                                    <div class="text-xs text-gray-400 mt-1">Medical research on sleep and immunity</div>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="article" value="history" class="mt-1 mr-3">
+                                <div class="flex-1">
+                                    <div class="font-medium">Smithsonian: Ancient Civilizations</div>
+                                    <div class="text-sm text-gray-500">https://smithsonianmag.com/maya-discovery-2024</div>
+                                    <div class="text-xs text-gray-400 mt-1">Archaeological discovery about Maya civilization</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- User Profile Settings -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">User Profile Settings</h2>
+                        
+                        <!-- Reader Type -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Reader Type</label>
+                            <select id="readerType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                                <option value="student">🎓 Student</option>
+                                <option value="business">💼 Business Professional</option>
+                                <option value="researcher">🔬 Researcher/Academic</option>
+                                <option value="tech">💻 Tech Professional</option>
+                                <option value="lifelong_learner" selected>📖 Lifelong Learner</option>
+                                <option value="creative">🎨 Creative Professional</option>
+                            </select>
+                        </div>
+
+                        <!-- Reading Level -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Reading Level</label>
+                            <select id="readingLevel" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                                <option value="simple">🟢 Quick & Simple</option>
+                                <option value="balanced" selected>🟡 Clear & Balanced</option>
+                                <option value="detailed">🔵 Detailed & Thorough</option>
+                                <option value="technical">🟣 Technical & Expert</option>
+                            </select>
+                        </div>
+
+                        <!-- Summary Style -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Summary Style</label>
+                            <select id="summaryStyle" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                                <option value="quick">Quick Summary (1 sentence)</option>
+                                <option value="eli8" selected>Explain Like I'm 8</option>
+                                <option value="detailed">Detailed Summary (5 bullets)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="space-y-3">
+                            <button id="showPromptBtn" class="w-full px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                                🔍 Show Generated Prompt
+                            </button>
+                            <button id="summarizeBtn" class="w-full px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                ⚡ Summarize Article
+                            </button>
+                            <button id="clearBtn" class="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                🗑️ Clear Results
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Results -->
+                <div class="space-y-6">
+                    <!-- Generated Prompt -->
+                    <div id="promptSection" class="bg-white rounded-lg shadow p-6 hidden">
+                        <div class="flex justify-between items-start mb-4">
+                            <h2 class="text-lg font-semibold text-gray-900">Generated Prompt</h2>
+                            <button id="copyPromptBtn" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
+                                📋 Copy
+                            </button>
+                        </div>
+                        <pre id="promptDisplay" class="bg-gray-50 p-4 rounded-md text-sm text-gray-700 whitespace-pre-wrap font-mono overflow-x-auto"></pre>
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Edit Prompt (Optional)</label>
+                            <textarea id="customPrompt" rows="10" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 font-mono text-sm"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Summary Result -->
+                    <div id="resultSection" class="bg-white rounded-lg shadow p-6 hidden">
+                        <div class="flex justify-between items-start mb-4">
+                            <h2 class="text-lg font-semibold text-gray-900">Summary Result</h2>
+                            <div class="flex space-x-2">
+                                <span id="tokenCount" class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">Tokens: 0</span>
+                                <span id="responseTime" class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">Time: 0ms</span>
+                            </div>
+                        </div>
+                        <div id="summaryResult" class="prose prose-sm max-w-none"></div>
+                    </div>
+
+                    <!-- Error Display -->
+                    <div id="errorSection" class="bg-red-50 border border-red-200 rounded-lg p-4 hidden">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p id="errorMessage" class="text-sm text-red-700"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="loadingSection" class="bg-white rounded-lg shadow p-6 hidden">
+                        <div class="text-center">
+                            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+                            <p class="mt-2 text-gray-600">Processing...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Get JWT token from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        if (!token) {
+            window.location.href = '/admin/login';
+        }
+
+        // Test articles with mock content
+        const testArticles = {
+            tech: {
+                title: "Revolutionary AI Model Achieves Human-Level Reasoning",
+                url: "https://techcrunch.com/2024/ai-breakthrough-llm",
+                content: `Researchers at leading AI labs have announced a breakthrough in artificial intelligence that brings machines closer to human-level reasoning capabilities. The new model, dubbed "ReasonNet," demonstrates unprecedented ability to solve complex logical problems and engage in multi-step reasoning tasks that were previously thought to be decades away.
+
+                The breakthrough came through a novel architecture that combines traditional transformer models with a new type of reasoning module inspired by cognitive science. Unlike previous models that relied primarily on pattern matching in vast datasets, ReasonNet can construct logical chains of thought and validate its own reasoning process.
+
+                In benchmark tests, the model scored 95% on advanced mathematical reasoning tasks, surpassing the previous best of 67%. More impressively, it showed the ability to explain its reasoning in natural language, making its decision-making process transparent and auditable. This transparency is crucial for applications in sensitive fields like healthcare and finance.
+
+                Industry experts are calling this a pivotal moment in AI development. The implications extend far beyond academic achievements, potentially revolutionizing fields from scientific research to legal analysis. However, researchers caution that significant challenges remain, particularly in ensuring the model's reliability and preventing potential misuse.
+
+                The team plans to release a limited version for research purposes while working with ethicists and policymakers to establish guidelines for responsible deployment. This measured approach reflects growing awareness in the AI community about the need to balance innovation with safety considerations.`
+            },
+            science: {
+                title: "Ocean Currents Show Unprecedented Changes, Study Reveals",
+                url: "https://nature.com/articles/climate-ocean-currents",
+                content: `A comprehensive analysis of global ocean currents has revealed changes occurring at a pace not seen in over 1,000 years, according to a new study published in Nature Climate Change. The research, conducted by an international team of oceanographers, provides the most detailed picture yet of how climate change is affecting the planet's ocean circulation systems.
+
+                The study analyzed data from a network of deep-sea monitoring stations, satellite observations, and historical records dating back to the medieval period. Researchers found that the Atlantic Meridional Overturning Circulation (AMOC), often called the ocean's conveyor belt, has weakened by approximately 15% since the mid-20th century.
+
+                This slowdown has far-reaching implications for global climate patterns. The AMOC plays a crucial role in distributing heat from the tropics to northern latitudes, influencing weather patterns across Europe and North America. The weakening could lead to more extreme weather events, including harsher winters in Europe and more intense hurricanes in the Atlantic.
+
+                The research also identified accelerating changes in the Pacific and Indian Ocean currents, with implications for monsoon patterns and marine ecosystems. Coral reefs and fish populations are already showing stress from altered current patterns, which affect nutrient distribution and water temperatures.
+
+                Scientists emphasize that while some change in ocean currents is natural, the current rate of change is unprecedented in the historical record. The findings underscore the urgency of climate action and the need for adaptive strategies in coastal communities worldwide. The team is now working on improved models to predict regional impacts over the coming decades.`
+            },
+            business: {
+                title: "Tech Sector Drives Market Recovery Despite Economic Headwinds",
+                url: "https://wsj.com/tech-stocks-q4-analysis",
+                content: `Technology stocks led a broad market rally in the fourth quarter, with the Nasdaq composite gaining 12% despite persistent concerns about inflation and interest rates. The surge was driven by better-than-expected earnings from major tech companies and growing optimism about artificial intelligence applications driving future growth.
+
+                Leading the charge were semiconductor manufacturers, with chip stocks posting gains of over 20% as demand for AI processors exceeded analyst expectations. Companies investing heavily in AI infrastructure saw their valuations soar, with some reaching all-time highs. This performance stands in stark contrast to the broader market, where traditional sectors struggled with rising costs and supply chain disruptions.
+
+                Cloud computing giants reported robust growth in their AI-related services, with enterprise adoption accelerating faster than predicted. Revenue from AI services grew by an average of 150% year-over-year across major providers, suggesting that businesses are rapidly integrating these technologies into their operations.
+
+                However, analysts warn that valuations may be getting ahead of fundamentals. The price-to-earnings ratios for many tech stocks now exceed levels seen during the dot-com boom, raising concerns about a potential correction. Some investors are rotating into value stocks, seeking opportunities in overlooked sectors.
+
+                Looking ahead, the tech sector's performance will likely depend on the Federal Reserve's interest rate decisions and the pace of AI monetization. Companies that can demonstrate clear paths to profitability from their AI investments are expected to outperform, while those with more speculative business models may face increased scrutiny from investors.`
+            },
+            health: {
+                title: "Sleep Quality Directly Impacts Immune System Function, Harvard Study Shows",
+                url: "https://health.harvard.edu/sleep-immune-system",
+                content: `A groundbreaking study from Harvard Medical School has established a direct biological link between sleep quality and immune system effectiveness, providing new insights into why poor sleep makes people more susceptible to illness. The research, involving over 5,000 participants tracked over three years, offers the most comprehensive evidence yet of sleep's critical role in maintaining immune health.
+
+                Researchers discovered that individuals getting less than six hours of sleep per night showed a 40% reduction in antibody response to vaccines compared to those sleeping seven to nine hours. The study identified specific immune cells, called T cells, that require deep sleep phases to function optimally. During deep sleep, these cells undergo a "reprogramming" process that enhances their ability to recognize and respond to pathogens.
+
+                The findings go beyond previous correlational studies by identifying the biological mechanisms at work. Using advanced imaging techniques, researchers observed that sleep deprivation disrupts the production of cytokines, proteins crucial for immune signaling. This disruption can persist for weeks after sleep patterns normalize, suggesting that chronic sleep debt has long-lasting effects on immune function.
+
+                Particularly concerning was the impact on the body's ability to form immunological memory. Participants with poor sleep quality showed reduced ability to maintain long-term immunity after vaccination or infection, potentially explaining why some individuals are more prone to recurring illnesses.
+
+                The study also found that sleep quality matters as much as quantity. Participants who experienced frequent sleep interruptions, even while getting eight hours in bed, showed similar immune impairments to those with shorter sleep duration. The researchers recommend prioritizing consistent sleep schedules and addressing sleep disorders as essential components of preventive healthcare.`
+            },
+            history: {
+                title: "Lost Maya Metropolis Discovered Using Lidar Technology",
+                url: "https://smithsonianmag.com/maya-discovery-2024",
+                content: `Archaeologists have discovered a massive Maya metropolis hidden beneath the jungle canopy in northern Guatemala, revolutionizing our understanding of ancient Maya civilization. Using cutting-edge lidar technology, researchers revealed a sprawling urban complex that may have housed over 100,000 people at its peak around 800 CE.
+
+                The site, tentatively named Yax Mutal after inscriptions found on stone monuments, covers approximately 650 square miles and includes pyramids, palaces, elevated highways, and sophisticated water management systems. The discovery challenges previous assumptions about Maya population density and urban planning capabilities.
+
+                Most remarkably, the lidar scans revealed an extensive network of raised causeways connecting different sectors of the city and linking it to outlying settlements. These highways, some up to 40 feet wide, suggest a level of regional integration and infrastructure development previously unknown for this period. The causeways appear to have been engineered to remain passable during the rainy season, demonstrating advanced understanding of hydraulic engineering.
+
+                The city's layout indicates careful urban planning, with distinct residential, commercial, and ceremonial districts. Researchers identified what appears to be a massive central market complex, surrounded by workshops for pottery, obsidian tool-making, and textile production. This suggests Yax Mutal was a major economic hub in the Maya world.
+
+                Initial excavations have yielded remarkable artifacts, including jade masks, ceramic vessels with hieroglyphic inscriptions, and murals depicting unknown Maya deities. The inscriptions reference previously unknown Maya rulers and suggest complex political alliances with other city-states. The discovery promises to rewrite chapters of Maya history and provides new insights into how this sophisticated civilization adapted to and thrived in a challenging tropical environment.`
+            }
+        };
+
+        // Generate prompt based on settings
+        function generatePrompt(article, readerType, readingLevel, summaryStyle) {
+            let prompt = "";
+            
+            // Base instruction based on summary style
+            if (summaryStyle === 'quick') {
+                prompt = "Summarize this article in exactly one clear, comprehensive sentence that captures the main point and why it matters.";
+            } else if (summaryStyle === 'eli8') {
+                prompt = "Explain this article in simple terms that anyone can understand, as if explaining to someone with no background knowledge. Use 2-3 short paragraphs.";
+            } else if (summaryStyle === 'detailed') {
+                prompt = "Provide a detailed summary of this article in exactly 5 bullet points, each capturing a key aspect or finding.";
+            }
+
+            // Add reader type context
+            prompt += "\n\n";
+            if (readerType === 'student') {
+                prompt += "Tailor the summary for a student who needs to understand key concepts and their educational significance.";
+            } else if (readerType === 'business') {
+                prompt += "Focus on business implications, ROI, market impact, and strategic considerations.";
+            } else if (readerType === 'researcher') {
+                prompt += "Emphasize methodology, evidence, research implications, and areas for further study.";
+            } else if (readerType === 'tech') {
+                prompt += "Highlight technical details, implementation considerations, and practical applications.";
+            } else if (readerType === 'creative') {
+                prompt += "Focus on creative insights, inspiration, and how this could influence creative work.";
+            } else {
+                prompt += "Provide a well-rounded perspective suitable for a curious general reader.";
+            }
+
+            // Add reading level guidance
+            prompt += "\n\n";
+            if (readingLevel === 'simple') {
+                prompt += "Use very simple language, short sentences, and avoid any jargon or technical terms.";
+            } else if (readingLevel === 'balanced') {
+                prompt += "Use clear, accessible language with explanations for any technical terms.";
+            } else if (readingLevel === 'detailed') {
+                prompt += "Provide comprehensive coverage with nuanced explanations and context.";
+            } else if (readingLevel === 'technical') {
+                prompt += "Use precise technical language and assume familiarity with domain-specific concepts.";
+            }
+
+            prompt += "\n\nArticle to summarize:\n\n" + article.content;
+            
+            return prompt;
+        }
+
+        // Show prompt
+        document.getElementById('showPromptBtn').addEventListener('click', function() {
+            const selectedArticle = document.querySelector('input[name="article"]:checked').value;
+            const readerType = document.getElementById('readerType').value;
+            const readingLevel = document.getElementById('readingLevel').value;
+            const summaryStyle = document.getElementById('summaryStyle').value;
+            
+            const article = testArticles[selectedArticle];
+            const prompt = generatePrompt(article, readerType, readingLevel, summaryStyle);
+            
+            document.getElementById('promptDisplay').textContent = prompt;
+            document.getElementById('customPrompt').value = prompt;
+            document.getElementById('promptSection').classList.remove('hidden');
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('errorSection').classList.add('hidden');
+        });
+
+        // Copy prompt
+        document.getElementById('copyPromptBtn').addEventListener('click', function() {
+            const prompt = document.getElementById('customPrompt').value || document.getElementById('promptDisplay').textContent;
+            navigator.clipboard.writeText(prompt).then(() => {
+                this.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    this.textContent = '📋 Copy';
+                }, 2000);
+            });
+        });
+
+        // Summarize article
+        document.getElementById('summarizeBtn').addEventListener('click', async function() {
+            const selectedArticle = document.querySelector('input[name="article"]:checked').value;
+            const readerType = document.getElementById('readerType').value;
+            const readingLevel = document.getElementById('readingLevel').value;
+            const summaryStyle = document.getElementById('summaryStyle').value;
+            
+            const article = testArticles[selectedArticle];
+            let prompt = document.getElementById('customPrompt').value;
+            
+            if (!prompt) {
+                prompt = generatePrompt(article, readerType, readingLevel, summaryStyle);
+            }
+            
+            // Show loading
+            document.getElementById('loadingSection').classList.remove('hidden');
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('errorSection').classList.add('hidden');
+            
+            const startTime = Date.now();
+            
+            try {
+                const response = await fetch('/api/admin/test-prompt', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        article_url: article.url,
+                        article_title: article.title,
+                        settings: {
+                            reader_type: readerType,
+                            reading_level: readingLevel,
+                            summary_style: summaryStyle
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                const endTime = Date.now();
+                
+                if (data.success) {
+                    // Display result
+                    document.getElementById('summaryResult').innerHTML = `
+                        <h3 class="font-semibold mb-2">${article.title}</h3>
+                        <div class="text-gray-700">${data.summary.replace(/\n/g, '<br>')}</div>
+                    `;
+                    
+                    document.getElementById('tokenCount').textContent = `Tokens: ${data.token_count || 'N/A'}`;
+                    document.getElementById('responseTime').textContent = `Time: ${endTime - startTime}ms`;
+                    
+                    document.getElementById('resultSection').classList.remove('hidden');
+                } else {
+                    throw new Error(data.error || 'Failed to generate summary');
+                }
+            } catch (error) {
+                document.getElementById('errorMessage').textContent = error.message;
+                document.getElementById('errorSection').classList.remove('hidden');
+            } finally {
+                document.getElementById('loadingSection').classList.add('hidden');
+            }
+        });
+
+        // Clear results
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            document.getElementById('promptSection').classList.add('hidden');
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('errorSection').classList.add('hidden');
+            document.getElementById('customPrompt').value = '';
+        });
+    </script>
+</body>
+</html>

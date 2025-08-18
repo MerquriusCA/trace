@@ -1256,6 +1256,12 @@ def admin_feedback():
     """Serve the admin feedback page"""
     return render_template('admin_feedback_tw.html')
 
+@app.route('/admin/prompt-test')
+@require_admin_token
+def admin_prompt_test():
+    """Serve the admin prompt testing page"""
+    return render_template('admin_prompt_test_tw.html')
+
 @app.route('/admin/products')
 @require_admin_token
 def admin_products():
@@ -1402,6 +1408,90 @@ def admin_get_user(current_user, user_id):
     except Exception as e:
         print(f"Admin get user error: {e}")
         return jsonify({'success': False, 'error': 'Failed to get user data'}), 500
+
+@app.route('/api/admin/test-prompt', methods=['POST'])
+@require_auth
+def admin_test_prompt(current_user):
+    """Test prompts with different user profiles and settings"""
+    try:
+        data = request.get_json()
+        prompt = data.get('prompt')
+        article_url = data.get('article_url')
+        article_title = data.get('article_title')
+        settings = data.get('settings', {})
+        
+        if not prompt:
+            return jsonify({
+                'success': False,
+                'error': 'Prompt is required'
+            }), 400
+        
+        # Get OpenAI API key from environment
+        openai_api_key = os.getenv('OPENAI_API_KEY')
+        if not openai_api_key:
+            return jsonify({
+                'success': False,
+                'error': 'OpenAI API key not configured'
+            }), 500
+        
+        # Call OpenAI API
+        import requests
+        
+        print(f"🧪 Testing prompt for {settings.get('reader_type', 'unknown')} reader")
+        print(f"   Reading level: {settings.get('reading_level', 'balanced')}")
+        print(f"   Summary style: {settings.get('summary_style', 'eli8')}")
+        
+        response = requests.post(
+            'https://api.openai.com/v1/chat/completions',
+            headers={
+                'Authorization': f'Bearer {openai_api_key}',
+                'Content-Type': 'application/json'
+            },
+            json={
+                'model': 'gpt-3.5-turbo',
+                'messages': [
+                    {
+                        'role': 'system',
+                        'content': 'You are a helpful assistant that summarizes content based on user preferences.'
+                    },
+                    {
+                        'role': 'user',
+                        'content': prompt
+                    }
+                ],
+                'temperature': 0.7,
+                'max_tokens': 500
+            }
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            summary = result['choices'][0]['message']['content']
+            token_count = result.get('usage', {}).get('total_tokens', 0)
+            
+            print(f"✅ Summary generated successfully ({token_count} tokens)")
+            
+            return jsonify({
+                'success': True,
+                'summary': summary,
+                'token_count': token_count,
+                'model': 'gpt-3.5-turbo',
+                'settings': settings
+            })
+        else:
+            error_data = response.json()
+            print(f"❌ OpenAI API error: {error_data}")
+            return jsonify({
+                'success': False,
+                'error': error_data.get('error', {}).get('message', 'API request failed')
+            }), 500
+            
+    except Exception as e:
+        print(f"❌ Prompt testing error: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 @app.route('/api/admin/feedback', methods=['GET'])
 @require_auth
