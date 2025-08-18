@@ -2265,7 +2265,7 @@ def create_tables():
             print("✅ Database tables created/verified")
             
             # List all tables for verification
-            from sqlalchemy import inspect
+            from sqlalchemy import inspect, text
             inspector = inspect(db.engine)
             tables = inspector.get_table_names()
             print(f"📊 Tables in database: {', '.join(tables)}")
@@ -2277,6 +2277,27 @@ def create_tables():
                 # Try to create just the feedback table
                 Feedback.__table__.create(db.engine, checkfirst=True)
                 print("✅ Feedback table created")
+            
+            # Add missing columns to User table if they don't exist
+            if 'user' in tables:
+                columns = inspector.get_columns('user')
+                column_names = [col['name'] for col in columns]
+                
+                # Add reader_type column if missing
+                if 'reader_type' not in column_names:
+                    print("📝 Adding reader_type column to User table...")
+                    with db.engine.connect() as conn:
+                        conn.execute(text("ALTER TABLE \"user\" ADD COLUMN reader_type VARCHAR(50) DEFAULT 'lifelong_learner'"))
+                        conn.commit()
+                    print("✅ reader_type column added")
+                
+                # Add reading_level column if missing
+                if 'reading_level' not in column_names:
+                    print("📝 Adding reading_level column to User table...")
+                    with db.engine.connect() as conn:
+                        conn.execute(text("ALTER TABLE \"user\" ADD COLUMN reading_level VARCHAR(20) DEFAULT 'balanced'"))
+                        conn.commit()
+                    print("✅ reading_level column added")
                 
         except Exception as e:
             print(f"❌ Error with database tables: {e}")
