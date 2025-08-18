@@ -122,6 +122,12 @@ button:disabled {
   font-size: 12px;
 }
 
+.btn-extra-small {
+  padding: 2px 6px;
+  font-size: 10px;
+  min-width: auto;
+}
+
 /* Google Sign In Button */
 .google-signin-button {
   background: white;
