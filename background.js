@@ -95,54 +95,6 @@ async function getPageContent(tabId) {
   }
 }
 
-// OpenAI API function
-async function callOpenAI(prompt, apiKey) {
-  try {
-    console.log('🔗 API CALL: Direct OpenAI API (callOpenAI function)');
-    console.log('📍 Endpoint: https://api.openai.com/v1/chat/completions');
-    console.log('🎯 Action: GPT analysis');
-    console.log('📏 Prompt length:', prompt.length);
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a helpful assistant that analyzes web page content. When given page text, identify and list the top 5 sentences that best convey the purpose and main message of the page. Format your response as a numbered list with just the sentences, no additional commentary.'
-          },
-          {
-            role: 'user',
-            content: `Here is the page content. Please identify the top 5 sentences that best convey the purpose of this page:\n\n${prompt}`
-          }
-        ],
-        temperature: 0.3,
-        max_tokens: 300
-      })
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error?.message || 'API request failed');
-    }
-
-    const data = await response.json();
-    return {
-      success: true,
-      analysis: data.choices[0].message.content
-    };
-  } catch (error) {
-    console.error('OpenAI API error:', error);
-    return {
-      success: false,
-      error: error.message
-    };
-  }
-}
 
 // Helper function to get backend base URL
 async function getBackendBaseUrl() {
@@ -436,11 +388,7 @@ async function refreshSubscriptionStatus(sendResponse) {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'analyzeWithGPT') {
     console.log('Received analyzeWithGPT request with tabId:', request.tabId);
-    chrome.storage.local.get(['openaiApiKey', 'backendUrl'], async (result) => {
-      if (!result.openaiApiKey) {
-        sendResponse({success: false, error: 'API key not set'});
-        return;
-      }
+    chrome.storage.local.get(['backendUrl'], async (result) => {
       
       // Get the current tab info
       let tab, url;
@@ -470,7 +418,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log('🌐 Page URL:', url);
         console.log('📦 Request body:', JSON.stringify({
           url: url,
-          apiKey: '***hidden***',
           action: 'analyze'
         }, null, 2));
         
@@ -488,7 +435,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           headers: headers,
           body: JSON.stringify({
             url: url,
-            apiKey: result.openaiApiKey,
             action: 'analyze'
           })
         });
@@ -526,11 +472,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true; // Keep message channel open for async response
   } else if (request.action === 'summarizePage') {
     console.log('Received summarizePage request with tabId:', request.tabId);
-    chrome.storage.local.get(['openaiApiKey', 'backendUrl'], async (result) => {
-      if (!result.openaiApiKey) {
-        sendResponse({success: false, error: 'API key not set'});
-        return;
-      }
+    chrome.storage.local.get(['backendUrl'], async (result) => {
       
       // Get the current tab info
       let tab, url;
@@ -559,10 +501,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log('🎯 Action: summarizePage');
         console.log('🌐 Page URL:', url);
         console.log('🔑 Auth token present:', !!authToken);
-        console.log('🔑 OpenAI key present:', !!result.openaiApiKey);
         console.log('📦 Request body:', JSON.stringify({
-          url: url,
-          apiKey: '***hidden***'
+          url: url
         }, null, 2));
         
         const headers = {
@@ -580,8 +520,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log('📡 Making fetch request to:', backendUrl);
         
         const requestBody = {
-          url: url,
-          apiKey: result.openaiApiKey
+          url: url
         };
         
         // Add custom prompt if provided

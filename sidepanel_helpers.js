@@ -32,6 +32,7 @@ function setMessageColor(messageDiv, text, color) {
   messageDiv.classList.add(cssClass);
 }
 
+
 // Export functions for use in sidepanel.js
 window.showMessage = showMessage;
 window.hideMessage = hideMessage;

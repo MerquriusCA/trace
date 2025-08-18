@@ -589,3 +589,96 @@ input:checked + .slider:before {
 .reset-subscription-button:hover {
   background-color: #e64a19;
 }
+
+/* API Key Bottom Section */
+.api-key-bottom {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  padding: 12px 16px;
+  margin-top: auto;
+}
+
+.api-key-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.api-key-header label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+  margin: 0;
+}
+
+.api-key-status {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.api-key-status.not-set {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.api-key-status.set {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.api-key-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.api-key-input-group input {
+  flex: 1;
+  font-size: 12px;
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.api-key-input-group input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.api-key-message {
+  font-size: 11px;
+  margin-top: 4px;
+  min-height: 16px;
+}
+
+.api-key-message.success {
+  color: #16a34a;
+}
+
+.api-key-message.error {
+  color: #dc2626;
+}
+
+/* Ensure body has proper layout for sticky bottom */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

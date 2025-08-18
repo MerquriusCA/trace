@@ -355,44 +355,6 @@ input:checked + .slider:before {
   line-height: 1.4;
 }
 
-/* API Key Input */
-.api-key-container {
-  background: white;
-  padding: 8px;
-  border-radius: 6px;
-  margin-bottom: 6px;
-  border: 1px solid #dee2e6;
-  box-sizing: border-box;
-}
-
-.api-key-container label {
-  display: block;
-  font-size: 12px;
-  font-weight: 500;
-  margin-bottom: 4px;
-  color: #495057;
-}
-
-.api-key-container input {
-  width: calc(100% - 50px);
-  padding: 4px 6px;
-  border: 1px solid #ced4da;
-  border-radius: 3px;
-  font-size: 12px;
-  margin-right: 4px;
-  box-sizing: border-box;
-  display: inline-block;
-  vertical-align: top;
-}
-
-.api-key-container button {
-  width: 45px;
-  display: inline-block;
-  padding: 4px 2px;
-  margin: 0;
-  font-size: 11px;
-  vertical-align: top;
-}
 
 /* Subscription Status */
 .subscription-status {

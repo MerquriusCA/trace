@@ -324,8 +324,13 @@ def require_auth(f):
 def require_active_subscription(f):
     @wraps(f)
     def decorated_function(current_user, *args, **kwargs):
-        # Check for active subscription
+        # Check for active subscription (allow special user)
         print(f"📝 Subscription check - User: {current_user.email}, Status: {current_user.subscription_status}")
+        
+        # Allow david@merqurius.com to bypass subscription requirement
+        if current_user.email == 'david@merqurius.com':
+            print(f"✅ Special user access granted: {current_user.email}")
+            return f(current_user, *args, **kwargs)
         
         if current_user.subscription_status != 'active':
             return jsonify({
@@ -1426,8 +1431,8 @@ def admin_test_prompt(current_user):
                 'error': 'Prompt is required'
             }), 400
         
-        # Get OpenAI API key from request or environment
-        openai_api_key = data.get('api_key') or os.getenv('OPENAI_API_KEY')
+        # Use backend OpenAI API key
+        openai_api_key = os.getenv('OPENAI_API_KEY')
         if not openai_api_key:
             return jsonify({
                 'success': False,
@@ -1729,7 +1734,6 @@ def summarize_with_auth(current_user):
         data = request.get_json()
         url = data.get('url')
         action = data.get('action', 'summarize')
-        api_key = data.get('apiKey')  # User's OpenAI API key
         custom_prompt = data.get('customPrompt')  # Custom prompt from frontend
         
         print(f"\n{'='*50}")
@@ -1738,13 +1742,14 @@ def summarize_with_auth(current_user):
         print(f"👤 User: {current_user.email}")
         print(f"🌐 URL: {url}")
         print(f"⚙️  Action: {action}")
-        print(f"🔑 API Key present: {bool(api_key)}")
         
         if not url:
             return jsonify({'success': False, 'error': 'URL required'}), 400
         
+        # Use backend OpenAI API key
+        api_key = os.getenv('OPENAI_API_KEY')
         if not api_key:
-            return jsonify({'success': False, 'error': 'OpenAI API key required'}), 400
+            return jsonify({'success': False, 'error': 'OpenAI API key not configured on server'}), 500
         
         # Fetch page content
         page_content = fetch_page_content(url)

@@ -9,8 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const toggleSwitch = document.getElementById('toggleSwitch');
   const statusText = document.getElementById('statusText');
   const pageInfo = document.getElementById('pageInfo');
-  const apiKeyInput = document.getElementById('apiKeyInput');
-  const saveApiKeyBtn = document.getElementById('saveApiKey');
   const analysisResult = document.getElementById('analysisResult');
   
   // Authentication elements
@@ -48,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const savePreferencesButton = document.getElementById('savePreferencesButton');
   const settingsMessage = document.getElementById('settingsMessage');
   const autoSummarizeEnabled = document.getElementById('autoSummarizeEnabled');
+  
   const notificationsEnabled = document.getElementById('notificationsEnabled');
   const startOnboardingButton = document.getElementById('startOnboardingButton');
   
@@ -70,8 +69,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }, 2000);
   
-  // Load saved state and API key
-  chrome.storage.local.get(['extensionEnabled', 'openaiApiKey'], function(result) {
+  // Load saved state
+  chrome.storage.local.get(['extensionEnabled'], function(result) {
     const isEnabled = result.extensionEnabled !== false; // Default to true
     toggleSwitch.checked = isEnabled;
     updateStatus(isEnabled);
@@ -79,13 +78,10 @@ document.addEventListener('DOMContentLoaded', function() {
       displayCurrentPageInfo();
     }
     
-    // Load saved API key and show analyze button if available
-    if (result.openaiApiKey) {
-      apiKeyInput.value = result.openaiApiKey;
-      if (isEnabled && isAuthenticated) {
-        analyzeButton.classList.remove('hidden');
-        summarizeButton.classList.remove('hidden');
-      }
+    // Show AI features if enabled and authenticated
+    if (isEnabled && isAuthenticated) {
+      analyzeButton.classList.remove('hidden');
+      summarizeButton.classList.remove('hidden');
     }
   });
 
@@ -99,13 +95,11 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (isEnabled) {
         displayCurrentPageInfo();
-        // Show analyze button if API key exists
-        chrome.storage.local.get(['openaiApiKey'], function(result) {
-          if (result.openaiApiKey) {
-            analyzeButton.classList.remove('hidden');
-            summarizeButton.classList.remove('hidden');
-          }
-        });
+        // Show analyze button if authenticated and (subscription is active OR special user)
+        if (isAuthenticated && currentUser && (currentUser.subscription_status === 'active' || currentUser.email === 'david@merqurius.com')) {
+          analyzeButton.classList.remove('hidden');
+          summarizeButton.classList.remove('hidden');
+        }
       } else {
         pageInfo.classList.add('hidden');
         document.getElementById('highlightedSentence').classList.add('hidden');
@@ -223,34 +217,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
-  // Handle API key save
-  saveApiKeyBtn.addEventListener('click', function() {
-    const apiKey = apiKeyInput.value.trim();
-    if (apiKey) {
-      chrome.storage.local.set({openaiApiKey: apiKey}, function() {
-        messageDiv.textContent = 'API key saved successfully!';
-        setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
-        
-        // Show analyze button if extension is enabled
-        chrome.storage.local.get(['extensionEnabled'], function(result) {
-          if (result.extensionEnabled !== false) {
-            analyzeButton.classList.remove('hidden');
-            summarizeButton.classList.remove('hidden');
-          }
-        });
-        
-        setTimeout(() => {
-          messageDiv.textContent = '';
-        }, 2000);
-      });
-    } else {
-      messageDiv.textContent = 'Please enter a valid API key';
-      setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
-      setTimeout(() => {
-        messageDiv.textContent = '';
-      }, 2000);
-    }
-  });
   
   // Handle analyze button
   analyzeButton.addEventListener('click', function() {
@@ -799,10 +765,9 @@ document.addEventListener('DOMContentLoaded', function() {
       // Load user preferences from backend when user signs in
       loadUserPreferences();
       
-      // Show AI features if extension is enabled AND user has active subscription
-      chrome.storage.local.get(['extensionEnabled', 'openaiApiKey'], function(result) {
-        if (result.extensionEnabled !== false && result.openaiApiKey && 
-            currentUser.subscription_status === 'active') {
+      // Show AI features if extension is enabled AND (user has active subscription OR special user)
+      chrome.storage.local.get(['extensionEnabled'], function(result) {
+        if (result.extensionEnabled !== false && (currentUser.subscription_status === 'active' || currentUser.email === 'david@merqurius.com')) {
           analyzeButton.classList.remove('hidden');
           summarizeButton.classList.remove('hidden');
         } else {
@@ -1149,8 +1114,8 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    // Check subscription status for AI features
-    if (currentUser && currentUser.subscription_status !== 'active') {
+    // Check subscription status for AI features (allow special user)
+    if (currentUser && currentUser.subscription_status !== 'active' && currentUser.email !== 'david@merqurius.com') {
       e.preventDefault();
       messageDiv.textContent = 'Active subscription required for AI features';
       setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
@@ -1173,8 +1138,8 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    // Check subscription status for AI features
-    if (currentUser && currentUser.subscription_status !== 'active') {
+    // Check subscription status for AI features (allow special user)
+    if (currentUser && currentUser.subscription_status !== 'active' && currentUser.email !== 'david@merqurius.com') {
       e.preventDefault();
       messageDiv.textContent = 'Active subscription required for AI features';
       setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
