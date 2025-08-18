@@ -1426,12 +1426,12 @@ def admin_test_prompt(current_user):
                 'error': 'Prompt is required'
             }), 400
         
-        # Get OpenAI API key from environment
-        openai_api_key = os.getenv('OPENAI_API_KEY')
+        # Get OpenAI API key from request or environment
+        openai_api_key = data.get('api_key') or os.getenv('OPENAI_API_KEY')
         if not openai_api_key:
             return jsonify({
                 'success': False,
-                'error': 'OpenAI API key not configured'
+                'error': 'OpenAI API key not configured. Please set OPENAI_API_KEY in Railway environment variables.'
             }), 500
         
         # Call OpenAI API
