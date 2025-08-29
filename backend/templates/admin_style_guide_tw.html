@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Style Guide - Trace Admin</title>
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -14,9 +19,31 @@
             theme: {
                 extend: {
                     colors: {
+                        // Primary - elegant purple
                         primary: {
+                            DEFAULT: 'hsl(260, 84%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(260, 84%, 70%)',
+                            muted: 'hsl(260, 30%, 95%)',
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#c084fc',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7e22ce',
+                            800: '#6b21a8',
+                            900: '#581c87',
+                        },
+                        // Secondary - sophisticated blue  
+                        secondary: {
+                            DEFAULT: 'hsl(217, 91%, 60%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(217, 91%, 65%)',
+                            muted: 'hsl(217, 30%, 95%)',
                             50: '#eff6ff',
-                            100: '#dbeafe', 
+                            100: '#dbeafe',
                             200: '#bfdbfe',
                             300: '#93c5fd',
                             400: '#60a5fa',
@@ -25,14 +52,112 @@
                             700: '#1d4ed8',
                             800: '#1e40af',
                             900: '#1e3a8a',
-                        }
-                    }
+                        },
+                        // Accent - warm coral
+                        accent: {
+                            DEFAULT: 'hsl(14, 90%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(14, 90%, 70%)',
+                            muted: 'hsl(14, 30%, 95%)',
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        },
+                        background: 'hsl(240, 10%, 98%)',
+                        foreground: 'hsl(240, 10%, 8%)',
+                        card: {
+                            DEFAULT: 'hsl(0, 0%, 100%)',
+                            foreground: 'hsl(240, 10%, 8%)',
+                        },
+                        muted: {
+                            DEFAULT: 'hsl(240, 5%, 96%)',
+                            foreground: 'hsl(240, 5%, 45%)',
+                        },
+                        destructive: {
+                            DEFAULT: 'hsl(0, 84%, 60%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                        },
+                        border: 'hsl(240, 6%, 90%)',
+                        input: 'hsl(240, 6%, 96%)',
+                        ring: 'hsl(260, 84%, 65%)',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        'heading': ['Space Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'gradient-primary': 'linear-gradient(135deg, hsl(260, 84%, 65%), hsl(217, 91%, 60%))',
+                        'gradient-hero': 'linear-gradient(135deg, hsl(260, 84%, 65%) 0%, hsl(217, 91%, 60%) 50%, hsl(14, 90%, 65%) 100%)',
+                        'gradient-subtle': 'linear-gradient(180deg, hsl(240, 10%, 98%), hsl(240, 5%, 96%))',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 40px hsl(260, 84%, 65%, 0.3)',
+                        'glow-lg': '0 0 60px hsl(260, 84%, 65%, 0.4)',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            'from': { opacity: '0' },
+                            'to': { opacity: '1' },
+                        },
+                        slideUp: {
+                            'from': { 
+                                opacity: '0',
+                                transform: 'translateY(20px)',
+                            },
+                            'to': { 
+                                opacity: '1',
+                                transform: 'translateY(0)',
+                            },
+                        },
+                    },
                 }
             }
         }
     </script>
+    
+    <!-- Custom CSS for additional styles -->
+    <style>
+        :root {
+            /* Design System Variables */
+            --gradient-primary: linear-gradient(135deg, hsl(260, 84%, 65%), hsl(217, 91%, 60%));
+            --gradient-hero: linear-gradient(135deg, hsl(260, 84%, 65%) 0%, hsl(217, 91%, 60%) 50%, hsl(14, 90%, 65%) 100%);
+            --gradient-subtle: linear-gradient(180deg, hsl(240, 10%, 98%), hsl(240, 5%, 96%));
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .text-gradient {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hover-lift {
+            transition: var(--transition-smooth);
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-background min-h-screen font-sans">
     <!-- Navigation -->
     <nav class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -67,112 +192,269 @@
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div class="px-4 py-6 sm:px-0">
             <!-- Header -->
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">Trace Extension Style Guide</h1>
-                <p class="mt-2 text-lg text-gray-600">Design system and component library for the Trace Chrome Extension</p>
+            <div class="mb-8 animate-fade-in">
+                <h1 class="text-4xl font-heading font-bold text-foreground mb-2">Trace Extension Style Guide</h1>
+                <p class="text-lg text-muted-foreground">Sophisticated design system with elegant purple/blue theme</p>
+                <div class="mt-4 flex gap-2">
+                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">v2.0</span>
+                    <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm font-medium">Tailwind CSS</span>
+                    <span class="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium">Custom Properties</span>
+                </div>
             </div>
 
             <!-- Colors -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Color Palette</h2>
+            <section class="mb-12 animate-slide-up">
+                <h2 class="text-2xl font-heading font-bold text-foreground mb-6">Color Palette</h2>
                 
-                <!-- Primary Colors -->
+                <!-- Brand Colors -->
                 <div class="mb-8">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Primary Colors</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Brand Colors</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Primary -->
+                        <div class="bg-card rounded-lg p-6 border border-border hover-lift">
+                            <div class="w-full h-24 rounded-lg mb-4 bg-gradient-to-br from-primary to-primary-hover shadow-glow"></div>
+                            <h4 class="font-heading font-semibold text-foreground mb-2">Primary - Elegant Purple</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-muted-foreground">Base</span>
+                                    <span class="font-mono text-xs">hsl(260, 84%, 65%)</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-muted-foreground">Hover</span>
+                                    <span class="font-mono text-xs">hsl(260, 84%, 70%)</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-muted-foreground">Muted</span>
+                                    <span class="font-mono text-xs">hsl(260, 30%, 95%)</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Secondary -->
+                        <div class="bg-card rounded-lg p-6 border border-border hover-lift">
+                            <div class="w-full h-24 rounded-lg mb-4 bg-gradient-to-br from-secondary to-secondary-hover"></div>
+                            <h4 class="font-heading font-semibold text-foreground mb-2">Secondary - Sophisticated Blue</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-muted-foreground">Base</span>
+                                    <span class="font-mono text-xs">hsl(217, 91%, 60%)</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-muted-foreground">Hover</span>
+                                    <span class="font-mono text-xs">hsl(217, 91%, 65%)</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-muted-foreground">Muted</span>
+                                    <span class="font-mono text-xs">hsl(217, 30%, 95%)</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Accent -->
+                        <div class="bg-card rounded-lg p-6 border border-border hover-lift">
+                            <div class="w-full h-24 rounded-lg mb-4 bg-gradient-to-br from-accent to-accent-hover"></div>
+                            <h4 class="font-heading font-semibold text-foreground mb-2">Accent - Warm Coral</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-muted-foreground">Base</span>
+                                    <span class="font-mono text-xs">hsl(14, 90%, 65%)</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-muted-foreground">Hover</span>
+                                    <span class="font-mono text-xs">hsl(14, 90%, 70%)</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-muted-foreground">Muted</span>
+                                    <span class="font-mono text-xs">hsl(14, 30%, 95%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gradients -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Gradients</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-card rounded-lg p-4 border border-border">
+                            <div class="w-full h-20 rounded-lg mb-2 bg-gradient-primary"></div>
+                            <div class="text-sm font-medium">Primary Gradient</div>
+                            <div class="text-xs text-muted-foreground">Purple to Blue</div>
+                        </div>
+                        <div class="bg-card rounded-lg p-4 border border-border">
+                            <div class="w-full h-20 rounded-lg mb-2 bg-gradient-hero"></div>
+                            <div class="text-sm font-medium">Hero Gradient</div>
+                            <div class="text-xs text-muted-foreground">Purple to Blue to Coral</div>
+                        </div>
+                        <div class="bg-card rounded-lg p-4 border border-border">
+                            <div class="w-full h-20 rounded-lg mb-2 bg-gradient-subtle"></div>
+                            <div class="text-sm font-medium">Subtle Gradient</div>
+                            <div class="text-xs text-muted-foreground">Light Background</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Neutral Colors -->
+                <div>
+                    <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Neutral Palette</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
                         <div class="text-center">
-                            <div class="w-full h-20 bg-primary-500 rounded-lg mb-2"></div>
-                            <div class="text-sm font-medium">Primary</div>
-                            <div class="text-xs text-gray-500">#3b82f6</div>
+                            <div class="w-full h-16 bg-background rounded-lg mb-2 border border-border"></div>
+                            <div class="text-xs font-medium">Background</div>
                         </div>
                         <div class="text-center">
-                            <div class="w-full h-20 bg-green-500 rounded-lg mb-2"></div>
-                            <div class="text-sm font-medium">Success</div>
-                            <div class="text-xs text-gray-500">#10b981</div>
+                            <div class="w-full h-16 bg-card rounded-lg mb-2 border border-border"></div>
+                            <div class="text-xs font-medium">Card</div>
                         </div>
                         <div class="text-center">
-                            <div class="w-full h-20 bg-red-500 rounded-lg mb-2"></div>
-                            <div class="text-sm font-medium">Error</div>
-                            <div class="text-xs text-gray-500">#ef4444</div>
+                            <div class="w-full h-16 bg-muted rounded-lg mb-2 border border-border"></div>
+                            <div class="text-xs font-medium">Muted</div>
                         </div>
                         <div class="text-center">
-                            <div class="w-full h-20 bg-yellow-500 rounded-lg mb-2"></div>
-                            <div class="text-sm font-medium">Warning</div>
-                            <div class="text-xs text-gray-500">#eab308</div>
+                            <div class="w-full h-16 bg-input rounded-lg mb-2 border border-border"></div>
+                            <div class="text-xs font-medium">Input</div>
                         </div>
                         <div class="text-center">
-                            <div class="w-full h-20 bg-gray-500 rounded-lg mb-2"></div>
-                            <div class="text-sm font-medium">Neutral</div>
-                            <div class="text-xs text-gray-500">#6b7280</div>
+                            <div class="w-full h-16 bg-border rounded-lg mb-2"></div>
+                            <div class="text-xs font-medium">Border</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-full h-16 bg-destructive rounded-lg mb-2"></div>
+                            <div class="text-xs font-medium">Destructive</div>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- Typography -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Typography</h2>
+            <section class="mb-12 animate-slide-up">
+                <h2 class="text-2xl font-heading font-bold text-foreground mb-6">Typography</h2>
                 
-                <div class="bg-white rounded-lg shadow p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Font Families -->
+                    <div class="bg-card rounded-lg p-6 border border-border">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Font Families</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="font-heading text-2xl font-bold text-foreground">Space Grotesk</p>
+                                <p class="text-sm text-muted-foreground">Headings & Display</p>
+                            </div>
+                            <div>
+                                <p class="font-sans text-xl text-foreground">Inter</p>
+                                <p class="text-sm text-muted-foreground">Body & UI Text</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Type Scale -->
+                    <div class="bg-card rounded-lg p-6 border border-border">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Type Scale</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <h1 class="text-3xl font-heading font-bold text-foreground">Display Large</h1>
+                                <p class="text-xs text-muted-foreground font-mono">3xl / 1.875rem</p>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-heading font-bold text-foreground">Display Medium</h2>
+                                <p class="text-xs text-muted-foreground font-mono">2xl / 1.5rem</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-heading font-semibold text-foreground">Heading</h3>
+                                <p class="text-xs text-muted-foreground font-mono">xl / 1.25rem</p>
+                            </div>
+                            <div>
+                                <p class="text-base text-foreground">Body Text</p>
+                                <p class="text-xs text-muted-foreground font-mono">base / 1rem</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-muted-foreground">Caption</p>
+                                <p class="text-xs text-muted-foreground font-mono">sm / 0.875rem</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Text Effects -->
+                <div class="mt-6 bg-card rounded-lg p-6 border border-border">
+                    <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Text Effects</h3>
                     <div class="space-y-4">
-                        <div>
-                            <h1 class="text-3xl font-bold text-gray-900">Heading 1 (3xl)</h1>
-                            <p class="text-sm text-gray-500">Used for page titles</p>
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900">Heading 2 (2xl)</h2>
-                            <p class="text-sm text-gray-500">Used for section headers</p>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900">Heading 3 (lg)</h3>
-                            <p class="text-sm text-gray-500">Used for subsection headers</p>
-                        </div>
-                        <div>
-                            <p class="text-base text-gray-900">Body text (base)</p>
-                            <p class="text-sm text-gray-500">Used for regular content</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Small text (sm)</p>
-                            <p class="text-xs text-gray-500">Used for captions and secondary info</p>
-                        </div>
+                        <p class="text-2xl font-heading font-bold text-gradient">Gradient Text Effect</p>
+                        <p class="text-lg text-primary">Primary Color Text</p>
+                        <p class="text-lg text-secondary">Secondary Color Text</p>
+                        <p class="text-lg text-accent">Accent Color Text</p>
                     </div>
                 </div>
             </section>
 
             <!-- Buttons -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Buttons</h2>
+            <section class="mb-12 animate-slide-up">
+                <h2 class="text-2xl font-heading font-bold text-foreground mb-6">Buttons</h2>
                 
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Primary Buttons -->
+                <div class="bg-card rounded-lg border border-border p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Solid Buttons -->
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Primary Buttons</h3>
+                            <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Solid Buttons</h3>
                             <div class="space-y-3">
-                                <button class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 text-sm">
+                                <button class="w-full px-4 py-2 bg-primary hover:bg-primary-hover text-primary-foreground rounded-lg font-medium text-sm transition-all hover-lift">
                                     Primary Button
                                 </button>
-                                <button class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm">
-                                    Success Button
+                                <button class="w-full px-4 py-2 bg-secondary hover:bg-secondary-hover text-secondary-foreground rounded-lg font-medium text-sm transition-all hover-lift">
+                                    Secondary Button
                                 </button>
-                                <button class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm">
-                                    Danger Button
+                                <button class="w-full px-4 py-2 bg-accent hover:bg-accent-hover text-accent-foreground rounded-lg font-medium text-sm transition-all hover-lift">
+                                    Accent Button
+                                </button>
+                                <button class="w-full px-4 py-2 bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded-lg font-medium text-sm transition-all hover-lift">
+                                    Destructive Button
                                 </button>
                             </div>
                         </div>
                         
-                        <!-- Secondary Buttons -->
+                        <!-- Outline & Ghost Buttons -->
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Secondary Buttons</h3>
+                            <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Outline & Ghost</h3>
                             <div class="space-y-3">
-                                <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 text-sm">
-                                    Secondary Button
+                                <button class="w-full px-4 py-2 border border-border text-foreground rounded-lg font-medium text-sm hover:bg-muted transition-all">
+                                    Outline Button
                                 </button>
-                                <button class="px-3 py-1 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 text-xs">
-                                    Small Button
+                                <button class="w-full px-4 py-2 border border-primary text-primary rounded-lg font-medium text-sm hover:bg-primary/10 transition-all">
+                                    Primary Outline
                                 </button>
-                                <button class="px-2 py-1 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 text-xs">
-                                    Extra Small Button
+                                <button class="w-full px-4 py-2 text-foreground rounded-lg font-medium text-sm hover:bg-muted transition-all">
+                                    Ghost Button
+                                </button>
+                                <button class="w-full px-4 py-2 text-primary rounded-lg font-medium text-sm hover:bg-primary/10 transition-all">
+                                    Primary Ghost
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Special Buttons -->
+                        <div>
+                            <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Special Styles</h3>
+                            <div class="space-y-3">
+                                <button class="w-full px-4 py-2 bg-gradient-primary text-white rounded-lg font-medium text-sm transition-all hover-lift shadow-glow">
+                                    Gradient Button
+                                </button>
+                                <button class="w-full px-4 py-2 bg-gradient-hero text-white rounded-lg font-medium text-sm transition-all hover-lift">
+                                    Hero Gradient
+                                </button>
+                                <div class="flex gap-2">
+                                    <button class="px-3 py-1 bg-primary hover:bg-primary-hover text-primary-foreground rounded text-xs font-medium transition-all">
+                                        Small
+                                    </button>
+                                    <button class="px-2 py-0.5 bg-secondary hover:bg-secondary-hover text-secondary-foreground rounded text-xs font-medium transition-all">
+                                        XS
+                                    </button>
+                                    <button class="p-2 bg-accent hover:bg-accent-hover text-accent-foreground rounded-lg transition-all">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <button class="w-full px-4 py-2 bg-card border border-border text-foreground rounded-lg font-medium text-sm hover:shadow-lg transition-all hover-lift">
+                                    Card Button
                                 </button>
                             </div>
                         </div>
@@ -181,22 +463,38 @@
             </section>
 
             <!-- Forms -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Form Elements</h2>
+            <section class="mb-12 animate-slide-up">
+                <h2 class="text-2xl font-heading font-bold text-foreground mb-6">Form Elements</h2>
                 
-                <div class="bg-white rounded-lg shadow p-6">
+                <div class="bg-card rounded-lg border border-border p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Input Fields -->
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Input Fields</h3>
+                            <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Input Fields</h3>
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Text Input</label>
-                                    <input type="text" placeholder="Enter text..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                    <label class="block text-sm font-medium text-foreground mb-1">Text Input</label>
+                                    <input type="text" placeholder="Enter text..." class="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring text-sm transition-all">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Select Dropdown</label>
-                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                    <label class="block text-sm font-medium text-foreground mb-1">Input with Icon</label>
+                                    <div class="relative">
+                                        <input type="email" placeholder="email@example.com" class="w-full pl-10 pr-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring text-sm transition-all">
+                                        <span class="absolute left-3 top-2.5 text-muted-foreground">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-foreground mb-1">Textarea</label>
+                                    <textarea rows="3" placeholder="Enter description..." class="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring text-sm transition-all resize-none"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-foreground mb-1">Select Dropdown</label>
+                                    <select class="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring text-sm transition-all">
+                                        <option>Choose an option</option>
                                         <option>Option 1</option>
                                         <option>Option 2</option>
                                         <option>Option 3</option>
@@ -205,22 +503,56 @@
                             </div>
                         </div>
                         
-                        <!-- Radio Buttons -->
+                        <!-- Checkboxes and Radio Buttons -->
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Radio Button Groups</h3>
-                            <div class="space-y-1">
-                                <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
-                                    <input type="radio" name="example" value="option1" class="mr-2" checked>
-                                    <span>🎯 Option 1</span>
-                                </label>
-                                <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
-                                    <input type="radio" name="example" value="option2" class="mr-2">
-                                    <span>⭐ Option 2</span>
-                                </label>
-                                <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
-                                    <input type="radio" name="example" value="option3" class="mr-2">
-                                    <span>🚀 Option 3</span>
-                                </label>
+                            <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Selection Controls</h3>
+                            <div class="space-y-4">
+                                <!-- Radio Buttons -->
+                                <div>
+                                    <label class="block text-sm font-medium text-foreground mb-2">Radio Group</label>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center p-3 bg-card border border-border rounded-lg cursor-pointer hover:bg-muted transition-all">
+                                            <input type="radio" name="example" value="option1" class="w-4 h-4 text-primary border-border focus:ring-primary" checked>
+                                            <span class="ml-3 text-sm">🎯 Primary Option</span>
+                                        </label>
+                                        <label class="flex items-center p-3 bg-card border border-border rounded-lg cursor-pointer hover:bg-muted transition-all">
+                                            <input type="radio" name="example" value="option2" class="w-4 h-4 text-primary border-border focus:ring-primary">
+                                            <span class="ml-3 text-sm">⭐ Secondary Option</span>
+                                        </label>
+                                        <label class="flex items-center p-3 bg-card border border-border rounded-lg cursor-pointer hover:bg-muted transition-all">
+                                            <input type="radio" name="example" value="option3" class="w-4 h-4 text-primary border-border focus:ring-primary">
+                                            <span class="ml-3 text-sm">🚀 Tertiary Option</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Checkboxes -->
+                                <div>
+                                    <label class="block text-sm font-medium text-foreground mb-2">Checkboxes</label>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center p-3 bg-card border border-border rounded-lg cursor-pointer hover:bg-muted transition-all">
+                                            <input type="checkbox" class="w-4 h-4 text-primary border-border rounded focus:ring-primary" checked>
+                                            <span class="ml-3 text-sm">Enable notifications</span>
+                                        </label>
+                                        <label class="flex items-center p-3 bg-card border border-border rounded-lg cursor-pointer hover:bg-muted transition-all">
+                                            <input type="checkbox" class="w-4 h-4 text-primary border-border rounded focus:ring-primary">
+                                            <span class="ml-3 text-sm">Subscribe to newsletter</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Toggle Switch -->
+                                <div>
+                                    <label class="block text-sm font-medium text-foreground mb-2">Toggle Switch</label>
+                                    <div class="flex items-center justify-between p-3 bg-card border border-border rounded-lg">
+                                        <span class="text-sm">Dark Mode</span>
+                                        <label class="relative inline-block w-12 h-6">
+                                            <input type="checkbox" class="sr-only peer">
+                                            <div class="w-12 h-6 bg-muted rounded-full peer peer-checked:bg-primary transition-all"></div>
+                                            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-6"></div>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -228,46 +560,83 @@
             </section>
 
             <!-- Cards and Containers -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Cards & Containers</h2>
+            <section class="mb-12 animate-slide-up">
+                <h2 class="text-2xl font-heading font-bold text-foreground mb-6">Cards & Containers</h2>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Basic Card -->
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-3">Basic Card</h3>
-                        <p class="text-gray-600 text-sm">Standard card component with shadow and rounded corners</p>
+                    <div class="bg-card border border-border rounded-lg p-6 hover-lift">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-3">Basic Card</h3>
+                        <p class="text-muted-foreground text-sm">Standard card component with subtle borders and hover effects</p>
+                    </div>
+                    
+                    <!-- Elevated Card -->
+                    <div class="bg-card border border-border rounded-lg p-6 shadow-lg hover-lift">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-3">Elevated Card</h3>
+                        <p class="text-muted-foreground text-sm">Card with enhanced shadow for prominence</p>
+                    </div>
+                    
+                    <!-- Gradient Card -->
+                    <div class="bg-gradient-primary rounded-lg p-6 text-white hover-lift">
+                        <h3 class="text-lg font-heading font-semibold mb-3">Gradient Card</h3>
+                        <p class="text-white/90 text-sm">Eye-catching card with gradient background</p>
                     </div>
                     
                     <!-- Success Card -->
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-6">
-                        <h3 class="text-lg font-semibold text-green-800 mb-3">Success State</h3>
-                        <p class="text-green-700 text-sm">Used for successful operations and positive feedback</p>
+                    <div class="bg-secondary-muted border border-secondary/20 rounded-lg p-6">
+                        <h3 class="text-lg font-heading font-semibold text-secondary mb-3">✅ Success State</h3>
+                        <p class="text-secondary/80 text-sm">Used for successful operations and positive feedback</p>
+                    </div>
+                    
+                    <!-- Warning Card -->
+                    <div class="bg-accent-muted border border-accent/20 rounded-lg p-6">
+                        <h3 class="text-lg font-heading font-semibold text-accent mb-3">⚠️ Warning State</h3>
+                        <p class="text-accent/80 text-sm">Used for warnings and important notices</p>
                     </div>
                     
                     <!-- Error Card -->
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-6">
-                        <h3 class="text-lg font-semibold text-red-800 mb-3">Error State</h3>
-                        <p class="text-red-700 text-sm">Used for error messages and failed operations</p>
+                    <div class="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
+                        <h3 class="text-lg font-heading font-semibold text-destructive mb-3">❌ Error State</h3>
+                        <p class="text-destructive/80 text-sm">Used for error messages and failed operations</p>
                     </div>
                 </div>
             </section>
 
             <!-- Navigation Components -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Navigation</h2>
+            <section class="mb-12 animate-slide-up">
+                <h2 class="text-2xl font-heading font-bold text-foreground mb-6">Navigation</h2>
                 
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Tab Navigation</h3>
-                    <div class="border-b border-gray-200">
-                        <nav class="flex space-x-8">
-                            <a href="#" class="border-primary-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                                Active Tab
+                <div class="space-y-6">
+                    <!-- Tab Navigation -->
+                    <div class="bg-card rounded-lg border border-border p-6">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Tab Navigation</h3>
+                        <div class="border-b border-border">
+                            <nav class="flex space-x-8">
+                                <a href="#" class="border-primary text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                    Active Tab
+                                </a>
+                                <a href="#" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                                    Inactive Tab
+                                </a>
+                                <a href="#" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                                    Another Tab
+                                </a>
+                            </nav>
+                        </div>
+                    </div>
+                    
+                    <!-- Pills Navigation -->
+                    <div class="bg-card rounded-lg border border-border p-6">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Pills Navigation</h3>
+                        <nav class="flex space-x-2">
+                            <a href="#" class="px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-medium">
+                                Active
                             </a>
-                            <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                                Inactive Tab
+                            <a href="#" class="px-4 py-2 bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary rounded-full text-sm font-medium transition-all">
+                                Inactive
                             </a>
-                            <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                                Another Tab
+                            <a href="#" class="px-4 py-2 bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary rounded-full text-sm font-medium transition-all">
+                                Another
                             </a>
                         </nav>
                     </div>
@@ -275,154 +644,277 @@
             </section>
 
             <!-- Extension-Specific Components -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Extension Components</h2>
+            <section class="mb-12 animate-slide-up">
+                <h2 class="text-2xl font-heading font-bold text-foreground mb-6">Extension Components</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- User Profile Card -->
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">User Profile</h3>
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold">
-                                JD
+                    <div class="bg-card border border-border rounded-lg p-6 hover-lift">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">User Profile</h3>
+                        <div class="flex items-center gap-4">
+                            <div class="relative">
+                                <div class="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold shadow-md">
+                                    JD
+                                </div>
+                                <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-secondary rounded-full border-2 border-white"></div>
                             </div>
-                            <div>
-                                <div class="font-medium text-gray-900">John Doe</div>
-                                <div class="text-sm text-gray-500">john@example.com</div>
+                            <div class="flex-1">
+                                <div class="font-heading font-semibold text-foreground">John Doe</div>
+                                <div class="text-sm text-muted-foreground">john@example.com</div>
+                                <div class="text-xs text-secondary font-medium mt-1">Pro Member</div>
                             </div>
-                            <button class="ml-auto px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700">
+                            <button class="px-3 py-1 bg-destructive/10 text-destructive text-xs rounded-lg font-medium hover:bg-destructive/20 transition-all">
                                 Logout
                             </button>
                         </div>
                     </div>
                     
                     <!-- Subscription Status -->
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Subscription Status</h3>
-                        <div class="space-y-2">
-                            <div class="px-3 py-2 bg-green-100 text-green-800 rounded-md text-sm">
-                                ✅ Active Subscription
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Subscription Status</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 p-3 bg-secondary-muted border border-secondary/20 rounded-lg">
+                                <div class="w-2 h-2 bg-secondary rounded-full"></div>
+                                <span class="text-secondary font-medium text-sm">✅ Active Subscription</span>
                             </div>
-                            <div class="px-3 py-2 bg-yellow-100 text-yellow-800 rounded-md text-sm">
-                                ⚠️ Trial Period
+                            <div class="flex items-center gap-3 p-3 bg-accent-muted border border-accent/20 rounded-lg">
+                                <div class="w-2 h-2 bg-accent rounded-full"></div>
+                                <span class="text-accent font-medium text-sm">⚠️ Trial Period</span>
                             </div>
-                            <div class="px-3 py-2 bg-red-100 text-red-800 rounded-md text-sm">
-                                ❌ Expired Subscription
+                            <div class="flex items-center gap-3 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                                <div class="w-2 h-2 bg-destructive rounded-full"></div>
+                                <span class="text-destructive font-medium text-sm">❌ Expired Subscription</span>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Extension Toggle Component -->
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Extension Toggle</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-gradient-subtle rounded-lg border border-border">
+                                <div>
+                                    <span class="font-heading font-medium text-foreground">Extension Status</span>
+                                    <p class="text-xs text-muted-foreground">Toggle extension functionality</p>
+                                </div>
+                                <label class="relative inline-block w-14 h-7">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-14 h-7 bg-muted rounded-full peer peer-checked:bg-primary transition-all shadow-inner"></div>
+                                    <div class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-all peer-checked:translate-x-7 shadow-md"></div>
+                                </label>
+                            </div>
+                            <div class="text-center">
+                                <span class="px-4 py-2 bg-gradient-primary text-white rounded-full text-sm font-medium shadow-glow">
+                                    ✨ Extension Active
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Action -->
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Floating Actions</h3>
+                        <div class="relative h-24 bg-muted rounded-lg flex items-center justify-center">
+                            <button class="absolute bottom-4 right-4 w-14 h-14 bg-gradient-primary rounded-full shadow-xl hover:shadow-glow transition-all hover:scale-110 flex items-center justify-center text-white">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                            </button>
+                            <span class="text-muted-foreground text-sm">Floating Action Button</span>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Chrome Extension Toggle -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Extension Controls</h2>
+            <!-- Animations & Effects -->
+            <section class="mb-12 animate-slide-up">
+                <h2 class="text-2xl font-heading font-bold text-foreground mb-6">Animations & Effects</h2>
                 
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Extension Toggle</h3>
-                    <div class="flex items-center justify-between p-4 border rounded-lg">
-                        <span class="font-medium">Extension Status</span>
-                        <div class="flex items-center gap-3">
-                            <label class="relative inline-block w-12 h-6">
-                                <input type="checkbox" class="sr-only" checked>
-                                <div class="block bg-primary-600 w-12 h-6 rounded-full"></div>
-                                <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition transform translate-x-6"></div>
-                            </label>
-                            <span class="font-bold text-primary-600">ON</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Hover Effects -->
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Hover Effects</h3>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-muted rounded-lg hover-lift cursor-pointer">
+                                <p class="text-sm font-medium">Lift on Hover</p>
+                                <p class="text-xs text-muted-foreground">Subtle elevation change</p>
+                            </div>
+                            <button class="w-full p-4 bg-gradient-primary text-white rounded-lg shadow-md hover:shadow-glow transition-all">
+                                Glow Effect Button
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading States -->
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Loading States</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <div class="animate-spin rounded-full h-6 w-6 border-2 border-muted border-t-primary"></div>
+                                <span class="text-sm text-muted-foreground">Loading...</span>
+                            </div>
+                            <div class="w-full bg-muted rounded-full h-2">
+                                <div class="bg-gradient-primary h-2 rounded-full animate-pulse" style="width: 60%"></div>
+                            </div>
+                            <button class="w-full px-4 py-2 bg-primary/50 text-primary-foreground rounded-lg text-sm font-medium cursor-not-allowed" disabled>
+                                Processing...
+                            </button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Loading States -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Loading & Status Indicators</h2>
+            <!-- Icons & Status -->
+            <section class="mb-12 animate-slide-up">
+                <h2 class="text-2xl font-heading font-bold text-foreground mb-6">Icons & Status Indicators</h2>
                 
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Loading Spinner -->
+                <div class="bg-card border border-border rounded-lg p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <!-- Loading States -->
                         <div class="text-center">
                             <div class="flex items-center justify-center mb-3">
-                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+                                <div class="animate-spin rounded-full h-10 w-10 border-2 border-muted border-t-primary"></div>
                             </div>
-                            <p class="text-sm text-gray-600">Loading Spinner</p>
+                            <p class="text-sm font-medium text-foreground">Loading</p>
+                            <p class="text-xs text-muted-foreground">Spinner animation</p>
                         </div>
                         
                         <!-- Success State -->
                         <div class="text-center">
                             <div class="flex items-center justify-center mb-3">
-                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                    <span class="text-green-600 text-lg">✓</span>
+                                <div class="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center">
+                                    <span class="text-secondary text-xl">✓</span>
                                 </div>
                             </div>
-                            <p class="text-sm text-gray-600">Success State</p>
+                            <p class="text-sm font-medium text-foreground">Success</p>
+                            <p class="text-xs text-muted-foreground">Completed action</p>
+                        </div>
+                        
+                        <!-- Warning State -->
+                        <div class="text-center">
+                            <div class="flex items-center justify-center mb-3">
+                                <div class="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
+                                    <span class="text-accent text-xl">⚠</span>
+                                </div>
+                            </div>
+                            <p class="text-sm font-medium text-foreground">Warning</p>
+                            <p class="text-xs text-muted-foreground">Needs attention</p>
                         </div>
                         
                         <!-- Error State -->
                         <div class="text-center">
                             <div class="flex items-center justify-center mb-3">
-                                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                                    <span class="text-red-600 text-lg">✗</span>
+                                <div class="w-10 h-10 bg-destructive/20 rounded-full flex items-center justify-center">
+                                    <span class="text-destructive text-xl">✗</span>
                                 </div>
                             </div>
-                            <p class="text-sm text-gray-600">Error State</p>
+                            <p class="text-sm font-medium text-foreground">Error</p>
+                            <p class="text-xs text-muted-foreground">Failed action</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Badge Examples -->
+                    <div class="mt-6 pt-6 border-t border-border">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Badges & Tags</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">Primary</span>
+                            <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm font-medium">Secondary</span>
+                            <span class="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium">Accent</span>
+                            <span class="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">Neutral</span>
+                            <span class="px-3 py-1 bg-gradient-primary text-white rounded-full text-sm font-medium shadow-sm">Gradient</span>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Spacing Guidelines -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Spacing & Layout</h2>
+            <!-- Design Tokens -->
+            <section class="mb-12 animate-slide-up">
+                <h2 class="text-2xl font-heading font-bold text-foreground mb-6">Design Tokens & Usage</h2>
                 
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Padding Scale</h3>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-16 text-gray-600">p-1</div>
-                                    <div class="bg-primary-100 p-1 rounded">4px</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Spacing Scale -->
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Spacing Scale</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-mono text-muted-foreground">gap-2</span>
+                                <div class="flex gap-2">
+                                    <div class="w-4 h-4 bg-primary/20 rounded"></div>
+                                    <div class="w-4 h-4 bg-primary/20 rounded"></div>
                                 </div>
-                                <div class="flex items-center gap-4">
-                                    <div class="w-16 text-gray-600">p-2</div>
-                                    <div class="bg-primary-100 p-2 rounded">8px</div>
+                                <span class="text-xs text-muted-foreground">0.5rem</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-mono text-muted-foreground">gap-4</span>
+                                <div class="flex gap-4">
+                                    <div class="w-4 h-4 bg-primary/20 rounded"></div>
+                                    <div class="w-4 h-4 bg-primary/20 rounded"></div>
                                 </div>
-                                <div class="flex items-center gap-4">
-                                    <div class="w-16 text-gray-600">p-4</div>
-                                    <div class="bg-primary-100 p-4 rounded">16px</div>
+                                <span class="text-xs text-muted-foreground">1rem</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-mono text-muted-foreground">gap-6</span>
+                                <div class="flex gap-6">
+                                    <div class="w-4 h-4 bg-primary/20 rounded"></div>
+                                    <div class="w-4 h-4 bg-primary/20 rounded"></div>
                                 </div>
-                                <div class="flex items-center gap-4">
-                                    <div class="w-16 text-gray-600">p-6</div>
-                                    <div class="bg-primary-100 p-6 rounded">24px</div>
-                                </div>
+                                <span class="text-xs text-muted-foreground">1.5rem</span>
                             </div>
                         </div>
-                        
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Margin Scale</h3>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-16 text-gray-600">mb-2</div>
-                                    <div class="text-gray-700">8px bottom margin</div>
-                                </div>
-                                <div class="flex items-center gap-4">
-                                    <div class="w-16 text-gray-600">mb-4</div>
-                                    <div class="text-gray-700">16px bottom margin</div>
-                                </div>
-                                <div class="flex items-center gap-4">
-                                    <div class="w-16 text-gray-600">mb-6</div>
-                                    <div class="text-gray-700">24px bottom margin</div>
-                                </div>
-                                <div class="flex items-center gap-4">
-                                    <div class="w-16 text-gray-600">mb-8</div>
-                                    <div class="text-gray-700">32px bottom margin</div>
-                                </div>
+                    </div>
+                    
+                    <!-- Border Radius -->
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Border Radius</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-mono text-muted-foreground">rounded</span>
+                                <div class="w-12 h-8 bg-primary/20 rounded"></div>
+                                <span class="text-xs text-muted-foreground">0.5rem</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-mono text-muted-foreground">rounded-lg</span>
+                                <div class="w-12 h-8 bg-secondary/20 rounded-lg"></div>
+                                <span class="text-xs text-muted-foreground">0.625rem</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-mono text-muted-foreground">rounded-full</span>
+                                <div class="w-8 h-8 bg-accent/20 rounded-full"></div>
+                                <span class="text-xs text-muted-foreground">50%</span>
                             </div>
                         </div>
                     </div>
                 </div>
+                
+                <!-- Shadow Examples -->
+                <div class="mt-6 bg-card border border-border rounded-lg p-6">
+                    <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Shadow Elevation</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div class="text-center">
+                            <div class="w-full h-16 bg-card rounded-lg mb-2 shadow-sm border border-border"></div>
+                            <p class="text-xs font-medium text-foreground">Shadow SM</p>
+                            <p class="text-xs text-muted-foreground">Subtle elevation</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-full h-16 bg-card rounded-lg mb-2 shadow-md"></div>
+                            <p class="text-xs font-medium text-foreground">Shadow MD</p>
+                            <p class="text-xs text-muted-foreground">Card elevation</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-full h-16 bg-card rounded-lg mb-2 shadow-lg"></div>
+                            <p class="text-xs font-medium text-foreground">Shadow LG</p>
+                            <p class="text-xs text-muted-foreground">Modal elevation</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-full h-16 bg-gradient-primary rounded-lg mb-2 shadow-glow"></div>
+                            <p class="text-xs font-medium text-foreground">Glow Effect</p>
+                            <p class="text-xs text-muted-foreground">Highlight elevation</p>
+                        </div>
+                    </div>
+                </div>
             </section>
+            
+            <!-- Implementation Guidelines -->\n            <section class=\"mb-12 animate-slide-up\">\n                <h2 class=\"text-2xl font-heading font-bold text-foreground mb-6\">Implementation Guidelines</h2>\n                \n                <div class=\"grid grid-cols-1 md:grid-cols-2 gap-6\">\n                    <!-- CSS Custom Properties -->\n                    <div class=\"bg-card border border-border rounded-lg p-6\">\n                        <h3 class=\"text-lg font-heading font-semibold text-foreground mb-4\">CSS Custom Properties</h3>\n                        <div class=\"bg-muted rounded-lg p-4 overflow-x-auto\">\n                            <pre class=\"text-xs font-mono text-foreground\"><code>:root {\n  --primary: 260 84% 65%;\n  --secondary: 217 91% 60%;\n  --accent: 14 90% 65%;\n  --background: 240 10% 98%;\n  --foreground: 240 10% 8%;\n  --card: 0 0% 100%;\n  --border: 240 6% 90%;\n  --muted: 240 5% 96%;\n}</code></pre>\n                        </div>\n                    </div>\n                    \n                    <!-- Tailwind Integration -->\n                    <div class=\"bg-card border border-border rounded-lg p-6\">\n                        <h3 class=\"text-lg font-heading font-semibold text-foreground mb-4\">Tailwind Classes</h3>\n                        <div class=\"space-y-3 text-sm\">\n                            <div class=\"flex justify-between\">\n                                <span class=\"font-mono text-muted-foreground\">bg-primary</span>\n                                <span class=\"text-foreground\">Primary background</span>\n                            </div>\n                            <div class=\"flex justify-between\">\n                                <span class=\"font-mono text-muted-foreground\">text-foreground</span>\n                                <span class=\"text-foreground\">Main text color</span>\n                            </div>\n                            <div class=\"flex justify-between\">\n                                <span class=\"font-mono text-muted-foreground\">border-border</span>\n                                <span class=\"text-foreground\">Standard border</span>\n                            </div>\n                            <div class=\"flex justify-between\">\n                                <span class=\"font-mono text-muted-foreground\">font-heading</span>\n                                <span class=\"text-foreground\">Space Grotesk font</span>\n                            </div>\n                            <div class=\"flex justify-between\">\n                                <span class=\"font-mono text-muted-foreground\">hover-lift</span>\n                                <span class=\"text-foreground\">Hover elevation</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n                \n                <!-- Usage Examples -->\n                <div class=\"mt-6 bg-card border border-border rounded-lg p-6\">\n                    <h3 class=\"text-lg font-heading font-semibold text-foreground mb-4\">Quick Start Example</h3>\n                    <div class=\"bg-muted rounded-lg p-4\">\n                        <pre class=\"text-sm font-mono text-foreground overflow-x-auto\"><code>&lt;div class=\"bg-card border border-border rounded-lg p-6 hover-lift\"&gt;\n  &lt;h3 class=\"font-heading font-semibold text-foreground mb-3\"&gt;Card Title&lt;/h3&gt;\n  &lt;p class=\"text-muted-foreground text-sm mb-4\"&gt;Card description&lt;/p&gt;\n  &lt;button class=\"px-4 py-2 bg-primary hover:bg-primary-hover text-primary-foreground rounded-lg transition-all\"&gt;\n    Action Button\n  &lt;/button&gt;\n&lt;/div&gt;</code></pre>\n                    </div>\n                </div>\n            </section>
         </div>
     </main>
 
