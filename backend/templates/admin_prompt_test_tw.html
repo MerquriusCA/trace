@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prompt Testing - Trace Admin</title>
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -15,31 +20,79 @@
                 extend: {
                     colors: {
                         primary: {
-                            50: '#eff6ff',
-                            100: '#dbeafe', 
-                            200: '#bfdbfe',
-                            300: '#93c5fd',
-                            400: '#60a5fa',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
-                        }
-                    }
+                            DEFAULT: 'hsl(260, 84%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(260, 84%, 70%)',
+                            muted: 'hsl(260, 30%, 95%)',
+                        },
+                        secondary: {
+                            DEFAULT: 'hsl(217, 91%, 60%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(217, 91%, 65%)',
+                            muted: 'hsl(217, 30%, 95%)',
+                        },
+                        accent: {
+                            DEFAULT: 'hsl(14, 90%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(14, 90%, 70%)',
+                            muted: 'hsl(14, 30%, 95%)',
+                        },
+                        background: 'hsl(240, 10%, 98%)',
+                        foreground: 'hsl(240, 10%, 8%)',
+                        card: {
+                            DEFAULT: 'hsl(0, 0%, 100%)',
+                            foreground: 'hsl(240, 10%, 8%)',
+                        },
+                        muted: {
+                            DEFAULT: 'hsl(240, 5%, 96%)',
+                            foreground: 'hsl(240, 5%, 45%)',
+                        },
+                        destructive: {
+                            DEFAULT: 'hsl(0, 84%, 60%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                        },
+                        border: 'hsl(240, 6%, 90%)',
+                        input: 'hsl(240, 6%, 96%)',
+                        ring: 'hsl(260, 84%, 65%)',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        'heading': ['Space Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'gradient-primary': 'linear-gradient(135deg, hsl(260, 84%, 65%), hsl(217, 91%, 60%))',
+                        'gradient-hero': 'linear-gradient(135deg, hsl(260, 84%, 65%) 0%, hsl(217, 91%, 60%) 50%, hsl(14, 90%, 65%) 100%)',
+                        'gradient-subtle': 'linear-gradient(180deg, hsl(240, 10%, 98%), hsl(240, 5%, 96%))',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 40px hsl(260, 84%, 65%, 0.3)',
+                        'glow-lg': '0 0 60px hsl(260, 84%, 65%, 0.4)',
+                    },
                 }
             }
         }
     </script>
+    
+    <style>
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .text-gradient {
+            background: linear-gradient(135deg, hsl(260, 84%, 65%), hsl(217, 91%, 60%));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hover-lift { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hover-lift:hover { transform: translateY(-2px); }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-background min-h-screen font-sans">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
+    <nav class="bg-card shadow-sm border-b border-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <h1 class="text-xl font-bold text-gray-900">Trace Admin</h1>
+                        <h1 class="text-xl font-heading font-bold text-foreground">Trace Admin</h1>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
                         <a href="/admin/dashboard" id="adminLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
@@ -67,7 +120,7 @@
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div class="px-4 py-6 sm:px-0">
             <!-- Configuration Panel - Horizontal Layout -->
-            <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <div class="bg-card border border-border rounded-lg p-6 mb-6 hover-lift">
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     <!-- Test Articles -->
                     <div>
@@ -189,13 +242,13 @@
                         
                         <!-- Action Buttons -->
                         <div class="space-y-2">
-                            <button id="showPromptBtn" class="w-full px-3 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm">
+                            <button id="showPromptBtn" class="w-full px-3 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg font-medium text-sm transition-all hover-lift">
                                 🔍 Show Prompt
                             </button>
-                            <button id="summarizeBtn" class="w-full px-3 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm">
+                            <button id="summarizeBtn" class="w-full px-3 py-2 bg-gradient-primary text-white rounded-lg font-medium text-sm shadow-glow hover:shadow-glow-lg transition-all hover-lift">
                                 ⚡ Summarize
                             </button>
-                            <button id="clearBtn" class="w-full px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                            <button id="clearBtn" class="w-full px-3 py-2 bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded-lg font-medium text-sm transition-all hover-lift">
                                 🗑️ Clear
                             </button>
                         </div>
@@ -206,19 +259,24 @@
             <!-- Results Section -->
             <div class="space-y-6">
                 <!-- Loading Section -->
-                <div id="loadingSection" class="bg-white rounded-lg shadow p-6 hidden">
+                <div id="loadingSection" class="bg-card border border-border rounded-lg p-6 hidden">
                     <div class="flex items-center justify-center py-4">
-                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-                        <span class="ml-3 text-gray-700">Processing...</span>
+                        <div class="animate-spin rounded-full h-8 w-8 border-2 border-muted border-t-primary"></div>
+                        <span class="ml-3 text-muted-foreground">Processing...</span>
                     </div>
                 </div>
 
                 <!-- Error Section -->
-                <div id="errorSection" class="bg-red-50 border border-red-200 rounded-lg p-6 hidden">
+                <div id="errorSection" class="bg-destructive/10 border border-destructive/20 rounded-lg p-6 hidden">
                     <div class="flex">
+                        <div class="flex-shrink-0">
+                            <div class="w-5 h-5 bg-destructive/20 rounded-full flex items-center justify-center">
+                                <span class="text-destructive text-sm">✗</span>
+                            </div>
+                        </div>
                         <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800">Error</h3>
-                            <div class="mt-2 text-sm text-red-700">
+                            <h3 class="text-sm font-heading font-medium text-destructive">Error</h3>
+                            <div class="mt-2 text-sm text-destructive/80">
                                 <p id="errorMessage"></p>
                             </div>
                         </div>
@@ -226,29 +284,29 @@
                 </div>
 
                 <!-- Generated Prompt -->
-                <div id="promptSection" class="bg-white rounded-lg shadow p-6 hidden">
+                <div id="promptSection" class="bg-card border border-border rounded-lg p-6 hidden hover-lift">
                     <div class="flex justify-between items-start mb-4">
-                        <h2 class="text-lg font-semibold text-gray-900">Generated Prompt</h2>
-                        <button id="copyPromptBtn" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
+                        <h2 class="text-lg font-heading font-semibold text-foreground">Generated Prompt</h2>
+                        <button id="copyPromptBtn" class="px-3 py-1 text-sm bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-all">
                             📋 Copy
                         </button>
                     </div>
-                    <pre id="promptDisplay" class="bg-gray-50 p-4 rounded-md text-sm text-gray-700 whitespace-pre-wrap font-mono overflow-x-auto"></pre>
+                    <pre id="promptDisplay" class="bg-input p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono overflow-x-auto border border-border"></pre>
                     <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Edit Prompt (Optional)</label>
-                        <textarea id="customPrompt" rows="10" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 font-mono text-sm"></textarea>
+                        <label class="block text-sm font-medium text-foreground mb-2">Edit Prompt (Optional)</label>
+                        <textarea id="customPrompt" rows="10" class="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring font-mono text-sm transition-all"></textarea>
                     </div>
                 </div>
 
                 <!-- Summary Result -->
-                <div id="resultSection" class="bg-white rounded-lg shadow p-6 hidden">
+                <div id="resultSection" class="bg-card border border-border rounded-lg p-6 hidden hover-lift">
                     <div class="flex justify-between items-start mb-4">
-                        <h2 class="text-lg font-semibold text-gray-900">Summary Result</h2>
-                        <div class="text-sm text-gray-500">
+                        <h2 class="text-lg font-heading font-semibold text-foreground">Summary Result</h2>
+                        <div class="text-sm text-muted-foreground">
                             <span id="tokenCount"></span> | <span id="responseTime"></span>
                         </div>
                     </div>
-                    <div id="summaryContent" class="prose max-w-none text-gray-700"></div>
+                    <div id="summaryContent" class="prose max-w-none text-foreground"></div>
                 </div>
             </div>
         </div>

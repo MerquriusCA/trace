@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Products - Trace Extension</title>
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -15,31 +20,79 @@
                 extend: {
                     colors: {
                         primary: {
-                            50: '#eff6ff',
-                            100: '#dbeafe', 
-                            200: '#bfdbfe',
-                            300: '#93c5fd',
-                            400: '#60a5fa',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
-                        }
-                    }
+                            DEFAULT: 'hsl(260, 84%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(260, 84%, 70%)',
+                            muted: 'hsl(260, 30%, 95%)',
+                        },
+                        secondary: {
+                            DEFAULT: 'hsl(217, 91%, 60%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(217, 91%, 65%)',
+                            muted: 'hsl(217, 30%, 95%)',
+                        },
+                        accent: {
+                            DEFAULT: 'hsl(14, 90%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(14, 90%, 70%)',
+                            muted: 'hsl(14, 30%, 95%)',
+                        },
+                        background: 'hsl(240, 10%, 98%)',
+                        foreground: 'hsl(240, 10%, 8%)',
+                        card: {
+                            DEFAULT: 'hsl(0, 0%, 100%)',
+                            foreground: 'hsl(240, 10%, 8%)',
+                        },
+                        muted: {
+                            DEFAULT: 'hsl(240, 5%, 96%)',
+                            foreground: 'hsl(240, 5%, 45%)',
+                        },
+                        destructive: {
+                            DEFAULT: 'hsl(0, 84%, 60%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                        },
+                        border: 'hsl(240, 6%, 90%)',
+                        input: 'hsl(240, 6%, 96%)',
+                        ring: 'hsl(260, 84%, 65%)',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        'heading': ['Space Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'gradient-primary': 'linear-gradient(135deg, hsl(260, 84%, 65%), hsl(217, 91%, 60%))',
+                        'gradient-hero': 'linear-gradient(135deg, hsl(260, 84%, 65%) 0%, hsl(217, 91%, 60%) 50%, hsl(14, 90%, 65%) 100%)',
+                        'gradient-subtle': 'linear-gradient(180deg, hsl(240, 10%, 98%), hsl(240, 5%, 96%))',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 40px hsl(260, 84%, 65%, 0.3)',
+                        'glow-lg': '0 0 60px hsl(260, 84%, 65%, 0.4)',
+                    },
                 }
             }
         }
     </script>
+    
+    <style>
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .text-gradient {
+            background: linear-gradient(135deg, hsl(260, 84%, 65%), hsl(217, 91%, 60%));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hover-lift { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hover-lift:hover { transform: translateY(-2px); }
+    </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-background font-sans">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
+    <nav class="bg-card shadow-sm border-b border-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <h1 class="text-xl font-bold text-gray-900">Trace Admin</h1>
+                        <h1 class="text-xl font-heading font-bold text-foreground">Trace Admin</h1>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
                         <a href="/admin/dashboard" id="adminLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
@@ -68,11 +121,11 @@
         <div class="px-4 sm:px-0">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <h1 class="text-2xl font-semibold text-gray-900">Products & Pricing</h1>
-                    <p class="mt-2 text-sm text-gray-700">Manage and view your Stripe products and pricing information</p>
+                    <h1 class="text-3xl font-heading font-bold text-gradient">Products & Pricing</h1>
+                    <p class="mt-2 text-lg text-muted-foreground">Manage and view your Stripe products and pricing information</p>
                 </div>
                 <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-                    <button onclick="loadProductsData()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700">
+                    <button onclick="loadProductsData()" class="inline-flex items-center px-4 py-2 bg-gradient-primary text-white rounded-lg font-medium text-sm shadow-glow hover:shadow-glow-lg transition-all hover-lift">
                         🔄 Refresh
                     </button>
                 </div>
@@ -85,26 +138,23 @@
                 <!-- Loading State -->
                 <div id="loadingState" class="text-center py-12">
                     <div class="inline-flex items-center">
-                        <svg class="animate-spin h-8 w-8 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span class="ml-3 text-lg text-gray-600">Loading products...</span>
+                        <div class="animate-spin rounded-full h-8 w-8 border-2 border-muted border-t-primary"></div>
+                        <span class="ml-3 text-lg text-muted-foreground">Loading products...</span>
                     </div>
                 </div>
                 
                 <!-- Error State (hidden by default) -->
                 <div id="errorState" class="hidden">
-                    <div class="rounded-md bg-red-50 p-4">
+                    <div class="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
                         <div class="flex">
                             <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                                </svg>
+                                <div class="w-5 h-5 bg-destructive/20 rounded-full flex items-center justify-center">
+                                    <span class="text-destructive text-sm">✗</span>
+                                </div>
                             </div>
                             <div class="ml-3">
-                                <h3 class="text-sm font-medium text-red-800">Error loading products</h3>
-                                <div class="mt-2 text-sm text-red-700">
+                                <h3 class="text-sm font-heading font-medium text-destructive">Error loading products</h3>
+                                <div class="mt-2 text-sm text-destructive/80">
                                     <p id="errorMessage">Unable to fetch products data</p>
                                 </div>
                             </div>
