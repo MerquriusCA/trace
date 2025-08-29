@@ -1267,6 +1267,12 @@ def admin_prompt_test():
     """Serve the admin prompt testing page"""
     return render_template('admin_prompt_test_tw.html')
 
+@app.route('/admin/style-guide')
+@require_admin_token
+def admin_style_guide():
+    """Serve the admin style guide page"""
+    return render_template('admin_style_guide_tw.html')
+
 @app.route('/admin/products')
 @require_admin_token
 def admin_products():

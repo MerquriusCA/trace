@@ -54,6 +54,9 @@
                         <a href="/admin/prompt-test" id="adminPromptTestLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Prompt Test
                         </a>
+                        <a href="/admin/style-guide" id="adminStyleGuideLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Style Guide
+                        </a>
                     </div>
                 </div>
             </div>
@@ -171,6 +174,7 @@
                 const adminFeedbackLink = document.getElementById('adminFeedbackLink');
                 const adminProductsLink = document.getElementById('adminProductsLink');
                 const adminPromptTestLink = document.getElementById('adminPromptTestLink');
+                const adminStyleGuideLink = document.getElementById('adminStyleGuideLink');
                 
                 if (adminLink) {
                     adminLink.href = `/admin/dashboard?token=${token}`;
@@ -183,6 +187,9 @@
                 }
                 if (adminPromptTestLink) {
                     adminPromptTestLink.href = `/admin/prompt-test?token=${token}`;
+                }
+                if (adminStyleGuideLink) {
+                    adminStyleGuideLink.href = `/admin/style-guide?token=${token}`;
                 }
             }
             
