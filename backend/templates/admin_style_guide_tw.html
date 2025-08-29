@@ -914,7 +914,70 @@
                 </div>
             </section>
             
-            <!-- Implementation Guidelines -->\n            <section class=\"mb-12 animate-slide-up\">\n                <h2 class=\"text-2xl font-heading font-bold text-foreground mb-6\">Implementation Guidelines</h2>\n                \n                <div class=\"grid grid-cols-1 md:grid-cols-2 gap-6\">\n                    <!-- CSS Custom Properties -->\n                    <div class=\"bg-card border border-border rounded-lg p-6\">\n                        <h3 class=\"text-lg font-heading font-semibold text-foreground mb-4\">CSS Custom Properties</h3>\n                        <div class=\"bg-muted rounded-lg p-4 overflow-x-auto\">\n                            <pre class=\"text-xs font-mono text-foreground\"><code>:root {\n  --primary: 260 84% 65%;\n  --secondary: 217 91% 60%;\n  --accent: 14 90% 65%;\n  --background: 240 10% 98%;\n  --foreground: 240 10% 8%;\n  --card: 0 0% 100%;\n  --border: 240 6% 90%;\n  --muted: 240 5% 96%;\n}</code></pre>\n                        </div>\n                    </div>\n                    \n                    <!-- Tailwind Integration -->\n                    <div class=\"bg-card border border-border rounded-lg p-6\">\n                        <h3 class=\"text-lg font-heading font-semibold text-foreground mb-4\">Tailwind Classes</h3>\n                        <div class=\"space-y-3 text-sm\">\n                            <div class=\"flex justify-between\">\n                                <span class=\"font-mono text-muted-foreground\">bg-primary</span>\n                                <span class=\"text-foreground\">Primary background</span>\n                            </div>\n                            <div class=\"flex justify-between\">\n                                <span class=\"font-mono text-muted-foreground\">text-foreground</span>\n                                <span class=\"text-foreground\">Main text color</span>\n                            </div>\n                            <div class=\"flex justify-between\">\n                                <span class=\"font-mono text-muted-foreground\">border-border</span>\n                                <span class=\"text-foreground\">Standard border</span>\n                            </div>\n                            <div class=\"flex justify-between\">\n                                <span class=\"font-mono text-muted-foreground\">font-heading</span>\n                                <span class=\"text-foreground\">Space Grotesk font</span>\n                            </div>\n                            <div class=\"flex justify-between\">\n                                <span class=\"font-mono text-muted-foreground\">hover-lift</span>\n                                <span class=\"text-foreground\">Hover elevation</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n                \n                <!-- Usage Examples -->\n                <div class=\"mt-6 bg-card border border-border rounded-lg p-6\">\n                    <h3 class=\"text-lg font-heading font-semibold text-foreground mb-4\">Quick Start Example</h3>\n                    <div class=\"bg-muted rounded-lg p-4\">\n                        <pre class=\"text-sm font-mono text-foreground overflow-x-auto\"><code>&lt;div class=\"bg-card border border-border rounded-lg p-6 hover-lift\"&gt;\n  &lt;h3 class=\"font-heading font-semibold text-foreground mb-3\"&gt;Card Title&lt;/h3&gt;\n  &lt;p class=\"text-muted-foreground text-sm mb-4\"&gt;Card description&lt;/p&gt;\n  &lt;button class=\"px-4 py-2 bg-primary hover:bg-primary-hover text-primary-foreground rounded-lg transition-all\"&gt;\n    Action Button\n  &lt;/button&gt;\n&lt;/div&gt;</code></pre>\n                    </div>\n                </div>\n            </section>
+            <!-- Implementation Guidelines -->
+            <section class="mb-12 animate-slide-up">
+                <h2 class="text-2xl font-heading font-bold text-foreground mb-6">Implementation Guidelines</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- CSS Custom Properties -->
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">CSS Custom Properties</h3>
+                        <div class="bg-muted rounded-lg p-4 overflow-x-auto">
+                            <pre class="text-xs font-mono text-foreground"><code>:root {
+  --primary: 260 84% 65%;
+  --secondary: 217 91% 60%;
+  --accent: 14 90% 65%;
+  --background: 240 10% 98%;
+  --foreground: 240 10% 8%;
+  --card: 0 0% 100%;
+  --border: 240 6% 90%;
+  --muted: 240 5% 96%;
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <!-- Tailwind Integration -->
+                    <div class="bg-card border border-border rounded-lg p-6">
+                        <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Tailwind Classes</h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between">
+                                <span class="font-mono text-muted-foreground">bg-primary</span>
+                                <span class="text-foreground">Primary background</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-mono text-muted-foreground">text-foreground</span>
+                                <span class="text-foreground">Main text color</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-mono text-muted-foreground">border-border</span>
+                                <span class="text-foreground">Standard border</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-mono text-muted-foreground">font-heading</span>
+                                <span class="text-foreground">Space Grotesk font</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-mono text-muted-foreground">hover-lift</span>
+                                <span class="text-foreground">Hover elevation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Usage Examples -->
+                <div class="mt-6 bg-card border border-border rounded-lg p-6">
+                    <h3 class="text-lg font-heading font-semibold text-foreground mb-4">Quick Start Example</h3>
+                    <div class="bg-muted rounded-lg p-4">
+                        <pre class="text-sm font-mono text-foreground overflow-x-auto"><code>&lt;div class="bg-card border border-border rounded-lg p-6 hover-lift"&gt;
+  &lt;h3 class="font-heading font-semibold text-foreground mb-3"&gt;Card Title&lt;/h3&gt;
+  &lt;p class="text-muted-foreground text-sm mb-4"&gt;Card description&lt;/p&gt;
+  &lt;button class="px-4 py-2 bg-primary hover:bg-primary-hover text-primary-foreground rounded-lg transition-all"&gt;
+    Action Button
+  &lt;/button&gt;
+&lt;/div&gt;</code></pre>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
