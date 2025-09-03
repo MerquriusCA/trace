@@ -140,6 +140,9 @@
                         <a href="/admin/style-guide" id="adminStyleGuideLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
                             Style Guide
                         </a>
+                        <a href="/admin/landing-page" id="adminLandingPageLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Landing Page
+                        </a>
                     </div>
                 </div>
             </div>
@@ -305,6 +308,10 @@
                 }
                 if (adminStyleGuideLink) {
                     adminStyleGuideLink.href = `/admin/style-guide?token=${token}`;
+                }
+                const adminLandingPageLink = document.getElementById('adminLandingPageLink');
+                if (adminLandingPageLink) {
+                    adminLandingPageLink.href = `/admin/landing-page?token=${token}`;
                 }
             }
             

@@ -1273,6 +1273,27 @@ def admin_style_guide():
     """Serve the admin style guide page"""
     return render_template('admin_style_guide_tw.html')
 
+@app.route('/admin/landing-page')
+@app.route('/landing')
+def admin_landing_page():
+    """Serve the landing page preview (no auth required, not indexed by search engines)"""
+    return render_template('admin_landing_page_tw.html')
+
+@app.route('/robots.txt')
+def robots_txt():
+    """Serve robots.txt to prevent search engine indexing of specific pages"""
+    robots_content = """User-agent: *
+Disallow: /admin/
+Disallow: /landing
+Disallow: /api/
+
+User-agent: Googlebot
+Disallow: /admin/
+Disallow: /landing
+Disallow: /api/
+"""
+    return robots_content, 200, {'Content-Type': 'text/plain'}
+
 @app.route('/admin/products')
 @require_admin_token
 def admin_products():
