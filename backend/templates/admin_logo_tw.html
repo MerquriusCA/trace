@@ -135,6 +135,37 @@
                             </linearGradient>
                         </defs>
                         
+                        <!-- Background neural network -->
+                        <g opacity="0.15">
+                            <path d="M 10 20 L 30 30" stroke="hsl(260, 84%, 65%)" stroke-width="1"/>
+                            <path d="M 10 50 L 30 30" stroke="hsl(260, 84%, 65%)" stroke-width="1"/>
+                            <path d="M 30 30 L 45 45" stroke="hsl(260, 84%, 65%)" stroke-width="1"/>
+                            <path d="M 45 45 L 60 30" stroke="hsl(217, 91%, 60%)" stroke-width="1"/>
+                            <path d="M 60 30 L 75 45" stroke="hsl(217, 91%, 60%)" stroke-width="1"/>
+                            <path d="M 75 45 L 90 30" stroke="hsl(217, 91%, 60%)" stroke-width="1"/>
+                            <path d="M 90 30 L 110 20" stroke="hsl(217, 91%, 60%)" stroke-width="1"/>
+                            <path d="M 90 30 L 110 50" stroke="hsl(217, 91%, 60%)" stroke-width="1"/>
+                            <path d="M 60 30 L 60 90" stroke="hsl(14, 90%, 65%)" stroke-width="1"/>
+                            <path d="M 60 90 L 40 110" stroke="hsl(14, 90%, 65%)" stroke-width="1"/>
+                            <path d="M 60 90 L 80 110" stroke="hsl(14, 90%, 65%)" stroke-width="1"/>
+                            <circle cx="10" cy="20" r="2" fill="hsl(260, 84%, 65%)"/>
+                            <circle cx="10" cy="50" r="2" fill="hsl(260, 84%, 65%)"/>
+                            <circle cx="45" cy="45" r="2" fill="hsl(217, 91%, 60%)"/>
+                            <circle cx="75" cy="45" r="2" fill="hsl(217, 91%, 60%)"/>
+                            <circle cx="110" cy="20" r="2" fill="hsl(217, 91%, 60%)"/>
+                            <circle cx="110" cy="50" r="2" fill="hsl(217, 91%, 60%)"/>
+                            <circle cx="40" cy="110" r="2" fill="hsl(14, 90%, 65%)"/>
+                            <circle cx="80" cy="110" r="2" fill="hsl(14, 90%, 65%)"/>
+                        </g>
+                        
+                        <!-- Animated background traces -->
+                        <path d="M 15 15 Q 35 10, 55 15 T 95 15 Q 105 25, 100 40" stroke="hsl(260, 84%, 65%)" stroke-width="1" fill="none" opacity="0.2" stroke-dasharray="5,5">
+                            <animate attributeName="stroke-dashoffset" values="0;10" dur="3s" repeatCount="indefinite"/>
+                        </path>
+                        <path d="M 20 100 Q 40 95, 60 100 T 100 100" stroke="hsl(14, 90%, 65%)" stroke-width="1" fill="none" opacity="0.2" stroke-dasharray="5,5">
+                            <animate attributeName="stroke-dashoffset" values="0;10" dur="2.5s" repeatCount="indefinite"/>
+                        </path>
+                        
                         <!-- Main T shape -->
                         <path d="M 30 30 L 90 30" stroke="url(#grad1)" stroke-width="8" stroke-linecap="round" fill="none"/>
                         <path d="M 60 30 L 60 90" stroke="url(#grad1)" stroke-width="8" stroke-linecap="round" fill="none"/>
@@ -161,7 +192,32 @@
                                 <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
                                 <stop offset="100%" style="stop-color:hsl(217, 91%, 60%);stop-opacity:1" />
                             </linearGradient>
+                            <radialGradient id="glow2">
+                                <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:0.3" />
+                                <stop offset="100%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:0" />
+                            </radialGradient>
                         </defs>
+                        
+                        <!-- Background thought bubbles/traces -->
+                        <g opacity="0.1">
+                            <circle cx="20" cy="30" r="8" fill="none" stroke="hsl(260, 84%, 65%)" stroke-width="1"/>
+                            <circle cx="35" cy="25" r="6" fill="none" stroke="hsl(260, 84%, 65%)" stroke-width="1"/>
+                            <circle cx="85" cy="25" r="6" fill="none" stroke="hsl(217, 91%, 60%)" stroke-width="1"/>
+                            <circle cx="100" cy="30" r="8" fill="none" stroke="hsl(217, 91%, 60%)" stroke-width="1"/>
+                            <path d="M 20 30 Q 30 20, 35 25" stroke="hsl(260, 84%, 65%)" stroke-width="0.5" fill="none"/>
+                            <path d="M 85 25 Q 90 20, 100 30" stroke="hsl(217, 91%, 60%)" stroke-width="0.5" fill="none"/>
+                        </g>
+                        
+                        <!-- Radiating light glow -->
+                        <circle cx="60" cy="50" r="45" fill="url(#glow2)"/>
+                        
+                        <!-- Animated idea paths -->
+                        <path d="M 15 70 Q 30 50, 60 50 T 105 70" stroke="hsl(14, 90%, 65%)" stroke-width="0.5" fill="none" opacity="0.3" stroke-dasharray="3,3">
+                            <animate attributeName="opacity" values="0;0.3;0" dur="4s" repeatCount="indefinite"/>
+                        </path>
+                        <path d="M 25 80 Q 40 60, 60 60 T 95 80" stroke="hsl(217, 91%, 60%)" stroke-width="0.5" fill="none" opacity="0.3" stroke-dasharray="3,3">
+                            <animate attributeName="opacity" values="0;0.3;0" dur="4s" begin="1s" repeatCount="indefinite"/>
+                        </path>
                         
                         <!-- Lightbulb shape forming a T -->
                         <path d="M 60 25 C 45 25, 30 35, 30 50 C 30 65, 40 70, 45 75 L 45 85 L 75 85 L 75 75 C 80 70, 90 65, 90 50 C 90 35, 75 25, 60 25 Z" 
@@ -175,6 +231,8 @@
                         <path d="M 60 15 L 60 10" stroke="hsl(260, 84%, 65%)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
                         <path d="M 45 20 L 40 15" stroke="hsl(260, 84%, 65%)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
                         <path d="M 75 20 L 80 15" stroke="hsl(260, 84%, 65%)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                        <path d="M 35 35 L 25 30" stroke="hsl(260, 84%, 65%)" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+                        <path d="M 85 35 L 95 30" stroke="hsl(217, 91%, 60%)" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
                         
                         <!-- Base -->
                         <rect x="52" y="85" width="16" height="8" fill="url(#grad2)" rx="2"/>
@@ -195,6 +253,38 @@
                                 <stop offset="100%" style="stop-color:hsl(14, 90%, 65%);stop-opacity:1" />
                             </linearGradient>
                         </defs>
+                        
+                        <!-- Background flow streams -->
+                        <g opacity="0.08">
+                            <path d="M 10 20 Q 30 15, 50 20 T 90 20 Q 105 25, 110 40" stroke="hsl(260, 84%, 65%)" stroke-width="1" fill="none"/>
+                            <path d="M 15 40 Q 35 35, 55 40 T 95 40 Q 105 45, 105 60" stroke="hsl(217, 91%, 60%)" stroke-width="1" fill="none"/>
+                            <path d="M 10 60 Q 30 55, 50 60 T 90 60 Q 100 65, 105 80" stroke="hsl(14, 90%, 65%)" stroke-width="1" fill="none"/>
+                            <path d="M 15 80 Q 35 75, 55 80 T 95 80 Q 105 85, 110 100" stroke="hsl(260, 84%, 65%)" stroke-width="1" fill="none"/>
+                            <path d="M 10 100 Q 30 95, 50 100 T 90 100 Q 100 105, 105 110" stroke="hsl(217, 91%, 60%)" stroke-width="1" fill="none"/>
+                        </g>
+                        
+                        <!-- Animated flow particles -->
+                        <circle cx="20" cy="20" r="1" fill="hsl(260, 84%, 65%)" opacity="0.3">
+                            <animate attributeName="cx" values="20;100" dur="5s" repeatCount="indefinite"/>
+                            <animate attributeName="cy" values="20;35" dur="5s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="0;0.3;0" dur="5s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="30" cy="50" r="1" fill="hsl(217, 91%, 60%)" opacity="0.3">
+                            <animate attributeName="cx" values="30;90" dur="4s" repeatCount="indefinite"/>
+                            <animate attributeName="cy" values="50;65" dur="4s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="0;0.3;0" dur="4s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="40" cy="80" r="1" fill="hsl(14, 90%, 65%)" opacity="0.3">
+                            <animate attributeName="cx" values="40;80" dur="3s" repeatCount="indefinite"/>
+                            <animate attributeName="cy" values="80;95" dur="3s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="0;0.3;0" dur="3s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <!-- Swirling background paths -->
+                        <path d="M 20 10 Q 60 5, 100 10 Q 110 30, 100 50 Q 60 55, 20 50 Q 10 30, 20 10" 
+                              stroke="hsl(260, 84%, 65%)" stroke-width="0.5" fill="none" opacity="0.1" stroke-dasharray="2,2">
+                            <animate attributeName="stroke-dashoffset" values="0;4" dur="10s" repeatCount="indefinite"/>
+                        </path>
                         
                         <!-- Flowing T with trace path -->
                         <path d="M 25 35 Q 30 25, 40 30 L 80 30 Q 90 25, 95 35" 
@@ -224,6 +314,31 @@
                             </linearGradient>
                         </defs>
                         
+                        <!-- Background grid pattern -->
+                        <g opacity="0.05">
+                            <path d="M 20 10 L 20 110" stroke="hsl(260, 84%, 65%)" stroke-width="0.5"/>
+                            <path d="M 40 10 L 40 110" stroke="hsl(260, 84%, 65%)" stroke-width="0.5"/>
+                            <path d="M 60 10 L 60 110" stroke="hsl(217, 91%, 60%)" stroke-width="0.5"/>
+                            <path d="M 80 10 L 80 110" stroke="hsl(217, 91%, 60%)" stroke-width="0.5"/>
+                            <path d="M 100 10 L 100 110" stroke="hsl(217, 91%, 60%)" stroke-width="0.5"/>
+                            <path d="M 10 20 L 110 20" stroke="hsl(260, 84%, 65%)" stroke-width="0.5"/>
+                            <path d="M 10 40 L 110 40" stroke="hsl(217, 91%, 60%)" stroke-width="0.5"/>
+                            <path d="M 10 60 L 110 60" stroke="hsl(14, 90%, 65%)" stroke-width="0.5"/>
+                            <path d="M 10 80 L 110 80" stroke="hsl(14, 90%, 65%)" stroke-width="0.5"/>
+                            <path d="M 10 100 L 110 100" stroke="hsl(14, 90%, 65%)" stroke-width="0.5"/>
+                        </g>
+                        
+                        <!-- Multiple trace paths -->
+                        <path d="M 15 20 Q 35 15, 55 20 T 95 20 Q 105 25, 100 35" 
+                              stroke="hsl(260, 84%, 65%)" stroke-width="0.5" fill="none" 
+                              stroke-dasharray="2,2" opacity="0.2"/>
+                        <path d="M 10 30 Q 30 28, 50 30 T 90 30 Q 100 32, 105 40" 
+                              stroke="hsl(217, 91%, 60%)" stroke-width="0.5" fill="none" 
+                              stroke-dasharray="2,2" opacity="0.2"/>
+                        <path d="M 15 50 Q 35 48, 55 50 T 95 50 Q 102 55, 100 65" 
+                              stroke="hsl(14, 90%, 65%)" stroke-width="0.5" fill="none" 
+                              stroke-dasharray="2,2" opacity="0.2"/>
+                        
                         <!-- Minimalist T with single trace line -->
                         <path d="M 30 40 L 90 40" stroke="url(#grad4)" stroke-width="3" stroke-linecap="round"/>
                         <path d="M 60 40 L 60 85" stroke="hsl(217, 91%, 60%)" stroke-width="3" stroke-linecap="round"/>
@@ -248,7 +363,43 @@
                                 <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
                                 <stop offset="100%" style="stop-color:hsl(217, 91%, 60%);stop-opacity:1" />
                             </linearGradient>
+                            <pattern id="circuit-pattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+                                <circle cx="1" cy="1" r="0.5" fill="hsl(260, 84%, 65%)" opacity="0.2"/>
+                                <circle cx="1" cy="5" r="0.5" fill="hsl(217, 91%, 60%)" opacity="0.2"/>
+                                <circle cx="1" cy="9" r="0.5" fill="hsl(14, 90%, 65%)" opacity="0.2"/>
+                                <circle cx="5" cy="1" r="0.5" fill="hsl(217, 91%, 60%)" opacity="0.2"/>
+                                <circle cx="5" cy="5" r="0.5" fill="hsl(14, 90%, 65%)" opacity="0.2"/>
+                                <circle cx="5" cy="9" r="0.5" fill="hsl(260, 84%, 65%)" opacity="0.2"/>
+                                <circle cx="9" cy="1" r="0.5" fill="hsl(14, 90%, 65%)" opacity="0.2"/>
+                                <circle cx="9" cy="5" r="0.5" fill="hsl(260, 84%, 65%)" opacity="0.2"/>
+                                <circle cx="9" cy="9" r="0.5" fill="hsl(217, 91%, 60%)" opacity="0.2"/>
+                            </pattern>
                         </defs>
+                        
+                        <!-- Circuit board background -->
+                        <rect x="0" y="0" width="120" height="120" fill="url(#circuit-pattern)"/>
+                        
+                        <!-- Background circuit traces -->
+                        <g opacity="0.1">
+                            <path d="M 10 20 L 25 20 L 25 39" stroke="hsl(260, 84%, 65%)" stroke-width="1" fill="none"/>
+                            <path d="M 10 30 L 20 30 L 20 39 L 25 39" stroke="hsl(260, 84%, 65%)" stroke-width="1" fill="none"/>
+                            <path d="M 95 39 L 100 39 L 100 20 L 110 20" stroke="hsl(217, 91%, 60%)" stroke-width="1" fill="none"/>
+                            <path d="M 95 39 L 105 39 L 105 50 L 110 50" stroke="hsl(217, 91%, 60%)" stroke-width="1" fill="none"/>
+                            <path d="M 60 90 L 60 100 L 45 100 L 45 110" stroke="hsl(14, 90%, 65%)" stroke-width="1" fill="none"/>
+                            <path d="M 60 90 L 70 90 L 70 105 L 85 105" stroke="hsl(14, 90%, 65%)" stroke-width="1" fill="none"/>
+                            <path d="M 40 39 L 40 55 L 50 55 L 50 65" stroke="hsl(260, 84%, 65%)" stroke-width="0.5" fill="none"/>
+                            <path d="M 80 39 L 80 55 L 70 55 L 70 65" stroke="hsl(217, 91%, 60%)" stroke-width="0.5" fill="none"/>
+                        </g>
+                        
+                        <!-- Data flow animation -->
+                        <circle cx="10" cy="20" r="1" fill="hsl(260, 84%, 65%)" opacity="0.5">
+                            <animate attributeName="cx" values="10;25;25" dur="2s" repeatCount="indefinite"/>
+                            <animate attributeName="cy" values="20;20;39" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="110" cy="20" r="1" fill="hsl(217, 91%, 60%)" opacity="0.5">
+                            <animate attributeName="cx" values="110;100;95" dur="2s" repeatCount="indefinite"/>
+                            <animate attributeName="cy" values="20;20;39" dur="2s" repeatCount="indefinite"/>
+                        </circle>
                         
                         <!-- Circuit board style T -->
                         <rect x="25" y="35" width="70" height="8" fill="url(#grad5)" rx="4"/>
@@ -278,7 +429,53 @@
                                 <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
                                 <stop offset="100%" style="stop-color:hsl(14, 90%, 65%);stop-opacity:1" />
                             </linearGradient>
+                            <radialGradient id="spark-glow">
+                                <stop offset="0%" style="stop-color:hsl(14, 90%, 65%);stop-opacity:0.4" />
+                                <stop offset="50%" style="stop-color:hsl(14, 90%, 65%);stop-opacity:0.2" />
+                                <stop offset="100%" style="stop-color:hsl(14, 90%, 65%);stop-opacity:0" />
+                            </radialGradient>
                         </defs>
+                        
+                        <!-- Background energy field -->
+                        <g opacity="0.1">
+                            <!-- Radial energy lines from center -->
+                            <path d="M 60 40 L 20 20" stroke="hsl(260, 84%, 65%)" stroke-width="0.5"/>
+                            <path d="M 60 40 L 100 20" stroke="hsl(217, 91%, 60%)" stroke-width="0.5"/>
+                            <path d="M 60 40 L 20 60" stroke="hsl(260, 84%, 65%)" stroke-width="0.5"/>
+                            <path d="M 60 40 L 100 60" stroke="hsl(217, 91%, 60%)" stroke-width="0.5"/>
+                            <path d="M 60 40 L 40 80" stroke="hsl(14, 90%, 65%)" stroke-width="0.5"/>
+                            <path d="M 60 40 L 80 80" stroke="hsl(14, 90%, 65%)" stroke-width="0.5"/>
+                            <path d="M 60 40 L 30 100" stroke="hsl(260, 84%, 65%)" stroke-width="0.5"/>
+                            <path d="M 60 40 L 90 100" stroke="hsl(217, 91%, 60%)" stroke-width="0.5"/>
+                        </g>
+                        
+                        <!-- Orbiting particles -->
+                        <circle cx="60" cy="40" r="25" fill="none" stroke="hsl(260, 84%, 65%)" stroke-width="0.5" opacity="0.1" stroke-dasharray="2,2">
+                            <animate attributeName="stroke-dashoffset" values="0;4" dur="8s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="60" cy="40" r="35" fill="none" stroke="hsl(217, 91%, 60%)" stroke-width="0.5" opacity="0.1" stroke-dasharray="2,2">
+                            <animate attributeName="stroke-dashoffset" values="0;-4" dur="10s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="60" cy="40" r="45" fill="none" stroke="hsl(14, 90%, 65%)" stroke-width="0.5" opacity="0.1" stroke-dasharray="2,2">
+                            <animate attributeName="stroke-dashoffset" values="0;4" dur="12s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <!-- Animated sparks -->
+                        <g>
+                            <circle cx="35" cy="40" r="1" fill="hsl(260, 84%, 65%)">
+                                <animate attributeName="cx" values="35;60" dur="1s" repeatCount="indefinite"/>
+                                <animate attributeName="opacity" values="0.5;0" dur="1s" repeatCount="indefinite"/>
+                                <animate attributeName="r" values="1;0" dur="1s" repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="85" cy="40" r="1" fill="hsl(217, 91%, 60%)">
+                                <animate attributeName="cx" values="85;60" dur="1s" begin="0.5s" repeatCount="indefinite"/>
+                                <animate attributeName="opacity" values="0.5;0" dur="1s" begin="0.5s" repeatCount="indefinite"/>
+                                <animate attributeName="r" values="1;0" dur="1s" begin="0.5s" repeatCount="indefinite"/>
+                            </circle>
+                        </g>
+                        
+                        <!-- Central glow -->
+                        <circle cx="60" cy="40" r="20" fill="url(#spark-glow)"/>
                         
                         <!-- T with spark at intersection -->
                         <path d="M 30 40 L 90 40" stroke="hsl(260, 84%, 65%)" stroke-width="4" stroke-linecap="round"/>
@@ -292,6 +489,10 @@
                         <path d="M 60 30 L 60 25" stroke="hsl(14, 90%, 65%)" stroke-width="1" opacity="0.6"/>
                         <path d="M 50 40 L 45 40" stroke="hsl(14, 90%, 65%)" stroke-width="1" opacity="0.6"/>
                         <path d="M 70 40 L 75 40" stroke="hsl(14, 90%, 65%)" stroke-width="1" opacity="0.6"/>
+                        <path d="M 54 34 L 50 30" stroke="hsl(14, 90%, 65%)" stroke-width="1" opacity="0.4"/>
+                        <path d="M 66 34 L 70 30" stroke="hsl(14, 90%, 65%)" stroke-width="1" opacity="0.4"/>
+                        <path d="M 54 46 L 50 50" stroke="hsl(14, 90%, 65%)" stroke-width="1" opacity="0.4"/>
+                        <path d="M 66 46 L 70 50" stroke="hsl(14, 90%, 65%)" stroke-width="1" opacity="0.4"/>
                     </svg>
                 </div>
                 <h3 class="text-lg font-heading font-semibold mb-2">Spark Point</h3>
