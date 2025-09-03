@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Logo Exploration - Trace</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: 'hsl(260, 84%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(260, 84%, 70%)',
+                            muted: 'hsl(260, 30%, 95%)',
+                        },
+                        secondary: {
+                            DEFAULT: 'hsl(217, 91%, 60%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(217, 91%, 65%)',
+                            muted: 'hsl(217, 30%, 95%)',
+                        },
+                        accent: {
+                            DEFAULT: 'hsl(14, 90%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(14, 90%, 70%)',
+                            muted: 'hsl(14, 30%, 95%)',
+                        },
+                        background: 'hsl(240, 10%, 98%)',
+                        foreground: 'hsl(240, 10%, 8%)',
+                        card: {
+                            DEFAULT: 'hsl(0, 0%, 100%)',
+                            foreground: 'hsl(240, 10%, 8%)',
+                        },
+                        muted: {
+                            DEFAULT: 'hsl(240, 5%, 96%)',
+                            foreground: 'hsl(240, 5%, 45%)',
+                        },
+                        border: 'hsl(240, 6%, 90%)',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        'heading': ['Space Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .text-gradient {
+            background: linear-gradient(135deg, hsl(260, 84%, 65%), hsl(217, 91%, 60%));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .logo-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .logo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        /* Animation for tracing path */
+        @keyframes trace {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        @keyframes glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.6));
+            }
+        }
+        
+        .animate-trace {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: trace 2s ease-out forwards;
+        }
+        
+        .animate-glow {
+            animation: glow 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-background">
+    <!-- Header -->
+    <div class="bg-primary text-primary-foreground text-center py-2 text-sm">
+        <span class="font-medium">Logo Exploration</span> - 
+        <span class="text-white/80">Creative concepts for Trace</span>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-heading font-bold mb-4">
+                <span class="text-gradient">Trace Logo Concepts</span>
+            </h1>
+            <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+                Exploring the visual metaphor of "tracing through thought" - combining letterforms with neural pathways, 
+                light bulbs, and the journey from question to understanding.
+            </p>
+        </div>
+
+        <!-- Logo Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            
+            <!-- Concept 1: T with Neural Path -->
+            <div class="logo-card bg-card rounded-lg p-8 border border-border">
+                <div class="flex justify-center mb-4 h-32">
+                    <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <!-- T with neural path -->
+                        <defs>
+                            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:hsl(217, 91%, 60%);stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Main T shape -->
+                        <path d="M 30 30 L 90 30" stroke="url(#grad1)" stroke-width="8" stroke-linecap="round" fill="none"/>
+                        <path d="M 60 30 L 60 90" stroke="url(#grad1)" stroke-width="8" stroke-linecap="round" fill="none"/>
+                        
+                        <!-- Neural nodes -->
+                        <circle cx="30" cy="30" r="6" fill="hsl(260, 84%, 65%)"/>
+                        <circle cx="90" cy="30" r="6" fill="hsl(217, 91%, 60%)"/>
+                        <circle cx="60" cy="90" r="6" fill="hsl(14, 90%, 65%)"/>
+                        
+                        <!-- Connecting paths (thought trace) -->
+                        <path d="M 30 30 Q 45 15, 60 30 T 90 30" stroke="hsl(260, 84%, 65%)" stroke-width="2" fill="none" opacity="0.5" stroke-dasharray="2,2" class="animate-trace"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-heading font-semibold mb-2">Neural T</h3>
+                <p class="text-sm text-muted-foreground">The T becomes a neural network, with nodes representing thoughts connecting through traced pathways.</p>
+            </div>
+
+            <!-- Concept 2: Lightbulb T -->
+            <div class="logo-card bg-card rounded-lg p-8 border border-border">
+                <div class="flex justify-center mb-4 h-32">
+                    <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:hsl(217, 91%, 60%);stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Lightbulb shape forming a T -->
+                        <path d="M 60 25 C 45 25, 30 35, 30 50 C 30 65, 40 70, 45 75 L 45 85 L 75 85 L 75 75 C 80 70, 90 65, 90 50 C 90 35, 75 25, 60 25 Z" 
+                              fill="none" stroke="url(#grad2)" stroke-width="3"/>
+                        
+                        <!-- Filament as T -->
+                        <path d="M 50 45 L 70 45" stroke="hsl(14, 90%, 65%)" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M 60 45 L 60 65" stroke="hsl(14, 90%, 65%)" stroke-width="2" stroke-linecap="round"/>
+                        
+                        <!-- Light rays -->
+                        <path d="M 60 15 L 60 10" stroke="hsl(260, 84%, 65%)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                        <path d="M 45 20 L 40 15" stroke="hsl(260, 84%, 65%)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                        <path d="M 75 20 L 80 15" stroke="hsl(260, 84%, 65%)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                        
+                        <!-- Base -->
+                        <rect x="52" y="85" width="16" height="8" fill="url(#grad2)" rx="2"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-heading font-semibold mb-2">Illuminated T</h3>
+                <p class="text-sm text-muted-foreground">A lightbulb with the filament forming a T, representing the "aha!" moment of understanding.</p>
+            </div>
+
+            <!-- Concept 3: Flowing Path -->
+            <div class="logo-card bg-card rounded-lg p-8 border border-border">
+                <div class="flex justify-center mb-4 h-32">
+                    <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:hsl(217, 91%, 60%);stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:hsl(14, 90%, 65%);stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Flowing T with trace path -->
+                        <path d="M 25 35 Q 30 25, 40 30 L 80 30 Q 90 25, 95 35" 
+                              stroke="url(#grad3)" stroke-width="4" fill="none" stroke-linecap="round"/>
+                        <path d="M 60 30 Q 65 50, 60 70 Q 55 85, 60 95" 
+                              stroke="url(#grad3)" stroke-width="4" fill="none" stroke-linecap="round"/>
+                        
+                        <!-- Thought dots along the path -->
+                        <circle cx="25" cy="35" r="3" fill="hsl(260, 84%, 65%)" class="animate-glow"/>
+                        <circle cx="60" cy="30" r="3" fill="hsl(217, 91%, 60%)" class="animate-glow"/>
+                        <circle cx="95" cy="35" r="3" fill="hsl(14, 90%, 65%)" class="animate-glow"/>
+                        <circle cx="60" cy="95" r="3" fill="hsl(14, 90%, 65%)" class="animate-glow"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-heading font-semibold mb-2">Flow State</h3>
+                <p class="text-sm text-muted-foreground">A flowing, organic T that represents the natural path of thought and discovery.</p>
+            </div>
+
+            <!-- Concept 4: Minimal Trace -->
+            <div class="logo-card bg-card rounded-lg p-8 border border-border">
+                <div class="flex justify-center mb-4 h-32">
+                    <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:hsl(217, 91%, 60%);stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Minimalist T with single trace line -->
+                        <path d="M 30 40 L 90 40" stroke="url(#grad4)" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M 60 40 L 60 85" stroke="hsl(217, 91%, 60%)" stroke-width="3" stroke-linecap="round"/>
+                        
+                        <!-- Trace line with arrow -->
+                        <path d="M 20 25 Q 40 20, 60 25 T 100 25" 
+                              stroke="hsl(14, 90%, 65%)" stroke-width="1.5" fill="none" 
+                              stroke-dasharray="3,3" opacity="0.8"/>
+                        <polygon points="100,25 95,23 95,27" fill="hsl(14, 90%, 65%)" opacity="0.8"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-heading font-semibold mb-2">Minimal Trace</h3>
+                <p class="text-sm text-muted-foreground">Clean, minimal T with a dotted trace line showing the path of understanding.</p>
+            </div>
+
+            <!-- Concept 5: Brain Circuit -->
+            <div class="logo-card bg-card rounded-lg p-8 border border-border">
+                <div class="flex justify-center mb-4 h-32">
+                    <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:hsl(217, 91%, 60%);stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Circuit board style T -->
+                        <rect x="25" y="35" width="70" height="8" fill="url(#grad5)" rx="4"/>
+                        <rect x="56" y="35" width="8" height="55" fill="url(#grad5)" rx="4"/>
+                        
+                        <!-- Circuit nodes -->
+                        <circle cx="25" cy="39" r="5" fill="hsl(260, 84%, 65%)"/>
+                        <circle cx="95" cy="39" r="5" fill="hsl(217, 91%, 60%)"/>
+                        <circle cx="60" cy="90" r="5" fill="hsl(14, 90%, 65%)"/>
+                        
+                        <!-- Circuit traces -->
+                        <path d="M 25 39 L 15 39 L 15 60 L 30 60" stroke="hsl(260, 84%, 65%)" stroke-width="1" fill="none" opacity="0.5"/>
+                        <path d="M 95 39 L 105 39 L 105 60 L 90 60" stroke="hsl(217, 91%, 60%)" stroke-width="1" fill="none" opacity="0.5"/>
+                        <path d="M 60 90 L 60 100 L 80 100" stroke="hsl(14, 90%, 65%)" stroke-width="1" fill="none" opacity="0.5"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-heading font-semibold mb-2">Circuit Mind</h3>
+                <p class="text-sm text-muted-foreground">T as a circuit board, representing the systematic processing of information.</p>
+            </div>
+
+            <!-- Concept 6: Spark Connection -->
+            <div class="logo-card bg-card rounded-lg p-8 border border-border">
+                <div class="flex justify-center mb-4 h-32">
+                    <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="grad6" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:hsl(14, 90%, 65%);stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- T with spark at intersection -->
+                        <path d="M 30 40 L 90 40" stroke="hsl(260, 84%, 65%)" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M 60 40 L 60 85" stroke="hsl(217, 91%, 60%)" stroke-width="4" stroke-linecap="round"/>
+                        
+                        <!-- Spark/star at intersection -->
+                        <path d="M 60 40 L 62 35 L 65 40 L 70 38 L 65 43 L 67 48 L 60 45 L 53 48 L 55 43 L 50 38 L 55 40 Z" 
+                              fill="url(#grad6)" class="animate-glow"/>
+                        
+                        <!-- Energy lines -->
+                        <path d="M 60 30 L 60 25" stroke="hsl(14, 90%, 65%)" stroke-width="1" opacity="0.6"/>
+                        <path d="M 50 40 L 45 40" stroke="hsl(14, 90%, 65%)" stroke-width="1" opacity="0.6"/>
+                        <path d="M 70 40 L 75 40" stroke="hsl(14, 90%, 65%)" stroke-width="1" opacity="0.6"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-heading font-semibold mb-2">Spark Point</h3>
+                <p class="text-sm text-muted-foreground">The intersection of the T creates a spark - the moment of insight and understanding.</p>
+            </div>
+
+        </div>
+
+        <!-- Typography Combinations -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-heading font-bold mb-6 text-center">Typography Combinations</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Typography 1 -->
+                <div class="bg-card rounded-lg p-6 border border-border">
+                    <div class="flex items-center gap-4">
+                        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="mini1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:hsl(217, 91%, 60%);stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M 10 12 L 30 12" stroke="url(#mini1)" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M 20 12 L 20 28" stroke="url(#mini1)" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="10" cy="12" r="2" fill="hsl(260, 84%, 65%)"/>
+                            <circle cx="30" cy="12" r="2" fill="hsl(217, 91%, 60%)"/>
+                            <circle cx="20" cy="28" r="2" fill="hsl(14, 90%, 65%)"/>
+                        </svg>
+                        <div>
+                            <h3 class="text-2xl font-heading font-bold">Trace</h3>
+                            <p class="text-xs text-muted-foreground">AI Reading Assistant</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Typography 2 -->
+                <div class="bg-card rounded-lg p-6 border border-border">
+                    <div class="flex items-center gap-4">
+                        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 8 10 Q 10 8, 12 10 L 28 10 Q 30 8, 32 10" 
+                                  stroke="hsl(260, 84%, 65%)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                            <path d="M 20 10 Q 22 20, 20 25 Q 18 30, 20 32" 
+                                  stroke="hsl(217, 91%, 60%)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        </svg>
+                        <div>
+                            <h3 class="text-2xl font-bold" style="font-family: 'Space Grotesk', sans-serif;">
+                                <span style="color: hsl(260, 84%, 65%);">T</span>race
+                            </h3>
+                            <p class="text-xs text-muted-foreground">Understand Anything</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Typography 3 -->
+                <div class="bg-card rounded-lg p-6 border border-border">
+                    <div class="flex items-center gap-4">
+                        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="8" y="11" width="24" height="2" fill="hsl(260, 84%, 65%)" rx="1"/>
+                            <rect x="19" y="11" width="2" height="18" fill="hsl(217, 91%, 60%)" rx="1"/>
+                            <circle cx="8" cy="12" r="2" fill="hsl(260, 84%, 65%)"/>
+                            <circle cx="32" cy="12" r="2" fill="hsl(217, 91%, 60%)"/>
+                            <circle cx="20" cy="29" r="2" fill="hsl(14, 90%, 65%)"/>
+                        </svg>
+                        <div>
+                            <h3 class="text-2xl font-heading font-semibold tracking-wide">TRACE</h3>
+                            <p class="text-xs text-muted-foreground uppercase tracking-wider">Smart Reading</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Color Variations -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-heading font-bold mb-6 text-center">Color Variations</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                
+                <!-- Primary -->
+                <div class="text-center">
+                    <div class="bg-white rounded-lg p-8 mb-2 border border-border">
+                        <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 15 20 L 45 20" stroke="hsl(260, 84%, 65%)" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M 30 20 L 30 40" stroke="hsl(217, 91%, 60%)" stroke-width="4" stroke-linecap="round"/>
+                            <circle cx="30" cy="20" r="3" fill="hsl(14, 90%, 65%)"/>
+                        </svg>
+                    </div>
+                    <p class="text-sm font-medium">Primary Gradient</p>
+                </div>
+
+                <!-- Monochrome -->
+                <div class="text-center">
+                    <div class="bg-white rounded-lg p-8 mb-2 border border-border">
+                        <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 15 20 L 45 20" stroke="#1f2937" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M 30 20 L 30 40" stroke="#1f2937" stroke-width="4" stroke-linecap="round"/>
+                            <circle cx="30" cy="20" r="3" fill="#1f2937"/>
+                        </svg>
+                    </div>
+                    <p class="text-sm font-medium">Monochrome</p>
+                </div>
+
+                <!-- Light Mode -->
+                <div class="text-center">
+                    <div class="bg-gray-900 rounded-lg p-8 mb-2 border border-border">
+                        <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 15 20 L 45 20" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M 30 20 L 30 40" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                            <circle cx="30" cy="20" r="3" fill="hsl(14, 90%, 65%)"/>
+                        </svg>
+                    </div>
+                    <p class="text-sm font-medium">Dark Background</p>
+                </div>
+
+                <!-- Single Color -->
+                <div class="text-center">
+                    <div class="bg-white rounded-lg p-8 mb-2 border border-border">
+                        <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 15 20 L 45 20" stroke="hsl(260, 84%, 65%)" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M 30 20 L 30 40" stroke="hsl(260, 84%, 65%)" stroke-width="4" stroke-linecap="round"/>
+                            <circle cx="30" cy="20" r="3" fill="hsl(260, 84%, 65%)"/>
+                        </svg>
+                    </div>
+                    <p class="text-sm font-medium">Single Color</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Interactive Demo -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-heading font-bold mb-6 text-center">Interactive Logo</h2>
+            <div class="bg-card rounded-lg p-12 border border-border text-center">
+                <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="inline-block">
+                    <defs>
+                        <linearGradient id="interactiveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1">
+                                <animate attributeName="stop-color" 
+                                    values="hsl(260, 84%, 65%);hsl(217, 91%, 60%);hsl(260, 84%, 65%)" 
+                                    dur="4s" repeatCount="indefinite" />
+                            </stop>
+                            <stop offset="100%" style="stop-color:hsl(217, 91%, 60%);stop-opacity:1">
+                                <animate attributeName="stop-color" 
+                                    values="hsl(217, 91%, 60%);hsl(14, 90%, 65%);hsl(217, 91%, 60%)" 
+                                    dur="4s" repeatCount="indefinite" />
+                            </stop>
+                        </linearGradient>
+                    </defs>
+                    
+                    <!-- Main T -->
+                    <path d="M 50 60 L 150 60" stroke="url(#interactiveGrad)" stroke-width="8" stroke-linecap="round" fill="none"/>
+                    <path d="M 100 60 L 100 140" stroke="url(#interactiveGrad)" stroke-width="8" stroke-linecap="round" fill="none"/>
+                    
+                    <!-- Animated trace path -->
+                    <path d="M 30 40 Q 65 20, 100 40 T 170 40" 
+                          stroke="hsl(14, 90%, 65%)" stroke-width="2" fill="none" 
+                          stroke-dasharray="5,5" opacity="0.6">
+                        <animate attributeName="stroke-dashoffset" 
+                            values="0;10" dur="1s" repeatCount="indefinite" />
+                    </path>
+                    
+                    <!-- Pulsing nodes -->
+                    <circle cx="50" cy="60" r="6" fill="hsl(260, 84%, 65%)">
+                        <animate attributeName="r" values="6;8;6" dur="2s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" values="1;0.6;1" dur="2s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="150" cy="60" r="6" fill="hsl(217, 91%, 60%)">
+                        <animate attributeName="r" values="6;8;6" dur="2s" begin="0.5s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" values="1;0.6;1" dur="2s" begin="0.5s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="100" cy="140" r="6" fill="hsl(14, 90%, 65%)">
+                        <animate attributeName="r" values="6;8;6" dur="2s" begin="1s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" values="1;0.6;1" dur="2s" begin="1s" repeatCount="indefinite" />
+                    </circle>
+                    
+                    <!-- Spark at center -->
+                    <circle cx="100" cy="60" r="10" fill="none" stroke="hsl(14, 90%, 65%)" stroke-width="1" opacity="0">
+                        <animate attributeName="r" values="10;25;10" dur="3s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" values="0;0.4;0" dur="3s" repeatCount="indefinite" />
+                    </circle>
+                </svg>
+                <div class="mt-6">
+                    <h3 class="text-3xl font-heading font-bold text-gradient">Trace</h3>
+                    <p class="text-muted-foreground mt-2">Stop Reading Everything. Start Understanding Anything.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usage Examples -->
+        <div>
+            <h2 class="text-2xl font-heading font-bold mb-6 text-center">Usage Examples</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                
+                <!-- Chrome Extension Icon -->
+                <div class="bg-card rounded-lg p-6 border border-border">
+                    <h3 class="text-lg font-heading font-semibold mb-4">Chrome Extension Icon</h3>
+                    <div class="flex gap-4 items-center">
+                        <div class="bg-gray-100 p-2 rounded">
+                            <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M 3 5 L 13 5" stroke="hsl(260, 84%, 65%)" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M 8 5 L 8 12" stroke="hsl(217, 91%, 60%)" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="8" cy="5" r="1" fill="hsl(14, 90%, 65%)"/>
+                            </svg>
+                        </div>
+                        <div class="bg-gray-100 p-2 rounded">
+                            <svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M 10 15 L 38 15" stroke="hsl(260, 84%, 65%)" stroke-width="4" stroke-linecap="round"/>
+                                <path d="M 24 15 L 24 35" stroke="hsl(217, 91%, 60%)" stroke-width="4" stroke-linecap="round"/>
+                                <circle cx="24" cy="15" r="3" fill="hsl(14, 90%, 65%)"/>
+                            </svg>
+                        </div>
+                        <div class="bg-gray-100 p-2 rounded">
+                            <svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M 25 40 L 103 40" stroke="hsl(260, 84%, 65%)" stroke-width="8" stroke-linecap="round"/>
+                                <path d="M 64 40 L 64 95" stroke="hsl(217, 91%, 60%)" stroke-width="8" stroke-linecap="round"/>
+                                <circle cx="64" cy="40" r="6" fill="hsl(14, 90%, 65%)"/>
+                                <path d="M 25 40 Q 45 30, 64 40 T 103 40" 
+                                      stroke="hsl(14, 90%, 65%)" stroke-width="2" fill="none" 
+                                      stroke-dasharray="3,3" opacity="0.4"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-sm text-muted-foreground mt-4">16x16, 48x48, 128x128 variations</p>
+                </div>
+
+                <!-- Favicon -->
+                <div class="bg-card rounded-lg p-6 border border-border">
+                    <h3 class="text-lg font-heading font-semibold mb-4">Favicon / App Icon</h3>
+                    <div class="flex gap-4 items-center">
+                        <div class="bg-gradient-to-br from-primary to-secondary p-3 rounded-lg">
+                            <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M 6 10 L 26 10" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                                <path d="M 16 10 L 16 24" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border">
+                            <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="favicon" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:hsl(217, 91%, 60%);stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M 6 10 L 26 10" stroke="url(#favicon)" stroke-width="3" stroke-linecap="round"/>
+                                <path d="M 16 10 L 16 24" stroke="url(#favicon)" stroke-width="3" stroke-linecap="round"/>
+                                <circle cx="16" cy="10" r="2" fill="hsl(14, 90%, 65%)"/>
+                            </svg>
+                        </div>
+                        <div class="bg-gray-900 p-3 rounded-lg">
+                            <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M 6 10 L 26 10" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                                <path d="M 16 10 L 16 24" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                                <circle cx="16" cy="10" r="2" fill="hsl(14, 90%, 65%)"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-sm text-muted-foreground mt-4">Different background options for favicon</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Download Section -->
+        <div class="mt-12 text-center">
+            <div class="bg-gradient-to-r from-primary via-secondary to-accent rounded-lg p-8 text-white">
+                <h2 class="text-2xl font-heading font-bold mb-4">Export Logo Assets</h2>
+                <p class="mb-6">Choose your preferred concept and download the SVG files for implementation</p>
+                <div class="flex gap-4 justify-center">
+                    <button onclick="downloadSVG('neural')" class="px-6 py-3 bg-white text-primary hover:bg-white/90 rounded-lg font-semibold transition-all">
+                        Download Neural T
+                    </button>
+                    <button onclick="downloadSVG('minimal')" class="px-6 py-3 bg-white/20 hover:bg-white/30 rounded-lg font-semibold transition-all">
+                        Download Minimal
+                    </button>
+                    <button onclick="downloadSVG('flow')" class="px-6 py-3 bg-white/20 hover:bg-white/30 rounded-lg font-semibold transition-all">
+                        Download Flow
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function downloadSVG(type) {
+            // SVG content for each type
+            const svgs = {
+                neural: `<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:hsl(217, 91%, 60%);stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M 30 30 L 90 30" stroke="url(#grad1)" stroke-width="8" stroke-linecap="round" fill="none"/>
+                    <path d="M 60 30 L 60 90" stroke="url(#grad1)" stroke-width="8" stroke-linecap="round" fill="none"/>
+                    <circle cx="30" cy="30" r="6" fill="hsl(260, 84%, 65%)"/>
+                    <circle cx="90" cy="30" r="6" fill="hsl(217, 91%, 60%)"/>
+                    <circle cx="60" cy="90" r="6" fill="hsl(14, 90%, 65%)"/>
+                </svg>`,
+                minimal: `<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:hsl(217, 91%, 60%);stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M 30 40 L 90 40" stroke="url(#grad4)" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M 60 40 L 60 85" stroke="hsl(217, 91%, 60%)" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M 20 25 Q 40 20, 60 25 T 100 25" stroke="hsl(14, 90%, 65%)" stroke-width="1.5" fill="none" stroke-dasharray="3,3" opacity="0.8"/>
+                    <polygon points="100,25 95,23 95,27" fill="hsl(14, 90%, 65%)" opacity="0.8"/>
+                </svg>`,
+                flow: `<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:hsl(260, 84%, 65%);stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:hsl(217, 91%, 60%);stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:hsl(14, 90%, 65%);stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M 25 35 Q 30 25, 40 30 L 80 30 Q 90 25, 95 35" stroke="url(#grad3)" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <path d="M 60 30 Q 65 50, 60 70 Q 55 85, 60 95" stroke="url(#grad3)" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <circle cx="25" cy="35" r="3" fill="hsl(260, 84%, 65%)"/>
+                    <circle cx="60" cy="30" r="3" fill="hsl(217, 91%, 60%)"/>
+                    <circle cx="95" cy="35" r="3" fill="hsl(14, 90%, 65%)"/>
+                    <circle cx="60" cy="95" r="3" fill="hsl(14, 90%, 65%)"/>
+                </svg>`
+            };
+
+            const svgContent = svgs[type];
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `trace-logo-${type}.svg`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

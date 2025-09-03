@@ -1279,6 +1279,11 @@ def admin_landing_page():
     """Serve the landing page preview (no auth required, not indexed by search engines)"""
     return render_template('admin_landing_page_tw.html')
 
+@app.route('/admin/logo')
+def admin_logo():
+    """Serve the logo exploration page (no auth required)"""
+    return render_template('admin_logo_tw.html')
+
 @app.route('/robots.txt')
 def robots_txt():
     """Serve robots.txt to prevent search engine indexing of specific pages"""
