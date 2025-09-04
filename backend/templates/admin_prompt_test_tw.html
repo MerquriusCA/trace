@@ -113,6 +113,9 @@
                         <a href="/admin/landing-page" id="adminLandingPageLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Landing Page
                         </a>
+                        <a href="/admin/logo" id="adminLogoLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Logo
+                        </a>
                     </div>
                 </div>
             </div>
@@ -351,6 +354,10 @@
                 const adminLandingPageLink = document.getElementById('adminLandingPageLink');
                 if (adminLandingPageLink) {
                     adminLandingPageLink.href = `/admin/landing-page?token=${token}`;
+                }
+                const adminLogoLink = document.getElementById('adminLogoLink');
+                if (adminLogoLink) {
+                    adminLogoLink.href = `/admin/logo?token=${token}`;
                 }
             }
         });
