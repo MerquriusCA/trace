@@ -798,6 +798,12 @@ document.addEventListener('DOMContentLoaded', function() {
     userSection.classList.add('hidden');
     userProfileBottom.classList.add('hidden');
     
+    // Hide utility buttons when not authenticated
+    const utilityButtonsSection = document.getElementById('utilityButtonsSection');
+    if (utilityButtonsSection) {
+      utilityButtonsSection.classList.add('hidden');
+    }
+    
     // Hide extension toggle when not authenticated
     const extensionToggleSection = document.getElementById('extensionToggleSection');
     if (extensionToggleSection) {
@@ -836,6 +842,12 @@ document.addEventListener('DOMContentLoaded', function() {
     loginSection.classList.add('hidden');
     userSection.classList.remove('hidden');
     userProfileBottom.classList.remove('hidden');
+    
+    // Show utility buttons when authenticated
+    const utilityButtonsSection = document.getElementById('utilityButtonsSection');
+    if (utilityButtonsSection) {
+      utilityButtonsSection.classList.remove('hidden');
+    }
     
     // Show extension toggle when authenticated
     const extensionToggleSection = document.getElementById('extensionToggleSection');
