@@ -10,12 +10,30 @@ const config = self.TRACE_CONFIG;
 
 // Initialize extension state
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.local.get(['extensionEnabled', 'authToken', 'currentUser'], (result) => {
+  initializeExtensionState();
+});
+
+// Initialize on startup as well
+chrome.runtime.onStartup.addListener(() => {
+  initializeExtensionState();
+});
+
+// Initialize extension state from storage
+async function initializeExtensionState() {
+  try {
+    const result = await chrome.storage.local.get(['extensionEnabled', 'authToken', 'currentUser']);
     extensionEnabled = result.extensionEnabled !== false; // Default to true
     authToken = result.authToken;
     currentUser = result.currentUser;
-  });
-});
+    config.log('Extension state initialized:', { extensionEnabled, hasToken: !!authToken, hasUser: !!currentUser });
+  } catch (error) {
+    config.error('Failed to initialize extension state:', error);
+    // Set safe defaults
+    extensionEnabled = true;
+    authToken = null;
+    currentUser = null;
+  }
+}
 
 // Combined message listener - handles all message types
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

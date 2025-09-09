@@ -289,6 +289,11 @@ function getAllTextNodes() {
 
 // Function to highlight text within a single text node
 function highlightTextInNode(textNode, startIndex, length, sentenceIndex, color) {
+  if (!textNode || !textNode.parentNode) {
+    console.error('Invalid text node or missing parent');
+    return;
+  }
+  
   const parent = textNode.parentNode;
   const fullText = textNode.textContent;
   
@@ -297,11 +302,18 @@ function highlightTextInNode(textNode, startIndex, length, sentenceIndex, color)
   const matchText = fullText.substring(startIndex, startIndex + length);
   const afterText = fullText.substring(startIndex + length);
   
-  // Create the highlight span
+  // Create the highlight span with safe CSS properties
   const highlightSpan = document.createElement('span');
   highlightSpan.className = 'chrome-ext-multi-highlight';
   highlightSpan.setAttribute('data-sentence-index', sentenceIndex);
-  highlightSpan.style.cssText = `background-color: ${color}; padding: 2px 4px; border-radius: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-weight: bold;`;
+  
+  // Safely set CSS properties to prevent injection
+  highlightSpan.style.backgroundColor = color;
+  highlightSpan.style.padding = '2px 4px';
+  highlightSpan.style.borderRadius = '3px';
+  highlightSpan.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+  highlightSpan.style.fontWeight = 'bold';
+  
   highlightSpan.textContent = matchText;
   
   // Replace the original text node with the three parts

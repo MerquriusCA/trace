@@ -201,35 +201,49 @@ document.addEventListener('DOMContentLoaded', function() {
     pageInfo.classList.remove('hidden');
   }
 
+  // Track tab listeners to avoid duplicates
+  let tabActivatedListener = null;
+  let tabUpdatedListener = null;
+  
   // Listen for tab changes to update page info
-  chrome.tabs.onActivated.addListener(function() {
-    chrome.storage.local.get(['extensionEnabled'], function(result) {
-      if (result.extensionEnabled !== false) {
-        displayCurrentPageInfo();
-      }
-    });
-  });
-
-  // Listen for tab updates
-  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-    if (changeInfo.status === 'complete' || changeInfo.url) {
-      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        if (tabs[0] && tabs[0].id === tabId) {
-          chrome.storage.local.get(['extensionEnabled'], function(result) {
-            if (result.extensionEnabled !== false) {
-              // Check if URL has changed
-              if (changeInfo.url && currentPageUrl && currentPageUrl !== changeInfo.url) {
-                // Clear analysis results when URL changes
-                analysisResult.classList.add('hidden');
-                document.getElementById('highlightedSentence').classList.add('hidden');
-              }
-              displayCurrentPageInfo();
-            }
-          });
+  if (!window.sidePanel_tabListenersAdded) {
+    tabActivatedListener = function() {
+      chrome.storage.local.get(['extensionEnabled'], function(result) {
+        if (result.extensionEnabled !== false) {
+          displayCurrentPageInfo();
         }
       });
-    }
-  });
+    };
+    chrome.tabs.onActivated.addListener(tabActivatedListener);
+
+    // Listen for tab updates
+    tabUpdatedListener = function(tabId, changeInfo, tab) {
+      if (changeInfo.status === 'complete' || changeInfo.url) {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          if (tabs[0] && tabs[0].id === tabId) {
+            chrome.storage.local.get(['extensionEnabled'], function(result) {
+              if (result.extensionEnabled !== false) {
+                // Check if URL has changed
+                if (changeInfo.url && currentPageUrl && currentPageUrl !== changeInfo.url) {
+                  // Clear analysis results when URL changes
+                  analysisResult.classList.add('hidden');
+                  document.getElementById('highlightedSentence').classList.add('hidden');
+                }
+                displayCurrentPageInfo();
+              }
+            });
+          }
+        });
+      }
+    };
+    chrome.tabs.onUpdated.addListener(tabUpdatedListener);
+    
+    // Mark listeners as added to prevent duplicates
+    window.sidePanel_tabListenersAdded = true;
+    
+    // Store listeners for cleanup
+    window.sidePanel_listeners = { tabActivatedListener, tabUpdatedListener };
+  }
   
   
   // Handle analyze button with authentication check
@@ -597,7 +611,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Get feedback type
-    const feedbackType = document.querySelector('input[name="feedbackType"]:checked').value;
+    const feedbackTypeElement = document.querySelector('input[name="feedbackType"]:checked');
+    if (!feedbackTypeElement) {
+      messageDiv.textContent = 'Please select a feedback type';
+      setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+      return;
+    }
+    const feedbackType = feedbackTypeElement.value;
     
     // Get current page context
     let currentPageUrl = 'Unknown';
