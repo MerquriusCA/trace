@@ -116,24 +116,83 @@
 
     <div class="min-h-screen">
         <!-- Hero Section -->
-        <section class="relative overflow-hidden bg-gradient-hero min-h-[70vh] flex items-center justify-center">
+        <section class="relative overflow-hidden bg-gradient-hero min-h-[400px] flex items-center justify-center">
             <div class="absolute inset-0 bg-black/10"></div>
             <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
-                <div class="mb-8 animate-fade-in">
-                    <svg class="w-24 h-24 mx-auto text-white mb-6 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                <div class="mb-6 animate-fade-in">
+                    <svg class="w-20 h-20 mx-auto mb-4" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="heroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:white;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:rgba(255,255,255,0.9);stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:rgba(255,255,255,0.8);stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Circuit board background -->
+                        <g opacity="0.15">
+                            <!-- Grid lines -->
+                            <path d="M 20 30 L 100 30" stroke="white" stroke-width="0.5"/>
+                            <path d="M 20 50 L 100 50" stroke="white" stroke-width="0.5"/>
+                            <path d="M 20 70 L 100 70" stroke="white" stroke-width="0.5"/>
+                            <path d="M 20 90 L 100 90" stroke="white" stroke-width="0.5"/>
+                            <path d="M 30 20 L 30 100" stroke="white" stroke-width="0.5"/>
+                            <path d="M 50 20 L 50 100" stroke="white" stroke-width="0.5"/>
+                            <path d="M 70 20 L 70 100" stroke="white" stroke-width="0.5"/>
+                            <path d="M 90 20 L 90 100" stroke="white" stroke-width="0.5"/>
+                            
+                            <!-- Circuit nodes -->
+                            <circle cx="30" cy="30" r="1" fill="white"/>
+                            <circle cx="50" cy="30" r="1" fill="white"/>
+                            <circle cx="70" cy="30" r="1" fill="white"/>
+                            <circle cx="90" cy="30" r="1" fill="white"/>
+                            <circle cx="30" cy="50" r="1" fill="white"/>
+                            <circle cx="90" cy="50" r="1" fill="white"/>
+                            <circle cx="30" cy="70" r="1" fill="white"/>
+                            <circle cx="90" cy="70" r="1" fill="white"/>
+                            <circle cx="30" cy="90" r="1" fill="white"/>
+                            <circle cx="50" cy="90" r="1" fill="white"/>
+                            <circle cx="70" cy="90" r="1" fill="white"/>
+                            <circle cx="90" cy="90" r="1" fill="white"/>
+                        </g>
+                        
+                        <!-- Main T design - bold and visible -->
+                        <path d="M 30 40 L 90 40" stroke="white" stroke-width="8" stroke-linecap="round"/>
+                        <path d="M 60 40 L 60 80" stroke="white" stroke-width="8" stroke-linecap="round"/>
+                        
+                        <!-- T shadow for depth -->
+                        <path d="M 30 42 L 90 42" stroke="rgba(0,0,0,0.1)" stroke-width="8" stroke-linecap="round"/>
+                        <path d="M 62 40 L 62 82" stroke="rgba(0,0,0,0.1)" stroke-width="8" stroke-linecap="round"/>
+                        
+                        <!-- Circuit connection points -->
+                        <circle cx="30" cy="40" r="4" fill="white" opacity="0.95">
+                            <animate attributeName="opacity" values="0.95;0.6;0.95" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="90" cy="40" r="4" fill="white" opacity="0.95">
+                            <animate attributeName="opacity" values="0.95;0.6;0.95" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="60" cy="80" r="4" fill="white" opacity="0.95">
+                            <animate attributeName="opacity" values="0.95;0.6;0.95" dur="2s" begin="1s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <!-- Central processing node - larger and more visible -->
+                        <circle cx="60" cy="40" r="7" fill="white" stroke="rgba(255,255,255,0.5)" stroke-width="2">
+                            <animate attributeName="r" values="7;9;7" dur="3s" repeatCount="indefinite"/>
+                            <animate attributeName="stroke-width" values="2;4;2" dur="3s" repeatCount="indefinite"/>
+                        </circle>
+                        
+                        <!-- Data flow lines -->
+                        <path d="M 25 39 L 15 39 L 15 60 L 30 60" stroke="white" stroke-width="1" fill="none" opacity="0.4"/>
+                        <path d="M 95 39 L 105 39 L 105 60 L 90 60" stroke="white" stroke-width="1" fill="none" opacity="0.4"/>
+                        <path d="M 60 90 L 60 100 L 80 100" stroke="white" stroke-width="1" fill="none" opacity="0.4"/>
                     </svg>
                 </div>
-                <h1 class="font-heading text-5xl md:text-7xl font-bold text-white mb-6 animate-slide-up">
-                    Stop Reading Everything.
-                    <span class="block mt-2">Start Understanding Anything.</span>
+                <h1 class="font-heading text-4xl md:text-6xl font-bold text-white mb-4 animate-slide-up">
+                    Read Less. Understand More.
                 </h1>
-                <p class="text-xl md:text-2xl text-white/90 mb-8 animate-fade-in">
+                <p class="text-lg md:text-xl text-white/90 mb-6 animate-fade-in">
                     Trace turns any webpage into personalized insights with AI that adapts to your reading style, profession, and time constraints.
                 </p>
-                <button class="inline-flex items-center px-8 py-3 bg-white text-primary hover:bg-white/90 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition-all animate-scale-in">
-                    Add to Chrome - It's Free
-                </button>
             </div>
         </section>
 
@@ -187,6 +246,25 @@
                     See Trace in <span class="text-gradient">Action</span>
                 </h2>
                 
+                <!-- Product Demo Video -->
+                <div class="mb-16">
+                    <div class="bg-card rounded-lg border border-border p-6 hover-lift">
+                        <div class="aspect-video bg-muted/50 rounded-lg border-2 border-dashed border-muted flex items-center justify-center">
+                            <div class="text-center">
+                                <svg class="w-16 h-16 mx-auto mb-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-3-4V6a2 2 0 114 0v4M6 18V8a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H8a2 2 0 01-2-2z" />
+                                </svg>
+                                <h3 class="text-lg font-heading font-semibold text-muted-foreground mb-2">Product Demo Video</h3>
+                                <p class="text-sm text-muted-foreground mb-4">Paste your video embed code or YouTube/Vimeo URL here</p>
+                                <!-- Placeholder for video embed -->
+                                <div class="text-xs text-muted-foreground bg-muted/30 rounded px-3 py-2 inline-block">
+                                    Replace this with: &lt;iframe&gt; or &lt;video&gt; tag
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="grid lg:grid-cols-3 gap-8">
                     <!-- Main Feature Card -->
                     <div class="lg:col-span-2">
@@ -219,9 +297,9 @@
                         <div class="bg-card rounded-lg border border-border p-4 cursor-pointer hover-lift" onclick="toggleCard(this)">
                             <div class="flex items-center justify-between">
                                 <h4 class="font-heading font-semibold text-primary">Quick Summary</h4>
-                                <span class="text-primary transition-transform" data-chevron>▼</span>
+                                <span class="text-primary transition-transform rotate-180" data-chevron>▼</span>
                             </div>
-                            <div class="hidden mt-3 text-muted-foreground" data-content>
+                            <div class="mt-3 text-muted-foreground" data-content>
                                 Get the main point in 1 sentence. Perfect when you're scanning through multiple articles and need the key takeaway instantly.
                             </div>
                         </div>
@@ -229,9 +307,9 @@
                         <div class="bg-card rounded-lg border border-border p-4 cursor-pointer hover-lift" onclick="toggleCard(this)">
                             <div class="flex items-center justify-between">
                                 <h4 class="font-heading font-semibold text-secondary">Explain Like I'm 8</h4>
-                                <span class="text-secondary transition-transform" data-chevron>▼</span>
+                                <span class="text-secondary transition-transform rotate-180" data-chevron>▼</span>
                             </div>
-                            <div class="hidden mt-3 text-muted-foreground" data-content>
+                            <div class="mt-3 text-muted-foreground" data-content>
                                 Complex topics broken down into simple, clear explanations. No jargon, no confusion - just understanding.
                             </div>
                         </div>
@@ -239,9 +317,9 @@
                         <div class="bg-card rounded-lg border border-border p-4 cursor-pointer hover-lift" onclick="toggleCard(this)">
                             <div class="flex items-center justify-between">
                                 <h4 class="font-heading font-semibold text-accent">Detailed Analysis</h4>
-                                <span class="text-accent transition-transform" data-chevron>▼</span>
+                                <span class="text-accent transition-transform rotate-180" data-chevron>▼</span>
                             </div>
-                            <div class="hidden mt-3 text-muted-foreground" data-content>
+                            <div class="mt-3 text-muted-foreground" data-content>
                                 5 comprehensive bullet points covering all important aspects. Ideal for research and deep understanding.
                             </div>
                         </div>

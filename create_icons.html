@@ -17,9 +17,14 @@ function createIcon(size) {
   // Clear canvas
   ctx.clearRect(0, 0, size, size);
   
-  // Create rounded rectangle background
+  // Create rounded rectangle background with gradient
   const radius = size / 8;
-  ctx.fillStyle = '#4CAF50';
+  const gradient = ctx.createLinearGradient(0, 0, size, size);
+  gradient.addColorStop(0, 'hsl(260, 84%, 65%)');    // Purple
+  gradient.addColorStop(0.5, 'hsl(217, 91%, 60%)');  // Blue
+  gradient.addColorStop(1, 'hsl(14, 90%, 65%)');     // Coral
+  
+  ctx.fillStyle = gradient;
   ctx.beginPath();
   ctx.moveTo(radius, 0);
   ctx.lineTo(size - radius, 0);
@@ -33,12 +38,85 @@ function createIcon(size) {
   ctx.closePath();
   ctx.fill();
   
-  // Add 'E' letter
+  // Scale factor for consistent design across sizes
+  const scale = size / 128;
+  
+  // Draw circuit grid background (subtle)
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+  ctx.lineWidth = 0.5 * scale;
+  
+  // Horizontal grid lines
+  for (let i = 0.25; i <= 0.75; i += 0.25) {
+    ctx.beginPath();
+    ctx.moveTo(size * 0.15, size * i);
+    ctx.lineTo(size * 0.85, size * i);
+    ctx.stroke();
+  }
+  
+  // Vertical grid lines
+  for (let i = 0.25; i <= 0.75; i += 0.25) {
+    ctx.beginPath();
+    ctx.moveTo(size * i, size * 0.15);
+    ctx.lineTo(size * i, size * 0.85);
+    ctx.stroke();
+  }
+  
+  // Circuit nodes
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+  for (let x = 0.25; x <= 0.75; x += 0.25) {
+    for (let y = 0.25; y <= 0.75; y += 0.25) {
+      ctx.beginPath();
+      ctx.arc(size * x, size * y, 1 * scale, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+  }
+  
+  // Main T design - bold and visible
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 8 * scale;
+  ctx.lineCap = 'round';
+  
+  // Horizontal bar of T
+  ctx.beginPath();
+  ctx.moveTo(size * 0.25, size * 0.35);
+  ctx.lineTo(size * 0.75, size * 0.35);
+  ctx.stroke();
+  
+  // Vertical bar of T
+  ctx.beginPath();
+  ctx.moveTo(size * 0.5, size * 0.35);
+  ctx.lineTo(size * 0.5, size * 0.65);
+  ctx.stroke();
+  
+  // Connection points
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+  
+  // Left connection point
+  ctx.beginPath();
+  ctx.arc(size * 0.25, size * 0.35, 4 * scale, 0, 2 * Math.PI);
+  ctx.fill();
+  
+  // Right connection point
+  ctx.beginPath();
+  ctx.arc(size * 0.75, size * 0.35, 4 * scale, 0, 2 * Math.PI);
+  ctx.fill();
+  
+  // Bottom connection point
+  ctx.beginPath();
+  ctx.arc(size * 0.5, size * 0.65, 4 * scale, 0, 2 * Math.PI);
+  ctx.fill();
+  
+  // Central processing node - larger and more visible
   ctx.fillStyle = 'white';
-  ctx.font = `bold ${size/2}px Arial`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('E', size/2, size/2);
+  ctx.beginPath();
+  ctx.arc(size * 0.5, size * 0.35, 7 * scale, 0, 2 * Math.PI);
+  ctx.fill();
+  
+  // Inner accent circle
+  ctx.fillStyle = 'hsl(14, 90%, 65%)';
+  ctx.beginPath();
+  ctx.arc(size * 0.5, size * 0.35, 4 * scale, 0, 2 * Math.PI);
+  ctx.fill();
   
   // Download
   const link = document.createElement('a');

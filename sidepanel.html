@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="sidepanel_styles.css">
+  <script src="config.js"></script>
 </head>
 <body>
   <div class="container">
@@ -56,8 +57,8 @@
       </div>
     </div>
     
-    <!-- Extension Toggle -->
-    <div class="toggle-container">
+    <!-- Extension Toggle (only shown when authenticated) -->
+    <div id="extensionToggleSection" class="toggle-container hidden">
       <span style="font-weight: 500;">Extension Status</span>
       <label class="switch">
         <input type="checkbox" id="toggleSwitch">
@@ -67,11 +68,11 @@
     </div>
     
     
-    <!-- Page Info -->
+    <!-- Page Info (only shown when authenticated) -->
     <div id="pageInfo" class="page-info hidden"></div>
     
-    <!-- Action Buttons -->
-    <div>
+    <!-- Action Buttons (only shown when authenticated) -->
+    <div id="actionButtonsSection" class="hidden">
       <button id="highlightButton" class="btn-secondary">Highlight First Sentence</button>
       <div id="highlightedSentence" class="highlighted-sentence hidden"></div>
       <button id="analyzeButton" class="btn-purple hidden">Get Top 5 Purpose Sentences</button>

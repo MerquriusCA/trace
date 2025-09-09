@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+  const config = window.TRACE_CONFIG;
   const highlightButton = document.getElementById('highlightButton');
   const analyzeButton = document.getElementById('analyzeButton');
   const summarizeButton = document.getElementById('summarizeButton');
@@ -56,15 +57,16 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentUser = null;
 
   // Initialize authentication state
+  let authCheckTimeout = null;
   initializeAuth();
   
   // Initialize tab navigation
   initializeTabs();
   
-  // Fallback: If no auth response after 2 seconds, show login
-  setTimeout(function() {
+  // Set a timeout for auth check, but cancel it if auth succeeds
+  authCheckTimeout = setTimeout(function() {
     if (!isAuthenticated && loginSection.classList.contains('hidden')) {
-      console.log('🚨 Auth timeout - forcing login section display');
+      config.log('🚨 Auth timeout - forcing login section display');
       showLoginSection();
     }
   }, 2000);
@@ -156,6 +158,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Function to display current page info
   function displayCurrentPageInfo() {
+    // Only display page info if user is authenticated
+    if (!currentUser) {
+      pageInfo.classList.add('hidden');
+      return;
+    }
+    
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       if (tabs[0]) {
         // Check if URL has changed
@@ -180,6 +188,12 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function displayPageTitle(title) {
+    // Only show page info if user is authenticated
+    if (!currentUser) {
+      pageInfo.classList.add('hidden');
+      return;
+    }
+    
     pageInfo.innerHTML = `
       <h3 class="font-semibold text-gray-900 mb-1">Current Page:</h3>
       <p class="text-sm text-gray-600">${title || 'Unable to get page title'}</p>
@@ -218,19 +232,40 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   
-  // Handle analyze button
-  analyzeButton.addEventListener('click', function() {
+  // Handle analyze button with authentication check
+  analyzeButton.addEventListener('click', function(e) {
+    // Check authentication first
+    if (!isAuthenticated) {
+      e.preventDefault();
+      messageDiv.textContent = 'Please sign in to use AI features';
+      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+      setTimeout(() => {
+        messageDiv.textContent = '';
+      }, 3000);
+      return;
+    }
+    
+    // Check subscription status for AI features (allow special user)
+    if (currentUser && currentUser.subscription_status !== 'active' && currentUser.email !== 'david@merqurius.com') {
+      e.preventDefault();
+      messageDiv.textContent = 'Active subscription required for AI features';
+      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+      setTimeout(() => {
+        messageDiv.textContent = '';
+      }, 3000);
+      return;
+    }
     // Get current tab
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      console.log('Analyze - Query result tabs:', tabs);
+      config.log('Analyze - Query result tabs:', tabs);
       if (!tabs[0]) {
         messageDiv.textContent = 'Unable to get current tab';
         setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
         return;
       }
       
-      console.log('Analyze - Current tab:', tabs[0]);
-      console.log('Analyze - Tab ID:', tabs[0].id, 'Tab URL:', tabs[0].url);
+      config.log('Analyze - Current tab:', tabs[0]);
+      config.log('Analyze - Tab ID:', tabs[0].id, 'Tab URL:', tabs[0].url);
       
       // No URL restriction check - backend service will handle all URLs
       
@@ -290,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   messageDiv.textContent = 'Analysis complete! No sentences could be highlighted on this page.';
                   setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
                 }
-                console.log('Highlighting debug info:', highlightResponse.debug);
+                config.log('Highlighting debug info:', highlightResponse.debug);
               }
             });
           } else {
@@ -323,19 +358,40 @@ document.addEventListener('DOMContentLoaded', function() {
     return sentences;
   }
   
-  // Handle summarize button
-  summarizeButton.addEventListener('click', async function() {
+  // Handle summarize button with authentication check
+  summarizeButton.addEventListener('click', async function(e) {
+    // Check authentication first
+    if (!isAuthenticated) {
+      e.preventDefault();
+      messageDiv.textContent = 'Please sign in to use AI features';
+      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+      setTimeout(() => {
+        messageDiv.textContent = '';
+      }, 3000);
+      return;
+    }
+    
+    // Check subscription status for AI features (allow special user)
+    if (currentUser && currentUser.subscription_status !== 'active' && currentUser.email !== 'david@merqurius.com') {
+      e.preventDefault();
+      messageDiv.textContent = 'Active subscription required for AI features';
+      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+      setTimeout(() => {
+        messageDiv.textContent = '';
+      }, 3000);
+      return;
+    }
     // Get current tab
     chrome.tabs.query({active: true, currentWindow: true}, async function(tabs) {
-      console.log('Query result - tabs:', tabs);
+      config.log('Query result - tabs:', tabs);
       if (!tabs[0]) {
         messageDiv.textContent = 'Unable to get current tab';
         setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
         return;
       }
       
-      console.log('Current tab:', tabs[0]);
-      console.log('Tab ID:', tabs[0].id, 'Tab URL:', tabs[0].url);
+      config.log('Current tab:', tabs[0]);
+      config.log('Tab ID:', tabs[0].id, 'Tab URL:', tabs[0].url);
       
       // No URL restriction check - backend service will handle all URLs
       
@@ -484,7 +540,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Feedback button event listener - Open modal
   feedbackButton.addEventListener('click', function() {
-    console.log('🗨️ Opening feedback modal');
+    config.log('🗨️ Opening feedback modal');
     
     if (!isAuthenticated || !currentUser) {
       messageDiv.textContent = 'Please sign in to send feedback';
@@ -617,14 +673,20 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Authentication Functions
   function initializeAuth() {
-    console.log('🔄 Initializing authentication...');
+    config.log('🔄 Initializing authentication...');
     
     // Check authentication status
     chrome.runtime.sendMessage({action: 'checkAuth'}, function(response) {
-      console.log('Auth check response:', response);
+      config.log('Auth check response:', response);
+      
+      // Clear the auth timeout since we got a response
+      if (authCheckTimeout) {
+        clearTimeout(authCheckTimeout);
+        authCheckTimeout = null;
+      }
       
       if (response && response.authenticated) {
-        console.log('✅ User is authenticated:', response.user);
+        config.log('✅ User is authenticated:', response.user);
         isAuthenticated = true;
         currentUser = response.user;
         showUserSection();
@@ -633,7 +695,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Check if user needs onboarding
         checkOnboardingStatus();
       } else {
-        console.log('❌ User not authenticated, showing login');
+        config.log('❌ User not authenticated, showing login');
         isAuthenticated = false;
         currentUser = null;
         showLoginSection();
@@ -644,13 +706,13 @@ document.addEventListener('DOMContentLoaded', function() {
   function checkOnboardingStatus() {
     // Check if onboarding has been completed
     chrome.storage.sync.get(['onboardingCompleted', 'userPreferences'], function(result) {
-      console.log('Onboarding status:', result);
+      config.log('Onboarding status:', result);
       
       if (!result.onboardingCompleted) {
-        console.log('🎯 Starting onboarding for new user');
+        config.log('🎯 Starting onboarding for new user');
         startOnboarding();
       } else {
-        console.log('✅ Onboarding already completed');
+        config.log('✅ Onboarding already completed');
         // Load user preferences if available
         if (result.userPreferences) {
           applyUserPreferences(result.userPreferences);
@@ -669,12 +731,12 @@ document.addEventListener('DOMContentLoaded', function() {
       left: Math.round((screen.availWidth - 380) / 2),
       top: Math.round((screen.availHeight - 620) / 2)
     }, function(window) {
-      console.log('🚀 Onboarding window opened');
+      config.log('🚀 Onboarding window opened');
     });
   }
   
   function applyUserPreferences(preferences) {
-    console.log('⚙️ Applying user preferences:', preferences);
+    config.log('⚙️ Applying user preferences:', preferences);
     
     // Apply summary style preferences to UI elements
     if (preferences.summaryStyle) {
@@ -692,7 +754,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Sync preferences with backend if authenticated
     if (isAuthenticated && preferences.summaryStyle) {
-      console.log('🔄 Syncing onboarding preferences with backend...');
+      config.log('🔄 Syncing onboarding preferences with backend...');
       chrome.runtime.sendMessage({
         action: 'savePreferences',
         preferences: {
@@ -702,19 +764,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }, function(response) {
         if (response && response.success) {
-          console.log('✅ Onboarding preferences synced with backend');
+          config.log('✅ Onboarding preferences synced with backend');
         } else {
-          console.log('⚠️ Could not sync preferences with backend:', response?.error);
+          config.log('⚠️ Could not sync preferences with backend:', response?.error);
         }
       });
     }
   }
   
   function showLoginSection() {
-    console.log('🔑 Showing login section');
+    config.log('🔑 Showing login section');
     loginSection.classList.remove('hidden');
     userSection.classList.add('hidden');
     userProfileBottom.classList.add('hidden');
+    
+    // Hide extension toggle when not authenticated
+    const extensionToggleSection = document.getElementById('extensionToggleSection');
+    if (extensionToggleSection) {
+      extensionToggleSection.classList.add('hidden');
+    }
+    
+    // Hide page info when not authenticated
+    const pageInfo = document.getElementById('pageInfo');
+    if (pageInfo) {
+      pageInfo.classList.add('hidden');
+    }
+    
+    // Hide action buttons when not authenticated
+    const actionButtonsSection = document.getElementById('actionButtonsSection');
+    if (actionButtonsSection) {
+      actionButtonsSection.classList.add('hidden');
+    }
     
     // Hide AI features when not authenticated
     analyzeButton.classList.add('hidden');
@@ -728,8 +808,8 @@ document.addEventListener('DOMContentLoaded', function() {
       showMainView();
     }
     
-    console.log('Login section classes:', loginSection.className);
-    console.log('User section classes:', userSection.className);
+    config.log('Login section classes:', loginSection.className);
+    config.log('User section classes:', userSection.className);
   }
   
   function showUserSection() {
@@ -737,17 +817,29 @@ document.addEventListener('DOMContentLoaded', function() {
     userSection.classList.remove('hidden');
     userProfileBottom.classList.remove('hidden');
     
+    // Show extension toggle when authenticated
+    const extensionToggleSection = document.getElementById('extensionToggleSection');
+    if (extensionToggleSection) {
+      extensionToggleSection.classList.remove('hidden');
+    }
+    
+    // Show action buttons when authenticated
+    const actionButtonsSection = document.getElementById('actionButtonsSection');
+    if (actionButtonsSection) {
+      actionButtonsSection.classList.remove('hidden');
+    }
+    
     // Show settings tab when authenticated
     settingsTabButton.classList.remove('hidden');
     
     if (currentUser) {
-      console.log('📸 Setting user avatar from Google picture:', currentUser.picture);
+      config.log('📸 Setting user avatar from Google picture:', currentUser.picture);
       
       // Set Google profile picture for bottom profile
       if (currentUser.picture) {
         userAvatarBottom.src = currentUser.picture;
         userAvatarBottom.onerror = function() {
-          console.log('❌ Failed to load Google profile picture, using fallback');
+          config.log('❌ Failed to load Google profile picture, using fallback');
           userAvatarBottom.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNFMEUwRTAiLz4KPHBhdGggZD0iTTE2IDE2QzE4LjIwOTEgMTYgMjAgMTQuMjA5MSAyMCAxMkMyMCA5Ljc5MDg2IDE4LjIwOTEgOCAxNiA4QzEzLjc5MDkgOCAxMiA5Ljc5MDg2IDEyIDEyQzEyIDE0LjIwOTEgMTMuNzkwOSAxNiAxNiAxNloiIGZpbGw9IiM5RTlFOUUiLz4KPHBhdGggZD0iTTI0IDI2QzI0IDIxLjU4MTcgMjAuNDE4MyAxOCAxNiAxOEMxMS41ODE3IDE4IDggMjEuNTgxNyA4IDI2IiBmaWxsPSIjOUU5RTlFIi8+Cjwvc3ZnPg==';
         };
       } else {
@@ -837,7 +929,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const upgradeBtn = document.getElementById('upgradeButton');
       if (upgradeBtn) {
         upgradeBtn.addEventListener('click', function() {
-          console.log('Upgrade button clicked');
+          config.log('Upgrade button clicked');
           startSubscription();
         });
       }
@@ -916,8 +1008,8 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Define subscription management functions
   function startSubscription() {
-    console.log('🔥 startSubscription called');
-    const priceId = 'price_1RrNm2Ktat2K2WuILiZCzn4M'; // Updated Stripe price ID
+    config.log('🔥 startSubscription called');
+    const priceId = config.stripe.priceId; // Get from config
     
     // Production  const priceId = 'price_1RpIEaKtat2K2WuIYhlyXSrE'; // Replace with actual Stripe price ID
     // Test const priceId = 'price_1RrNm2Ktat2K2WuILiZCzn4M'; // Updated Stripe price ID
@@ -1101,54 +1193,7 @@ document.addEventListener('DOMContentLoaded', function() {
     chrome.tabs.create({ url: 'https://billing.stripe.com/p/login/test_your_portal_link' });
   };
   
-  // Update analyze and summarize button handlers to check authentication
-  const originalAnalyzeHandler = analyzeButton.onclick;
-  analyzeButton.addEventListener('click', function(e) {
-    if (!isAuthenticated) {
-      e.preventDefault();
-      messageDiv.textContent = 'Please sign in to use AI features';
-      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-      setTimeout(() => {
-        messageDiv.textContent = '';
-      }, 3000);
-      return;
-    }
-    
-    // Check subscription status for AI features (allow special user)
-    if (currentUser && currentUser.subscription_status !== 'active' && currentUser.email !== 'david@merqurius.com') {
-      e.preventDefault();
-      messageDiv.textContent = 'Active subscription required for AI features';
-      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-      setTimeout(() => {
-        messageDiv.textContent = '';
-      }, 3000);
-      return;
-    }
-  });
-  
-  const originalSummarizeHandler = summarizeButton.onclick;
-  summarizeButton.addEventListener('click', function(e) {
-    if (!isAuthenticated) {
-      e.preventDefault();
-      messageDiv.textContent = 'Please sign in to use AI features';
-      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-      setTimeout(() => {
-        messageDiv.textContent = '';
-      }, 3000);
-      return;
-    }
-    
-    // Check subscription status for AI features (allow special user)
-    if (currentUser && currentUser.subscription_status !== 'active' && currentUser.email !== 'david@merqurius.com') {
-      e.preventDefault();
-      messageDiv.textContent = 'Active subscription required for AI features';
-      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-      setTimeout(() => {
-        messageDiv.textContent = '';
-      }, 3000);
-      return;
-    }
-  });
+  // Note: Authentication checks are now integrated directly into the button click handlers above
   
   // Function to jump to a specific sentence on the page
   window.jumpToSentence = function(sentenceIndex) {
