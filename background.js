@@ -86,11 +86,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     case 'getSubscriptionStatus':
       getSubscriptionStatus(sendResponse);
       return true;
-      
+
     case 'createCheckoutSession':
       createCheckoutSession(request.priceId, sendResponse);
       return true;
-      
+
     case 'refreshSubscriptionStatus':
       refreshSubscriptionStatus(sendResponse);
       return true;
@@ -356,7 +356,7 @@ async function getSubscriptionStatus(sendResponse) {
     const backendUrl = `${config.getBackendUrl()}${config.api.subscription.status}`;
     config.log('🔗 API CALL: Get Subscription Status');
     config.log('📍 Endpoint:', backendUrl);
-    
+
     const response = await fetch(backendUrl, {
       headers: {
         'Authorization': `Bearer ${authToken}`
@@ -374,6 +374,7 @@ async function getSubscriptionStatus(sendResponse) {
     sendResponse({ success: false, error: error.message });
   }
 }
+
 
 async function createCheckoutSession(priceId, sendResponse) {
   if (!authToken) {

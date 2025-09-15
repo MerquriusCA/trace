@@ -922,7 +922,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (cachedPrice) {
       return cachedPrice;
     }
-    
+
     try {
       const response = await fetch(`${config.getBackendUrl()}/api/subscription/price`);
       if (response.ok) {
@@ -936,10 +936,10 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (error) {
       config.error('❌ Error fetching subscription price:', error);
     }
-    
+
     // Fallback to default price
     return {
-      display: '$9.99/month',
+      display: '$9.99/month (fallback)',
       formatted_amount: 9.99,
       interval: 'month'
     };

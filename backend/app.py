@@ -589,8 +589,8 @@ def get_subscription_price():
         if not stripe or not stripe.api_key:
             return jsonify({'success': False, 'error': 'Stripe not configured'}), 500
         
-        # Get the price ID from config
-        price_id = 'price_1RpIEaKtat2K2WuIYhlyXSrE'  # Production price ID
+        # Get the price ID from environment variable
+        price_id = os.environ.get('STRIPE_PRICE_ID', 'price_1RpIEaKtat2K2WuIYhlyXSrE')
         
         print(f"🔍 Fetching price details for: {price_id}")
         
@@ -1670,7 +1670,13 @@ def admin_get_all_users(current_user):
             if subscription_status == 'active':
                 subscription_plan = 'Pro'
                 active_subscriptions += 1
-                monthly_revenue += 9.99  # Assuming $9.99/month
+                # Get actual price from Stripe instead of hardcoded value
+                try:
+                    price_id = os.environ.get('STRIPE_PRICE_ID', 'price_1RpIEaKtat2K2WuIYhlyXSrE')
+                    price = stripe.Price.retrieve(price_id)
+                    monthly_revenue += (price.unit_amount / 100) if price.unit_amount else 9.99
+                except:
+                    monthly_revenue += 9.99  # Fallback
             elif subscription_status == 'trialing':
                 subscription_status = 'trial'
                 subscription_plan = 'Trial'
