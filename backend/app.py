@@ -582,6 +582,68 @@ def subscription_status(current_user):
         }
     })
 
+@app.route('/api/subscription/price', methods=['GET'])
+def get_subscription_price():
+    """Get the subscription price from Stripe"""
+    try:
+        if not stripe or not stripe.api_key:
+            return jsonify({'success': False, 'error': 'Stripe not configured'}), 500
+        
+        # Get the price ID from config
+        price_id = 'price_1RpIEaKtat2K2WuIYhlyXSrE'  # Production price ID
+        
+        print(f"🔍 Fetching price details for: {price_id}")
+        
+        import requests
+        headers = {
+            'Authorization': f'Bearer {stripe.api_key}',
+            'Stripe-Version': '2023-10-16'
+        }
+        
+        # Get price details from Stripe
+        price_response = requests.get(
+            f'https://api.stripe.com/v1/prices/{price_id}',
+            headers=headers
+        )
+        
+        if price_response.status_code != 200:
+            print(f"❌ Failed to fetch price: {price_response.status_code}")
+            return jsonify({'success': False, 'error': 'Failed to fetch price from Stripe'}), 500
+        
+        price_data = price_response.json()
+        
+        # Extract price information
+        amount = price_data.get('unit_amount', 0)
+        currency = price_data.get('currency', 'usd')
+        recurring = price_data.get('recurring', {})
+        interval = recurring.get('interval', 'month') if recurring else 'one-time'
+        
+        # Convert amount from cents to dollars
+        price_amount = amount / 100
+        
+        # Format price display
+        price_display = f"${price_amount:.2f}"
+        if interval != 'one-time':
+            price_display += f"/{interval}"
+        
+        print(f"✅ Price fetched: {price_display}")
+        
+        return jsonify({
+            'success': True,
+            'price': {
+                'id': price_id,
+                'amount': amount,
+                'currency': currency,
+                'display': price_display,
+                'interval': interval,
+                'formatted_amount': price_amount
+            }
+        })
+        
+    except Exception as e:
+        print(f"❌ Error fetching price: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/subscription/refresh', methods=['POST'])
 @require_auth
 def refresh_subscription_status(current_user):

@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentPageUrl = null;
   let isAuthenticated = false;
   let currentUser = null;
+  let cachedPrice = null; // Cache for subscription price
 
   // Initialize authentication state
   let authCheckTimeout = null;
@@ -905,18 +906,54 @@ document.addEventListener('DOMContentLoaded', function() {
   function loadSubscriptionStatus() {
     if (!isAuthenticated) return;
     
-    chrome.runtime.sendMessage({action: 'getSubscriptionStatus'}, function(response) {
+    chrome.runtime.sendMessage({action: 'getSubscriptionStatus'}, async function(response) {
       if (response && response.success) {
         const subscription = response.subscription;
-        updateSubscriptionUI(subscription);
+        await updateSubscriptionUI(subscription);
       } else {
         // Default to inactive if can't get status
-        updateSubscriptionUI({ status: 'inactive' });
+        await updateSubscriptionUI({ status: 'inactive' });
       }
     });
   }
   
-  function updateSubscriptionUI(subscription) {
+  // Function to fetch subscription price from backend
+  async function fetchSubscriptionPrice() {
+    if (cachedPrice) {
+      return cachedPrice;
+    }
+    
+    try {
+      const response = await fetch(`${config.getBackendUrl()}/api/subscription/price`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.price) {
+          cachedPrice = data.price;
+          config.log('✅ Subscription price fetched:', data.price.display);
+          return data.price;
+        }
+      }
+    } catch (error) {
+      config.error('❌ Error fetching subscription price:', error);
+    }
+    
+    // Fallback to default price
+    return {
+      display: '$9.99/month',
+      formatted_amount: 9.99,
+      interval: 'month'
+    };
+  }
+  
+  // Helper function to update subscribe button text with dynamic price
+  async function updateSubscribeButtonText(button) {
+    if (button) {
+      const priceInfo = await fetchSubscriptionPrice();
+      button.textContent = `Upgrade to Pro - ${priceInfo.display}`;
+    }
+  }
+  
+  async function updateSubscriptionUI(subscription) {
     const status = subscription.status || 'inactive';
     
     // Clear existing content
@@ -925,6 +962,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Check if user is whitelisted
     const isWhitelisted = currentUser && config.whitelist.isWhitelisted(currentUser.email);
+    
+    // Fetch dynamic price
+    const priceInfo = await fetchSubscriptionPrice();
     
     // Update subscription status display
     if (status === 'active') {
@@ -946,7 +986,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Show purchase button for whitelisted users to convert to paid
       subscriptionActions.innerHTML = `
         <button class="subscribe-button" id="upgradeButton">
-          Upgrade to Pro - $9.99/month
+          Upgrade to Pro - ${priceInfo.display}
         </button>
       `;
     } else if (status === 'past_due') {
@@ -1084,7 +1124,7 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('⏰ Request timeout - re-enabling button');
       if (subscribeButton) {
         subscribeButton.disabled = false;
-        subscribeButton.textContent = 'Upgrade to Pro - $9.99/month';
+        updateSubscribeButtonText(subscribeButton);
       }
       messageDiv.textContent = 'Request timed out. Please try again.';
       setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
@@ -1104,7 +1144,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Re-enable button on error
         if (subscribeButton) {
           subscribeButton.disabled = false;
-          subscribeButton.textContent = 'Upgrade to Pro - $9.99/month';
+          updateSubscribeButtonText(subscribeButton);
         }
         return;
       }
@@ -1116,7 +1156,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Re-enable button
         if (subscribeButton) {
           subscribeButton.disabled = false;
-          subscribeButton.textContent = 'Upgrade to Pro - $9.99/month';
+          updateSubscribeButtonText(subscribeButton);
         }
         return;
       }
@@ -1163,7 +1203,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearInterval(checkInterval);
                 // Reset button to original state
                 if (subscribeButton) {
-                  subscribeButton.textContent = 'Upgrade to Pro - $9.99/month';
+                  updateSubscribeButtonText(subscribeButton);
                 }
               }
             });
@@ -1177,7 +1217,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Re-enable button on error
         if (subscribeButton) {
           subscribeButton.disabled = false;
-          subscribeButton.textContent = 'Upgrade to Pro - $9.99/month';
+          updateSubscribeButtonText(subscribeButton);
         }
       }
       
@@ -1375,26 +1415,29 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    chrome.runtime.sendMessage({action: 'getSubscriptionStatus'}, function(response) {
+    chrome.runtime.sendMessage({action: 'getSubscriptionStatus'}, async function(response) {
       if (response && response.success) {
         const subscription = response.subscription;
-        updateSubscriptionSettingsUI(subscription);
+        await updateSubscriptionSettingsUI(subscription);
       } else {
         // Default to inactive if can't get status
-        updateSubscriptionSettingsUI({ status: 'inactive' });
+        await updateSubscriptionSettingsUI({ status: 'inactive' });
       }
     });
   }
   
-  function updateSubscriptionSettingsUI(subscription) {
+  async function updateSubscriptionSettingsUI(subscription) {
     // Use the same logic as the main view for consistency
     const status = subscription.status || 'inactive';
     const isWhitelisted = currentUser && config.whitelist.isWhitelisted(currentUser.email);
     
+    // Fetch dynamic price
+    const priceInfo = await fetchSubscriptionPrice();
+    
     if (status === 'active') {
       subscriptionStatusSettings.textContent = '✅ Active Subscription';
       subscriptionStatusSettings.className = 'subscription-status subscription-active';
-      subscriptionPlan.textContent = 'Pro Plan - $9.99/month • Access to all AI features';
+      subscriptionPlan.textContent = `Pro Plan - ${priceInfo.display} • Access to all AI features`;
       
       // Show subscription management buttons for active users
       resetSubscriptionButton.style.display = 'flex';
