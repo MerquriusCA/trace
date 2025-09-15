@@ -38,13 +38,18 @@ except ImportError as e:
     print(f"❌ Failed to import Stripe: {e}")
     stripe = None
 
-# Load environment variables from .env file
-load_dotenv()
-
-# Detect environment
+# Detect environment first (Railway sets these variables)
 is_railway = bool(os.getenv('RAILWAY_ENVIRONMENT_ID') or os.getenv('RAILWAY_PROJECT_ID'))
+
+# Only load .env files for local development (not on Railway)
+if not is_railway:
+    load_dotenv()
+    print("🔧 Loaded local .env file for development")
+else:
+    print("🚀 Running on Railway - using environment variables only")
+
 environment = 'railway' if is_railway else 'local'
-print(f"🚀 Environment: {environment}")
+print(f"🌍 Environment: {environment}")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
