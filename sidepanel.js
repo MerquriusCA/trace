@@ -97,8 +97,8 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (isEnabled) {
         displayCurrentPageInfo();
-        // Show analyze button if authenticated and (subscription is active OR special user)
-        if (isAuthenticated && currentUser && (currentUser.subscription_status === 'active' || currentUser.email === 'david@merqurius.com')) {
+        // Show analyze button if authenticated and (subscription is active OR whitelisted user)
+        if (isAuthenticated && currentUser && (currentUser.subscription_status === 'active' || config.whitelist.isWhitelisted(currentUser.email))) {
           analyzeButton.classList.remove('hidden');
           summarizeButton.classList.remove('hidden');
         }
@@ -259,8 +259,8 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    // Check subscription status for AI features (allow special user)
-    if (currentUser && currentUser.subscription_status !== 'active' && currentUser.email !== 'david@merqurius.com') {
+    // Check subscription status for AI features (allow whitelisted users)
+    if (currentUser && currentUser.subscription_status !== 'active' && !config.whitelist.isWhitelisted(currentUser.email)) {
       e.preventDefault();
       messageDiv.textContent = 'Active subscription required for AI features';
       setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
@@ -385,8 +385,8 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    // Check subscription status for AI features (allow special user)
-    if (currentUser && currentUser.subscription_status !== 'active' && currentUser.email !== 'david@merqurius.com') {
+    // Check subscription status for AI features (allow whitelisted users)
+    if (currentUser && currentUser.subscription_status !== 'active' && !config.whitelist.isWhitelisted(currentUser.email)) {
       e.preventDefault();
       messageDiv.textContent = 'Active subscription required for AI features';
       setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
@@ -889,9 +889,9 @@ document.addEventListener('DOMContentLoaded', function() {
       // Load user preferences from backend when user signs in
       loadUserPreferences();
       
-      // Show AI features if extension is enabled AND (user has active subscription OR special user)
+      // Show AI features if extension is enabled AND (user has active subscription OR whitelisted user)
       chrome.storage.local.get(['extensionEnabled'], function(result) {
-        if (result.extensionEnabled !== false && (currentUser.subscription_status === 'active' || currentUser.email === 'david@merqurius.com')) {
+        if (result.extensionEnabled !== false && (currentUser.subscription_status === 'active' || config.whitelist.isWhitelisted(currentUser.email))) {
           analyzeButton.classList.remove('hidden');
           summarizeButton.classList.remove('hidden');
         } else {
@@ -923,6 +923,9 @@ document.addEventListener('DOMContentLoaded', function() {
     subscriptionStatus.innerHTML = '';
     subscriptionActions.innerHTML = '';
     
+    // Check if user is whitelisted
+    const isWhitelisted = currentUser && config.whitelist.isWhitelisted(currentUser.email);
+    
     // Update subscription status display
     if (status === 'active') {
       subscriptionStatus.className = 'subscription-status active';
@@ -932,6 +935,20 @@ document.addEventListener('DOMContentLoaded', function() {
       `;
       
       subscriptionActions.innerHTML = '';
+    } else if (isWhitelisted) {
+      // Special display for whitelisted users
+      subscriptionStatus.className = 'subscription-status active';
+      subscriptionStatus.innerHTML = `
+        🎯 <strong>Preview Access</strong><br>
+        <small>Full access granted for evaluation</small>
+      `;
+      
+      // Show purchase button for whitelisted users to convert to paid
+      subscriptionActions.innerHTML = `
+        <button class="subscribe-button" id="upgradeButton">
+          Upgrade to Pro - $9.99/month
+        </button>
+      `;
     } else if (status === 'past_due') {
       subscriptionStatus.className = 'subscription-status expired';
       subscriptionStatus.innerHTML = `
