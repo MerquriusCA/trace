@@ -24,7 +24,8 @@
       "Bash(mv:*)",
       "Bash(railway whoami:*)",
       "Bash(railway status:*)",
-      "Bash(railway link:*)"
+      "Bash(railway link:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }

@@ -962,26 +962,24 @@ document.addEventListener('DOMContentLoaded', function() {
         </button>
       `;
     } else {
+      // Regular users (non-whitelisted) - NO purchase button
       subscriptionStatus.className = 'subscription-status inactive';
       subscriptionStatus.innerHTML = `
-        💡 <strong>Free Trial</strong><br>
-        <small>Upgrade to access AI features (Analyze & Summarize)</small>
+        🔒 <strong>Limited Access</strong><br>
+        <small>AI features are not available in this version</small>
       `;
       
-      subscriptionActions.innerHTML = `
-        <button class="subscribe-button" id="upgradeButton">
-          Upgrade to Pro - $9.99/month
-        </button>
-      `;
-      
-      // Add click handler for the upgrade button
-      const upgradeBtn = document.getElementById('upgradeButton');
-      if (upgradeBtn) {
-        upgradeBtn.addEventListener('click', function() {
-          config.log('Upgrade button clicked');
-          startSubscription();
-        });
-      }
+      // No purchase button for non-whitelisted users
+      subscriptionActions.innerHTML = '';
+    }
+    
+    // Add click handler for upgrade button (only exists for whitelisted users)
+    const upgradeBtn = document.getElementById('upgradeButton');
+    if (upgradeBtn) {
+      upgradeBtn.addEventListener('click', function() {
+        config.log('Upgrade button clicked');
+        startSubscription();
+      });
     }
   }
   
@@ -1391,6 +1389,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateSubscriptionSettingsUI(subscription) {
     // Use the same logic as the main view for consistency
     const status = subscription.status || 'inactive';
+    const isWhitelisted = currentUser && config.whitelist.isWhitelisted(currentUser.email);
     
     if (status === 'active') {
       subscriptionStatusSettings.textContent = '✅ Active Subscription';
@@ -1400,6 +1399,15 @@ document.addEventListener('DOMContentLoaded', function() {
       // Show subscription management buttons for active users
       resetSubscriptionButton.style.display = 'flex';
       cancelSubscriptionButton.style.display = 'block';
+    } else if (isWhitelisted) {
+      // Special display for whitelisted users in settings
+      subscriptionStatusSettings.textContent = '🎯 Preview Access';
+      subscriptionStatusSettings.className = 'subscription-status subscription-active';
+      subscriptionPlan.textContent = 'Full access granted for evaluation • Upgrade available';
+      
+      // Hide subscription management buttons for preview users
+      resetSubscriptionButton.style.display = 'none';
+      cancelSubscriptionButton.style.display = 'none';
     } else if (status === 'past_due') {
       subscriptionStatusSettings.textContent = '⚠️ Payment Required';
       subscriptionStatusSettings.className = 'subscription-status subscription-inactive';
@@ -1409,11 +1417,12 @@ document.addEventListener('DOMContentLoaded', function() {
       resetSubscriptionButton.style.display = 'flex';
       cancelSubscriptionButton.style.display = 'block';
     } else {
-      subscriptionStatusSettings.textContent = '💡 Free Trial';
+      // Regular users (non-whitelisted) - Limited access message
+      subscriptionStatusSettings.textContent = '🔒 Limited Access';
       subscriptionStatusSettings.className = 'subscription-status subscription-trial';
-      subscriptionPlan.textContent = 'Upgrade to Pro to access AI features (Analyze & Summarize)';
+      subscriptionPlan.textContent = 'AI features are not available in this version';
       
-      // Hide subscription management buttons for free trial users
+      // Hide subscription management buttons for limited access users
       resetSubscriptionButton.style.display = 'none';
       cancelSubscriptionButton.style.display = 'none';
     }
