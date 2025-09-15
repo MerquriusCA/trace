@@ -1058,8 +1058,8 @@ document.addEventListener('DOMContentLoaded', function() {
     config.log('🔥 startSubscription called');
     const priceId = config.stripe.priceId; // Get from config
     
-    // Production  const priceId = 'price_1RpIEaKtat2K2WuIYhlyXSrE'; // Replace with actual Stripe price ID
-    // Test const priceId = 'price_1RrNm2Ktat2K2WuILiZCzn4M'; // Updated Stripe price ID
+    // Using production price ID from config: price_1RpIEaKtat2K2WuIYhlyXSrE
+    // Test price ID available: price_1RrNm2Ktat2K2WuILiZCzn4M
 
 
     // Disable button to prevent double-clicks

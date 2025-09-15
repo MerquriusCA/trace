@@ -34,8 +34,8 @@ const CONFIG = {
   
   // Stripe configuration
   stripe: {
-    priceId: 'price_1RrNm2Ktat2K2WuILiZCzn4M' // Test price ID
-    // Production: 'price_1RpIEaKtat2K2WuIYhlyXSrE'
+    priceId: 'price_1RpIEaKtat2K2WuIYhlyXSrE' // Production price ID
+    // Test: 'price_1RrNm2Ktat2K2WuILiZCzn4M'
   },
   
   // Whitelist configuration - users who can see purchase button without subscription
