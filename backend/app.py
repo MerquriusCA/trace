@@ -1751,10 +1751,21 @@ def admin_get_products(current_user):
             products_with_prices.append(product_data)
         
         print(f"✅ Successfully processed {len(products_with_prices)} products with prices")
+        
+        # Get abbreviated keys for debugging
+        secret_key_abbrev = stripe.api_key[:12] + "..." if stripe.api_key else "Not set"
+        publishable_key = os.getenv('STRIPE_PUBLISHABLE_KEY', '')
+        publishable_key_abbrev = publishable_key[:12] + "..." if publishable_key else "Not set"
+        
         return jsonify({
             'success': True,
             'products': products_with_prices,
-            'count': len(products_with_prices)
+            'count': len(products_with_prices),
+            'debug_info': {
+                'secret_key': secret_key_abbrev,
+                'publishable_key': publishable_key_abbrev,
+                'environment': 'test' if 'test' in stripe.api_key else 'live' if 'live' in stripe.api_key else 'unknown'
+            }
         })
         
     except requests.exceptions.RequestException as e:

@@ -168,6 +168,18 @@
                     </div>
                 </div>
                 
+                <!-- Debug Info (populated by JavaScript) -->
+                <div id="debugInfo" class="hidden mb-6">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <span class="text-blue-600 text-sm font-medium">🔧 Stripe Configuration Debug</span>
+                        </div>
+                        <div class="text-sm text-blue-800" id="debugContent">
+                            <!-- Debug info will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Products Grid (populated by JavaScript) -->
                 <div id="productsGrid" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     <!-- Products will be inserted here by JavaScript -->
@@ -254,6 +266,7 @@
                 
                 if (data.success && data.products) {
                     displayProducts(data.products);
+                    displayDebugInfo(data.debug_info);
                 } else {
                     throw new Error(data.error || 'Failed to load products');
                 }
@@ -344,6 +357,31 @@
                     </div>
                 </div>
             `).join('');
+        }
+        
+        function displayDebugInfo(debugInfo) {
+            const debugElement = document.getElementById('debugInfo');
+            const debugContent = document.getElementById('debugContent');
+            
+            if (debugInfo) {
+                debugContent.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <span class="font-medium">Secret Key:</span><br>
+                            <span class="font-mono text-xs">${debugInfo.secret_key}</span>
+                        </div>
+                        <div>
+                            <span class="font-medium">Publishable Key:</span><br>
+                            <span class="font-mono text-xs">${debugInfo.publishable_key}</span>
+                        </div>
+                        <div>
+                            <span class="font-medium">Environment:</span><br>
+                            <span class="font-mono text-xs ${debugInfo.environment === 'live' ? 'text-green-700 font-bold' : 'text-orange-700'}">${debugInfo.environment.toUpperCase()}</span>
+                        </div>
+                    </div>
+                `;
+                debugElement.classList.remove('hidden');
+            }
         }
     </script>
 </body>
