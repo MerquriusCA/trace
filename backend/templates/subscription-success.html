@@ -1,125 +1,634 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Subscription Successful!</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Trace Pro!</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: #f5f5f5;
+            padding: 20px;
         }
+
         .container {
-            text-align: center;
             background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .step {
+            display: none;
             padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            max-width: 500px;
+            text-align: center;
+            min-height: 500px;
         }
-        h1 {
-            color: #4CAF50;
-            margin-bottom: 20px;
+
+        .step.active {
+            display: block;
         }
+
+        .step-header {
+            margin-bottom: 32px;
+        }
+
+        .step-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .step-header h2 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #718096;
+            line-height: 1.5;
+        }
+
         .icon {
             font-size: 72px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
-        .message {
-            color: #666;
+
+        .feature-list {
+            display: grid;
+            gap: 20px;
+            margin: 32px 0;
+            text-align: left;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #f7fafc;
+            border-radius: 12px;
+        }
+
+        .feature-icon {
+            font-size: 32px;
+        }
+
+        .feature-item h3 {
             font-size: 18px;
-            line-height: 1.6;
-            margin-bottom: 30px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
         }
-        .button {
-            background: #4CAF50;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
+
+        .feature-item p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .preference-options {
+            display: grid;
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .preference-option {
+            display: block;
             cursor: pointer;
+        }
+
+        .preference-option input[type="radio"] {
+            display: none;
+        }
+
+        .preference-content {
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f7fafc;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .preference-option input[type="radio"]:checked + .preference-content {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .preference-option:hover .preference-content {
+            border-color: #cbd5e0;
+        }
+
+        .option-icon {
+            font-size: 24px;
+            margin-right: 12px;
+        }
+
+        .preference-content strong {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .preference-content p {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 32px;
+        }
+
+        .btn {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
             text-decoration: none;
             display: inline-block;
         }
-        .button:hover {
-            background: #45a049;
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #e2e8f0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #667eea;
+            transition: width 0.3s ease;
+        }
+
+        .final-content {
+            text-align: center;
+        }
+
+        .final-content .icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .next-steps {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        .next-steps h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .next-steps ol {
+            color: #4a5568;
+            font-size: 16px;
+            line-height: 1.6;
+            padding-left: 20px;
+        }
+
+        .next-steps li {
+            margin-bottom: 8px;
+        }
+
+        .demo-link {
+            background: #48bb78;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .demo-link:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                margin: 10px;
+            }
+
+            .step {
+                padding: 24px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="icon">🎉</div>
-        <h1>Welcome to Pro!</h1>
-        <p class="message">
-            Your subscription is now active. You have full access to all features!<br><br>
-            Please return to the Chrome extension to start using your Pro features.
-        </p>
-        <button class="button" onclick="closeTab()">Close This Tab</button>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+
+        <!-- Welcome Step -->
+        <div id="welcomeStep" class="step active">
+            <div class="step-header">
+                <div class="icon">🎉</div>
+                <h1>Welcome to Trace Pro!</h1>
+                <p class="subtitle">Your subscription is now active. Let's get you set up in just a few steps.</p>
+            </div>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <span class="feature-icon">✨</span>
+                    <div>
+                        <h3>Smart Summaries</h3>
+                        <p>Get AI-powered summaries of any webpage</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🎯</span>
+                    <div>
+                        <h3>Key Insights</h3>
+                        <p>Extract the most important sentences and purpose</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">⚡</span>
+                    <div>
+                        <h3>Instant Analysis</h3>
+                        <p>One-click analysis for faster reading</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="getStartedBtn" class="btn btn-primary">Get Started</button>
+            </div>
+        </div>
+
+        <!-- Reader Type Step -->
+        <div id="readerTypeStep" class="step">
+            <div class="step-header">
+                <h2>What best describes you?</h2>
+                <p class="subtitle">This helps us personalize your experience</p>
+            </div>
+
+            <div class="preference-options">
+                <label class="preference-option">
+                    <input type="radio" name="readerType" value="student" id="studentType">
+                    <div class="preference-content">
+                        <span class="option-icon">🎓</span>
+                        <strong>Student</strong>
+                        <p>K-12 or university student doing research and learning</p>
+                    </div>
+                </label>
+
+                <label class="preference-option">
+                    <input type="radio" name="readerType" value="business" id="businessType">
+                    <div class="preference-content">
+                        <span class="option-icon">💼</span>
+                        <strong>Business Professional</strong>
+                        <p>Working professional staying informed in my industry</p>
+                    </div>
+                </label>
+
+                <label class="preference-option">
+                    <input type="radio" name="readerType" value="researcher" id="researcherType">
+                    <div class="preference-content">
+                        <span class="option-icon">🔬</span>
+                        <strong>Researcher/Academic</strong>
+                        <p>Academic or professional researcher analyzing information</p>
+                    </div>
+                </label>
+
+                <label class="preference-option">
+                    <input type="radio" name="readerType" value="tech" id="techType">
+                    <div class="preference-content">
+                        <span class="option-icon">💻</span>
+                        <strong>Tech Professional</strong>
+                        <p>Developer or tech professional reading documentation</p>
+                    </div>
+                </label>
+
+                <label class="preference-option">
+                    <input type="radio" name="readerType" value="lifelong_learner" id="lifelongType" checked>
+                    <div class="preference-content">
+                        <span class="option-icon">📖</span>
+                        <strong>Lifelong Learner</strong>
+                        <p>Curious reader exploring diverse topics and ideas</p>
+                    </div>
+                </label>
+
+                <label class="preference-option">
+                    <input type="radio" name="readerType" value="creative" id="creativeType">
+                    <div class="preference-content">
+                        <span class="option-icon">🎨</span>
+                        <strong>Creative Professional</strong>
+                        <p>Writer, designer, or creative seeking inspiration</p>
+                    </div>
+                </label>
+            </div>
+
+            <div class="actions">
+                <button id="backToWelcomeBtn" class="btn btn-secondary">Back</button>
+                <button id="continueToLevelBtn" class="btn btn-primary">Continue</button>
+            </div>
+        </div>
+
+        <!-- Reading Level Step -->
+        <div id="readingLevelStep" class="step">
+            <div class="step-header">
+                <h2>How do you prefer your content?</h2>
+                <p class="subtitle">We'll adjust the complexity to match your preference</p>
+            </div>
+
+            <div class="preference-options">
+                <label class="preference-option">
+                    <input type="radio" name="readingLevel" value="simple" id="simpleLevel">
+                    <div class="preference-content">
+                        <span class="option-icon">🟢</span>
+                        <strong>Quick & Simple</strong>
+                        <p>Key points only - easy to scan and understand quickly</p>
+                    </div>
+                </label>
+
+                <label class="preference-option">
+                    <input type="radio" name="readingLevel" value="balanced" id="balancedLevel" checked>
+                    <div class="preference-content">
+                        <span class="option-icon">🟡</span>
+                        <strong>Clear & Balanced</strong>
+                        <p>Well-explained essentials with helpful context</p>
+                    </div>
+                </label>
+
+                <label class="preference-option">
+                    <input type="radio" name="readingLevel" value="detailed" id="detailedLevel">
+                    <div class="preference-content">
+                        <span class="option-icon">🔵</span>
+                        <strong>Detailed & Thorough</strong>
+                        <p>Complete understanding with nuance and depth</p>
+                    </div>
+                </label>
+
+                <label class="preference-option">
+                    <input type="radio" name="readingLevel" value="technical" id="technicalLevel">
+                    <div class="preference-content">
+                        <span class="option-icon">🟣</span>
+                        <strong>Technical & Expert</strong>
+                        <p>Full complexity with industry terms and technical details</p>
+                    </div>
+                </label>
+            </div>
+
+            <div class="actions">
+                <button id="backToTypeBtn" class="btn btn-secondary">Back</button>
+                <button id="continueToPrefsBtn" class="btn btn-primary">Continue</button>
+            </div>
+        </div>
+
+        <!-- Summary Preferences Step -->
+        <div id="preferencesStep" class="step">
+            <div class="step-header">
+                <h2>How would you like us to tailor our content for you?</h2>
+                <p class="subtitle">Choose your preferred summary style - you can change this anytime in Settings</p>
+            </div>
+
+            <div class="preference-options">
+                <label class="preference-option">
+                    <input type="radio" name="summaryStyle" value="quick" id="quickSummaryOnboard">
+                    <div class="preference-content">
+                        <strong>Quick Summary</strong>
+                        <p>Get the main point in 1 sentence - perfect for busy professionals</p>
+                    </div>
+                </label>
+
+                <label class="preference-option">
+                    <input type="radio" name="summaryStyle" value="eli8" id="eli8SummaryOnboard" checked>
+                    <div class="preference-content">
+                        <strong>Explain Like I'm 8</strong>
+                        <p>Simple and clear explanations that anyone can understand</p>
+                    </div>
+                </label>
+
+                <label class="preference-option">
+                    <input type="radio" name="summaryStyle" value="detailed" id="detailedSummaryOnboard">
+                    <div class="preference-content">
+                        <strong>Detailed Summary</strong>
+                        <p>Thorough breakdown in 5 bullet points for comprehensive understanding</p>
+                    </div>
+                </label>
+            </div>
+
+            <div class="actions">
+                <button id="backToLevelBtn" class="btn btn-secondary">Back</button>
+                <button id="finishOnboardingBtn" class="btn btn-primary">Complete Setup</button>
+            </div>
+        </div>
+
+        <!-- Final Thank You Step -->
+        <div id="completionStep" class="step">
+            <div class="final-content">
+                <div class="icon">🚀</div>
+                <h2>You're all set!</h2>
+                <p class="subtitle">Trace is now configured with your preferences and ready to enhance your browsing experience.</p>
+
+                <div class="next-steps">
+                    <h3>🎯 How to Use Trace:</h3>
+                    <ol>
+                        <li><strong>Navigate to any webpage</strong> you want to analyze</li>
+                        <li><strong>Click the Trace extension icon</strong> in your browser toolbar</li>
+                        <li><strong>Click "Summarize Page"</strong> to get an AI-powered summary</li>
+                        <li><strong>Use "Get Top 5 Purpose Sentences"</strong> for key insights</li>
+                    </ol>
+                </div>
+
+                <p style="color: #4a5568; font-size: 16px; margin: 20px 0;">
+                    🌟 <strong>Ready to try it out?</strong> Here's a great article to test your new AI powers:
+                </p>
+
+                <a href="https://www.nature.com/articles/d41586-025-03007-6" target="_blank" class="demo-link">
+                    📖 Try Trace on this Nature Article
+                </a>
+
+                <div class="actions" style="margin-top: 32px;">
+                    <button id="closeTabBtn" class="btn btn-primary">Perfect! Close This Tab</button>
+                </div>
+
+                <p style="color: #718096; font-size: 14px; margin-top: 16px;">
+                    Thank you for subscribing! Happy browsing with Trace. 🎉
+                </p>
+            </div>
+        </div>
     </div>
-    
+
     <script>
-        function closeTab() {
-            // Try multiple methods to close the tab
+        // Onboarding flow state
+        let currentStep = 0;
+        const steps = ['welcomeStep', 'readerTypeStep', 'readingLevelStep', 'preferencesStep', 'completionStep'];
+
+        // User preferences
+        const userPreferences = {
+            reader_type: 'lifelong_learner',
+            reading_level: 'balanced',
+            summary_style: 'eli8',
+            auto_summarize_enabled: false,
+            notifications_enabled: true
+        };
+
+        // Update progress bar
+        function updateProgress() {
+            const progress = (currentStep / (steps.length - 1)) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Show step
+        function showStep(stepIndex) {
+            // Hide all steps
+            steps.forEach(stepId => {
+                document.getElementById(stepId).classList.remove('active');
+            });
+
+            // Show current step
+            document.getElementById(steps[stepIndex]).classList.add('active');
+            currentStep = stepIndex;
+            updateProgress();
+        }
+
+        // Save preferences to extension
+        async function savePreferences() {
+            // Get selected values
+            const readerType = document.querySelector('input[name="readerType"]:checked')?.value || 'lifelong_learner';
+            const readingLevel = document.querySelector('input[name="readingLevel"]:checked')?.value || 'balanced';
+            const summaryStyle = document.querySelector('input[name="summaryStyle"]:checked')?.value || 'eli8';
+
+            userPreferences.reader_type = readerType;
+            userPreferences.reading_level = readingLevel;
+            userPreferences.summary_style = summaryStyle;
+
+            // Save to local storage (chrome extension will sync this)
             try {
-                // Method 1: Direct close
-                window.close();
-                
-                // Method 2: If that doesn't work, try closing parent
-                if (window.opener) {
-                    window.opener.focus();
-                    window.close();
-                }
-                
-                // Method 3: Navigate back if close doesn't work
-                setTimeout(() => {
-                    if (!window.closed) {
-                        // Show message that tab needs to be closed manually
-                        document.querySelector('.container').innerHTML = `
-                            <div class="icon">✅</div>
-                            <h1>All Set!</h1>
-                            <p class="message">
-                                Your subscription is active!<br><br>
-                                <strong>Please manually close this tab and return to the Chrome extension.</strong>
-                            </p>
-                        `;
-                    }
-                }, 1000);
-                
-            } catch (e) {
-                console.log('Tab close failed:', e);
-                // Show manual close message
-                document.querySelector('.container').innerHTML = `
-                    <div class="icon">✅</div>
-                    <h1>All Set!</h1>
-                    <p class="message">
-                        Your subscription is active!<br><br>
-                        <strong>Please manually close this tab and return to the Chrome extension.</strong>
-                    </p>
-                `;
+                localStorage.setItem('traceOnboardingComplete', 'true');
+                localStorage.setItem('traceUserPreferences', JSON.stringify(userPreferences));
+                console.log('Preferences saved:', userPreferences);
+            } catch (error) {
+                console.error('Error saving preferences:', error);
             }
         }
-        
-        // Try to auto-close after 3 seconds
-        setTimeout(() => {
-            closeTab();
-        }, 3000);
-        
-        // Show countdown
-        let countdown = 3;
-        const button = document.querySelector('.button');
-        const interval = setInterval(() => {
-            if (countdown > 0) {
-                button.textContent = `Closing in ${countdown}s...`;
-                countdown--;
-            } else {
-                clearInterval(interval);
-                button.textContent = 'Close This Tab';
+
+        // Event listeners
+        document.getElementById('getStartedBtn').addEventListener('click', () => {
+            showStep(1);
+        });
+
+        document.getElementById('backToWelcomeBtn').addEventListener('click', () => {
+            showStep(0);
+        });
+
+        document.getElementById('continueToLevelBtn').addEventListener('click', () => {
+            showStep(2);
+        });
+
+        document.getElementById('backToTypeBtn').addEventListener('click', () => {
+            showStep(1);
+        });
+
+        document.getElementById('continueToPrefsBtn').addEventListener('click', () => {
+            showStep(3);
+        });
+
+        document.getElementById('backToLevelBtn').addEventListener('click', () => {
+            showStep(2);
+        });
+
+        document.getElementById('finishOnboardingBtn').addEventListener('click', async () => {
+            await savePreferences();
+            showStep(4);
+        });
+
+        document.getElementById('closeTabBtn').addEventListener('click', () => {
+            // Try to close the tab
+            try {
+                window.close();
+
+                // If close doesn't work, show instruction
+                setTimeout(() => {
+                    if (!window.closed) {
+                        document.getElementById('closeTabBtn').textContent = 'Please close this tab manually';
+                        document.getElementById('closeTabBtn').style.background = '#718096';
+                    }
+                }, 1000);
+            } catch (e) {
+                document.getElementById('closeTabBtn').textContent = 'Please close this tab manually';
+                document.getElementById('closeTabBtn').style.background = '#718096';
             }
-        }, 1000);
+        });
+
+        // Initialize
+        updateProgress();
+
+        // Auto-advance from welcome after a short delay to show the flow
+        setTimeout(() => {
+            // Uncomment if you want auto-advance: showStep(1);
+        }, 2000);
     </script>
 </body>
 </html>

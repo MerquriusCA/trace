@@ -1142,13 +1142,9 @@ document.addEventListener('DOMContentLoaded', function() {
             chrome.runtime.sendMessage({action: 'getSubscriptionStatus'}, function(statusResponse) {
               if (statusResponse && statusResponse.success && statusResponse.subscription.status === 'active') {
                 clearInterval(checkInterval);
-                messageDiv.innerHTML = '<strong>🎉 Subscription activated! Launching setup...</strong>';
-                // Launch onboarding flow for new subscribers
-                setTimeout(() => {
-                  startOnboarding();
-                  // Reload after a short delay to update UI
-                  setTimeout(() => location.reload(), 2000);
-                }, 500);
+                messageDiv.innerHTML = '<strong>🎉 Subscription activated! Refreshing...</strong>';
+                // Just reload to update UI - onboarding now happens in success tab
+                setTimeout(() => location.reload(), 1500);
               }
               // Stop checking after 5 minutes
               if (checkCount > 60) {
@@ -1187,14 +1183,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     chrome.runtime.sendMessage({action: 'getSubscriptionStatus'}, function(statusResponse) {
       if (statusResponse && statusResponse.success && statusResponse.subscription.status === 'active') {
-        messageDiv.innerHTML = '<strong>🎉 Subscription activated! Launching setup...</strong>';
+        messageDiv.innerHTML = '<strong>🎉 Subscription activated! Refreshing...</strong>';
         setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
-        // Launch onboarding flow for new subscribers
-        setTimeout(() => {
-          startOnboarding();
-          // Reload after a short delay to update UI
-          setTimeout(() => location.reload(), 2000);
-        }, 500);
+        // Just reload to update UI - onboarding now happens in success tab
+        setTimeout(() => location.reload(), 1500);
       } else {
         messageDiv.textContent = 'Subscription not yet active. Please complete checkout and try again.';
         setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
