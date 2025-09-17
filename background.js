@@ -129,11 +129,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 // Open side panel when extension icon is clicked
-chrome.action.onClicked.addListener(async (tab) => {
-  // Refresh auth state when side panel is opened (helps with post-checkout auth)
-  await initializeExtensionState();
-
+chrome.action.onClicked.addListener((tab) => {
   chrome.sidePanel.open({ windowId: tab.windowId });
+
+  // Refresh auth state after panel opens (helps with post-checkout auth)
+  initializeExtensionState();
 });
 
 // Function to check if URL is accessible
