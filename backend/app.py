@@ -1521,6 +1521,63 @@ def admin_get_user(current_user, user_id):
         print(f"Admin get user error: {e}")
         return jsonify({'success': False, 'error': 'Failed to get user data'}), 500
 
+@app.route('/api/admin/user/<int:user_id>/cancel-subscription', methods=['POST'])
+@require_auth
+def admin_cancel_user_subscription(current_user, user_id):
+    """Admin endpoint to cancel a user's subscription"""
+    # Check if current user is admin
+    if current_user.email != 'admin@trace.com':
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 403
+
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'success': False, 'error': 'User not found'}), 404
+
+        if not user.subscription_id:
+            return jsonify({'success': False, 'error': 'User has no active subscription'}), 400
+
+        # Cancel the subscription immediately using Stripe API
+        if stripe and stripe.api_key:
+            import requests
+            headers = {
+                'Authorization': f'Bearer {stripe.api_key}',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+
+            # Cancel immediately instead of at period end
+            response = requests.delete(
+                f'https://api.stripe.com/v1/subscriptions/{user.subscription_id}',
+                headers=headers,
+                timeout=10
+            )
+
+            if response.status_code == 200:
+                # Update user's subscription status in database
+                user.subscription_status = 'cancelled'
+                user.subscription_id = None
+                user.plan_id = None
+                user.current_period_end = None
+                db.session.commit()
+
+                print(f"✅ Admin cancelled subscription for user {user.email}")
+                return jsonify({
+                    'success': True,
+                    'message': f'Successfully cancelled subscription for {user.email}'
+                })
+            else:
+                error_data = response.json()
+                return jsonify({
+                    'success': False,
+                    'error': f'Stripe error: {error_data.get("error", {}).get("message", "Unknown error")}'
+                }), 500
+        else:
+            return jsonify({'success': False, 'error': 'Stripe not configured'}), 500
+
+    except Exception as e:
+        print(f"Admin cancel subscription error: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/admin/test-prompt', methods=['POST'])
 @require_auth
 def admin_test_prompt(current_user):
