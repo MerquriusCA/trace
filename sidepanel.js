@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
   const config = window.TRACE_CONFIG;
-  const highlightButton = document.getElementById('highlightButton');
   const analyzeButton = document.getElementById('analyzeButton');
   const summarizeButton = document.getElementById('summarizeButton');
   const testBackendButton = document.getElementById('testBackendButton');
@@ -51,7 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const notificationsEnabled = document.getElementById('notificationsEnabled');
   const startOnboardingButton = document.getElementById('startOnboardingButton');
   
-  let currentSentence = null;
   let currentPageUrl = null;
   let isAuthenticated = false;
   let currentUser = null;
@@ -98,14 +96,13 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (isEnabled) {
         displayCurrentPageInfo();
-        // Show analyze button if authenticated and (subscription is active OR whitelisted user)
-        if (isAuthenticated && currentUser && (currentUser.subscription_status === 'active' || config.whitelist.isWhitelisted(currentUser.email))) {
+        // Show analyze button if authenticated and subscription is active
+        if (isAuthenticated && currentUser && currentUser.subscription_status === 'active') {
           analyzeButton.classList.remove('hidden');
           summarizeButton.classList.remove('hidden');
         }
       } else {
         pageInfo.classList.add('hidden');
-        document.getElementById('highlightedSentence').classList.add('hidden');
         analyzeButton.classList.add('hidden');
         summarizeButton.classList.add('hidden');
         analysisResult.classList.add('hidden');
@@ -117,45 +114,8 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateStatus(isEnabled) {
     statusText.textContent = isEnabled ? 'ON' : 'OFF';
     statusText.className = isEnabled ? 'on' : 'off';
-    highlightButton.disabled = !isEnabled;
   }
 
-
-  // Handle highlight button click
-  highlightButton.addEventListener('click', function() {
-    if (highlightButton.disabled) return;
-    
-    messageDiv.textContent = 'Highlighting first sentence...';
-    setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-    
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, {action: "highlightFirstSentence"}, function(response) {
-        if (chrome.runtime.lastError) {
-          messageDiv.textContent = 'Error: Unable to highlight';
-          setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
-          document.getElementById('highlightedSentence').classList.add('hidden');
-        } else if (response && response.status) {
-          messageDiv.textContent = response.status;
-          setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
-          
-          // Display the highlighted sentence
-          if (response.sentence) {
-            currentSentence = response.sentence;
-            const highlightedDiv = document.getElementById('highlightedSentence');
-            highlightedDiv.innerHTML = `
-              <h4>Highlighted Sentence:</h4>
-              <p>${response.sentence}</p>
-            `;
-            highlightedDiv.classList.remove('hidden');
-          }
-        }
-      });
-    });
-    
-    setTimeout(() => {
-      messageDiv.textContent = '';
-    }, 3000);
-  });
 
   // Function to display current page info
   function displayCurrentPageInfo() {
@@ -171,7 +131,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentPageUrl && currentPageUrl !== tabs[0].url) {
           // Clear analysis results when navigating to a new page
           analysisResult.classList.add('hidden');
-          document.getElementById('highlightedSentence').classList.add('hidden');
         }
         
         currentPageUrl = tabs[0].url;
@@ -228,7 +187,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (changeInfo.url && currentPageUrl && currentPageUrl !== changeInfo.url) {
                   // Clear analysis results when URL changes
                   analysisResult.classList.add('hidden');
-                  document.getElementById('highlightedSentence').classList.add('hidden');
                 }
                 displayCurrentPageInfo();
               }
@@ -260,8 +218,8 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    // Check subscription status for AI features (allow whitelisted users)
-    if (currentUser && currentUser.subscription_status !== 'active' && !config.whitelist.isWhitelisted(currentUser.email)) {
+    // Check subscription status for AI features
+    if (currentUser && currentUser.subscription_status !== 'active') {
       e.preventDefault();
       messageDiv.textContent = 'Active subscription required for AI features';
       setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
@@ -386,8 +344,8 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    // Check subscription status for AI features (allow whitelisted users)
-    if (currentUser && currentUser.subscription_status !== 'active' && !config.whitelist.isWhitelisted(currentUser.email)) {
+    // Check subscription status for AI features
+    if (currentUser && currentUser.subscription_status !== 'active') {
       e.preventDefault();
       messageDiv.textContent = 'Active subscription required for AI features';
       setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
@@ -464,23 +422,23 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Test backend button
   testBackendButton.addEventListener('click', function() {
-    messageDiv.textContent = 'Testing backend connection...';
-    setMessageColor(messageDiv, messageDiv.textContent, '#ff5722');
-    
+    settingsMessage.textContent = 'Testing backend connection...';
+    setMessageColor(settingsMessage, settingsMessage.textContent, '#ff5722');
+
     chrome.runtime.sendMessage({action: 'testBackend'}, function(response) {
       if (response.success) {
-        messageDiv.textContent = 'Backend is working! ' + JSON.stringify(response.data);
-        setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
+        settingsMessage.textContent = 'Backend is working! ' + JSON.stringify(response.data);
+        setMessageColor(settingsMessage, settingsMessage.textContent, '#4CAF50');
       } else {
-        messageDiv.textContent = 'Backend test failed: ' + response.error;
-        setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+        settingsMessage.textContent = 'Backend test failed: ' + response.error;
+        setMessageColor(settingsMessage, settingsMessage.textContent, '#f44336');
         if (response.rawResponse) {
           console.log('Raw response:', response.rawResponse);
         }
       }
-      
+
       setTimeout(() => {
-        messageDiv.textContent = '';
+        settingsMessage.textContent = '';
       }, 5000);
     });
   });
@@ -489,14 +447,14 @@ document.addEventListener('DOMContentLoaded', function() {
   checkPageButton.addEventListener('click', function() {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       if (!tabs[0]) {
-        messageDiv.textContent = 'Unable to get current tab';
-        setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+        settingsMessage.textContent = 'Unable to get current tab';
+        setMessageColor(settingsMessage, settingsMessage.textContent, '#f44336');
         return;
       }
-      
+
       const url = tabs[0].url;
       const title = tabs[0].title;
-      
+
       // Check for obvious incompatible URLs
       const incompatiblePatterns = [
         /^chrome:\/\//,
@@ -507,38 +465,38 @@ document.addEventListener('DOMContentLoaded', function() {
         /\.pdf$/i,
         /\.(jpg|jpeg|png|gif|svg|mp4|mp3|avi)$/i
       ];
-      
+
       const isIncompatible = incompatiblePatterns.some(pattern => pattern.test(url));
-      
+
       if (isIncompatible) {
-        messageDiv.textContent = '❌ This page type is not compatible with the tool';
-        setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
-        setTimeout(() => { messageDiv.textContent = ''; }, 4000);
+        settingsMessage.textContent = '❌ This page type is not compatible with the tool';
+        setMessageColor(settingsMessage, settingsMessage.textContent, '#f44336');
+        setTimeout(() => { settingsMessage.textContent = ''; }, 4000);
         return;
       }
-      
+
       // Check page content via content script
       chrome.tabs.sendMessage(tabs[0].id, {action: 'checkContent'}, function(response) {
         if (chrome.runtime.lastError || !response) {
-          messageDiv.textContent = '⚠️ Cannot access page content (may be restricted)';
-          setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+          settingsMessage.textContent = '⚠️ Cannot access page content (may be restricted)';
+          setMessageColor(settingsMessage, settingsMessage.textContent, '#ff9800');
         } else {
           const textLength = response.textLength || 0;
           const hasText = response.hasText || false;
-          
+
           if (textLength > 200) {
-            messageDiv.textContent = `✅ Page looks good! (~${textLength} chars of text)`;
-            setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
+            settingsMessage.textContent = `✅ Page looks good! (~${textLength} chars of text)`;
+            setMessageColor(settingsMessage, settingsMessage.textContent, '#4CAF50');
           } else if (textLength > 50) {
-            messageDiv.textContent = `⚠️ Limited content (~${textLength} chars) - may work`;
-            setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+            settingsMessage.textContent = `⚠️ Limited content (~${textLength} chars) - may work`;
+            setMessageColor(settingsMessage, settingsMessage.textContent, '#ff9800');
           } else {
-            messageDiv.textContent = '❌ Very little text content detected';
-            setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+            settingsMessage.textContent = '❌ Very little text content detected';
+            setMessageColor(settingsMessage, settingsMessage.textContent, '#f44336');
           }
         }
-        
-        setTimeout(() => { messageDiv.textContent = ''; }, 5000);
+
+        setTimeout(() => { settingsMessage.textContent = ''; }, 5000);
       });
     });
   });
@@ -805,11 +763,6 @@ document.addEventListener('DOMContentLoaded', function() {
       utilityButtonsSection.classList.add('hidden');
     }
     
-    // Hide extension toggle when not authenticated
-    const extensionToggleSection = document.getElementById('extensionToggleSection');
-    if (extensionToggleSection) {
-      extensionToggleSection.classList.add('hidden');
-    }
     
     // Hide page info when not authenticated
     const pageInfo = document.getElementById('pageInfo');
@@ -850,11 +803,6 @@ document.addEventListener('DOMContentLoaded', function() {
       utilityButtonsSection.classList.remove('hidden');
     }
     
-    // Show extension toggle when authenticated
-    const extensionToggleSection = document.getElementById('extensionToggleSection');
-    if (extensionToggleSection) {
-      extensionToggleSection.classList.remove('hidden');
-    }
     
     // Show action buttons when authenticated
     const actionButtonsSection = document.getElementById('actionButtonsSection');
@@ -890,9 +838,9 @@ document.addEventListener('DOMContentLoaded', function() {
       // Load user preferences from backend when user signs in
       loadUserPreferences();
       
-      // Show AI features if extension is enabled AND (user has active subscription OR whitelisted user)
+      // Show AI features if extension is enabled AND user has active subscription
       chrome.storage.local.get(['extensionEnabled'], function(result) {
-        if (result.extensionEnabled !== false && (currentUser.subscription_status === 'active' || config.whitelist.isWhitelisted(currentUser.email))) {
+        if (result.extensionEnabled !== false && currentUser.subscription_status === 'active') {
           analyzeButton.classList.remove('hidden');
           summarizeButton.classList.remove('hidden');
         } else {
@@ -979,8 +927,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Special display for whitelisted users
       subscriptionStatus.className = 'subscription-status active';
       subscriptionStatus.innerHTML = `
-        🎯 <strong>Preview Access</strong><br>
-        <small>Full access granted for evaluation</small>
+        🎯 <strong>Beta Access</strong>
       `;
       
       // Show purchase button for whitelisted users to convert to paid
@@ -1195,8 +1142,13 @@ document.addEventListener('DOMContentLoaded', function() {
             chrome.runtime.sendMessage({action: 'getSubscriptionStatus'}, function(statusResponse) {
               if (statusResponse && statusResponse.success && statusResponse.subscription.status === 'active') {
                 clearInterval(checkInterval);
-                messageDiv.innerHTML = '<strong>🎉 Subscription activated! Refreshing...</strong>';
-                setTimeout(() => location.reload(), 1500);
+                messageDiv.innerHTML = '<strong>🎉 Subscription activated! Launching setup...</strong>';
+                // Launch onboarding flow for new subscribers
+                setTimeout(() => {
+                  startOnboarding();
+                  // Reload after a short delay to update UI
+                  setTimeout(() => location.reload(), 2000);
+                }, 500);
               }
               // Stop checking after 5 minutes
               if (checkCount > 60) {
@@ -1235,9 +1187,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     chrome.runtime.sendMessage({action: 'getSubscriptionStatus'}, function(statusResponse) {
       if (statusResponse && statusResponse.success && statusResponse.subscription.status === 'active') {
-        messageDiv.innerHTML = '<strong>🎉 Subscription activated! Refreshing...</strong>';
+        messageDiv.innerHTML = '<strong>🎉 Subscription activated! Launching setup...</strong>';
         setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
-        setTimeout(() => location.reload(), 1000);
+        // Launch onboarding flow for new subscribers
+        setTimeout(() => {
+          startOnboarding();
+          // Reload after a short delay to update UI
+          setTimeout(() => location.reload(), 2000);
+        }, 500);
       } else {
         messageDiv.textContent = 'Subscription not yet active. Please complete checkout and try again.';
         setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
@@ -1435,37 +1392,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const priceInfo = await fetchSubscriptionPrice();
     
     if (status === 'active') {
-      subscriptionStatusSettings.textContent = '✅ Active Subscription';
+      subscriptionStatusSettings.textContent = '✅ Active';
       subscriptionStatusSettings.className = 'subscription-status subscription-active';
-      subscriptionPlan.textContent = `Pro Plan - ${priceInfo.display} • Access to all AI features`;
-      
+      subscriptionPlan.textContent = `Pro Plan subscription is active - ${priceInfo.display}`;
+
       // Show subscription management buttons for active users
       resetSubscriptionButton.style.display = 'flex';
       cancelSubscriptionButton.style.display = 'block';
-    } else if (isWhitelisted) {
-      // Special display for whitelisted users in settings
-      subscriptionStatusSettings.textContent = '🎯 Preview Access';
-      subscriptionStatusSettings.className = 'subscription-status subscription-active';
-      subscriptionPlan.textContent = 'Full access granted for evaluation • Upgrade available';
-      
-      // Hide subscription management buttons for preview users
-      resetSubscriptionButton.style.display = 'none';
-      cancelSubscriptionButton.style.display = 'none';
     } else if (status === 'past_due') {
-      subscriptionStatusSettings.textContent = '⚠️ Payment Required';
+      subscriptionStatusSettings.textContent = '⚠️ Past Due';
       subscriptionStatusSettings.className = 'subscription-status subscription-inactive';
-      subscriptionPlan.textContent = 'Subscription payment is past due';
-      
+      subscriptionPlan.textContent = 'Subscription payment is overdue - please update payment method';
+
       // Show subscription management buttons for past due users
       resetSubscriptionButton.style.display = 'flex';
       cancelSubscriptionButton.style.display = 'block';
+    } else if (status === 'canceled') {
+      subscriptionStatusSettings.textContent = '❌ Canceled';
+      subscriptionStatusSettings.className = 'subscription-status subscription-inactive';
+      subscriptionPlan.textContent = 'Subscription has been canceled - AI features unavailable';
+
+      // Hide subscription management buttons for canceled users
+      resetSubscriptionButton.style.display = 'none';
+      cancelSubscriptionButton.style.display = 'none';
     } else {
-      // Regular users (non-whitelisted) - Limited access message
-      subscriptionStatusSettings.textContent = '🔒 Limited Access';
+      // Regular users (non-whitelisted) - No subscription
+      subscriptionStatusSettings.textContent = '⭕ No Active Subscription';
       subscriptionStatusSettings.className = 'subscription-status subscription-trial';
-      subscriptionPlan.textContent = 'AI features are not available in this version';
-      
-      // Hide subscription management buttons for limited access users
+      subscriptionPlan.textContent = 'Subscribe to access AI-powered analysis features';
+
+      // Hide subscription management buttons for users without subscriptions
       resetSubscriptionButton.style.display = 'none';
       cancelSubscriptionButton.style.display = 'none';
     }

@@ -16,7 +16,7 @@
   <div class="container">
     <!-- Navigation Tabs -->
     <div class="tab-navigation">
-      <button id="mainTabButton" class="tab-button active">Trace Extension</button>
+      <button id="mainTabButton" class="tab-button active">Trace</button>
       <button id="settingsTabButton" class="tab-button">⚙️ Settings</button>
     </div>
     
@@ -42,9 +42,9 @@
       <!-- User Section - Subscription Status Only -->
       <div id="userSection" class="hidden">        
         <!-- Welcome Message -->
-        <div class="welcome-card">
+        <div class="welcome-card" style="padding: 8px 12px;">
           <div class="welcome-content">
-            <span class="welcome-icon">👋</span>
+            <img src="icon16.png" alt="Trace" style="width: 16px; height: 16px; margin-right: 8px;">
             <span id="welcomeMessage" class="welcome-text">Welcome!</span>
           </div>
         </div>
@@ -57,24 +57,11 @@
       </div>
     </div>
     
-    <!-- Extension Toggle (only shown when authenticated) -->
-    <div id="extensionToggleSection" class="toggle-container hidden">
-      <span style="font-weight: 500;">Extension Status</span>
-      <label class="switch">
-        <input type="checkbox" id="toggleSwitch">
-        <span class="slider"></span>
-      </label>
-      <span id="statusText">OFF</span>
-    </div>
-    
-    
     <!-- Page Info (only shown when authenticated) -->
     <div id="pageInfo" class="page-info hidden"></div>
     
     <!-- Action Buttons (only shown when authenticated) -->
     <div id="actionButtonsSection" class="hidden">
-      <button id="highlightButton" class="btn-secondary">Highlight First Sentence</button>
-      <div id="highlightedSentence" class="highlighted-sentence hidden"></div>
       <button id="analyzeButton" class="btn-purple hidden">Get Top 5 Purpose Sentences</button>
       <button id="summarizeButton" class="btn-success hidden">Summarize Page</button>
     </div>
@@ -107,7 +94,7 @@
       
       <!-- Subscription Management -->
       <div class="card">
-        <h3>Subscription</h3>
+        <h3>Subscription Status</h3>
         <div id="subscriptionDetails">
           <div class="subscription-info">
             <div id="subscriptionStatusSettings" class="subscription-status">Loading...</div>
@@ -160,6 +147,15 @@
       <!-- Other Settings -->
       <div class="card">
         <h3>Extension Settings</h3>
+        <!-- Trace Active Toggle -->
+        <div id="extensionToggleSection" class="toggle-container" style="margin-bottom: 16px; padding: 12px; background: #f9fafb; border-radius: 8px;">
+          <span style="font-weight: 500;">Trace Active</span>
+          <label class="switch">
+            <input type="checkbox" id="toggleSwitch">
+            <span class="slider"></span>
+          </label>
+          <span id="statusText">OFF</span>
+        </div>
         <div class="setting-item">
           <label>
             <input type="checkbox" id="autoSummarizeEnabled">
@@ -181,7 +177,17 @@
           </p>
         </div>
       </div>
-      
+
+      <!-- Developer Tools -->
+      <div class="card">
+        <h3>Developer Tools</h3>
+        <p class="settings-description">Diagnostic tools for troubleshooting</p>
+        <div class="utility-buttons" style="display: flex; gap: 8px; margin-top: 12px;">
+          <button id="testBackendButton" class="btn-secondary btn-small">Test Backend</button>
+          <button id="checkPageButton" class="btn-secondary btn-small">Check Page</button>
+        </div>
+      </div>
+
       <!-- Settings Messages -->
       <div id="settingsMessage" class="hidden"></div>
     </div>
@@ -189,11 +195,8 @@
   
   <!-- Utility Buttons - Fixed Bottom (above user profile) -->
   <div id="utilityButtonsSection" class="utility-buttons-bottom hidden">
-    <button id="testBackendButton" class="btn-secondary btn-small">Test Backend</button>
-    <button id="checkPageButton" class="btn-secondary btn-small">Check Page</button>
-    
     <!-- Feedback Button -->
-    <button id="feedbackButton" class="btn-secondary" style="margin-top: 8px; display: flex; align-items: center; gap: 6px;">
+    <button id="feedbackButton" class="btn-secondary" style="display: flex; align-items: center; gap: 6px;">
       <span>💬</span>
       <span>Send Feedback</span>
     </button>

@@ -228,7 +228,17 @@
                 const data = await response.json();
                 
                 if (data.success && data.user) {
-                    displayUserData(data.user);
+                    // Merge user, subscription, and usage data for display
+                    const userData = {
+                        ...data.user,
+                        subscription_status: data.subscription?.status || 'inactive',
+                        subscription_id: data.subscription?.subscription_id,
+                        stripe_customer_id: data.subscription?.stripe_customer_id,
+                        total_requests: data.usage?.total_requests || 0,
+                        month_requests: data.usage?.month_requests || 0,
+                        recent_activity: data.activity || []
+                    };
+                    displayUserData(userData);
                 } else {
                     throw new Error(data.error || 'Failed to load user data');
                 }
