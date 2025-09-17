@@ -94,6 +94,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     case 'refreshSubscriptionStatus':
       refreshSubscriptionStatus(sendResponse);
       return true;
+
+    case 'forceAuthRefresh':
+      forceAuthRefresh(sendResponse);
+      return true;
       
     case 'savePreferences':
       config.log('Background: Received savePreferences request:', request.preferences);
@@ -125,7 +129,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 // Open side panel when extension icon is clicked
-chrome.action.onClicked.addListener((tab) => {
+chrome.action.onClicked.addListener(async (tab) => {
+  // Refresh auth state when side panel is opened (helps with post-checkout auth)
+  await initializeExtensionState();
+
   chrome.sidePanel.open({ windowId: tab.windowId });
 });
 
@@ -867,6 +874,49 @@ async function sendFeedback(feedbackData, sendResponse) {
     sendResponse({
       success: false,
       error: "Failed to send feedback"
+    });
+  }
+}
+
+// Force auth and subscription refresh (useful after checkout)
+async function forceAuthRefresh(sendResponse) {
+  try {
+    config.log('🔄 Force refreshing authentication and subscription status...');
+
+    // First re-initialize auth state from storage
+    await initializeExtensionState();
+
+    if (!authToken || !currentUser) {
+      sendResponse({ success: false, error: 'Not authenticated' });
+      return;
+    }
+
+    // Verify token is still valid
+    const authCheckResult = await new Promise((resolve) => {
+      checkAuthStatus(resolve);
+    });
+
+    if (!authCheckResult.authenticated) {
+      sendResponse({ success: false, error: 'Authentication expired' });
+      return;
+    }
+
+    // Refresh subscription status from Stripe
+    const subscriptionResult = await new Promise((resolve) => {
+      refreshSubscriptionStatus(resolve);
+    });
+
+    sendResponse({
+      success: true,
+      auth: authCheckResult,
+      subscription: subscriptionResult
+    });
+
+  } catch (error) {
+    config.error('❌ Error in forceAuthRefresh:', error);
+    sendResponse({
+      success: false,
+      error: 'Failed to refresh authentication'
     });
   }
 }

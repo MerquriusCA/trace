@@ -306,8 +306,38 @@ document.addEventListener('DOMContentLoaded', function() {
             setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
           }
         } else {
-          messageDiv.textContent = 'Error: ' + (response.error || 'Analysis failed');
-          setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+          const errorMsg = response.error || 'Analysis failed';
+
+          // Check if it's an auth token error - trigger refresh and retry
+          if (errorMsg.includes('Authorization token required') || errorMsg.includes('Token has expired') || errorMsg.includes('Invalid token')) {
+            messageDiv.textContent = 'Refreshing authentication...';
+            setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+
+            // Force auth refresh and retry
+            chrome.runtime.sendMessage({action: 'forceAuthRefresh'}, function(refreshResponse) {
+              if (refreshResponse && refreshResponse.success) {
+                messageDiv.textContent = 'Authentication refreshed. Please try again.';
+                setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
+
+                // Update our local auth state
+                isAuthenticated = true;
+                currentUser = refreshResponse.auth.user;
+
+                setTimeout(() => {
+                  messageDiv.textContent = '';
+                }, 2000);
+              } else {
+                messageDiv.textContent = 'Please sign in again to use AI features';
+                setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+                isAuthenticated = false;
+                currentUser = null;
+                showLoginSection();
+              }
+            });
+          } else {
+            messageDiv.textContent = 'Error: ' + errorMsg;
+            setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+          }
         }
         
         setTimeout(() => {
@@ -409,8 +439,38 @@ document.addEventListener('DOMContentLoaded', function() {
             setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
           }
         } else {
-          messageDiv.textContent = 'Error: ' + (response.error || 'Summary failed');
-          setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+          const errorMsg = response.error || 'Summary failed';
+
+          // Check if it's an auth token error - trigger refresh and retry
+          if (errorMsg.includes('Authorization token required') || errorMsg.includes('Token has expired') || errorMsg.includes('Invalid token')) {
+            messageDiv.textContent = 'Refreshing authentication...';
+            setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+
+            // Force auth refresh and retry
+            chrome.runtime.sendMessage({action: 'forceAuthRefresh'}, function(refreshResponse) {
+              if (refreshResponse && refreshResponse.success) {
+                messageDiv.textContent = 'Authentication refreshed. Please try again.';
+                setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
+
+                // Update our local auth state
+                isAuthenticated = true;
+                currentUser = refreshResponse.auth.user;
+
+                setTimeout(() => {
+                  messageDiv.textContent = '';
+                }, 2000);
+              } else {
+                messageDiv.textContent = 'Please sign in again to use AI features';
+                setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+                isAuthenticated = false;
+                currentUser = null;
+                showLoginSection();
+              }
+            });
+          } else {
+            messageDiv.textContent = 'Error: ' + errorMsg;
+            setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+          }
         }
         
         setTimeout(() => {
@@ -669,8 +729,29 @@ document.addEventListener('DOMContentLoaded', function() {
         isAuthenticated = true;
         currentUser = response.user;
         showUserSection();
-        loadSubscriptionStatus();
-        
+
+        // Check if we might be returning from a checkout (recent auth with no cached subscription data)
+        // This helps refresh subscription status immediately after purchase
+        chrome.storage.local.get(['lastSubscriptionCheck'], function(result) {
+          const lastCheck = result.lastSubscriptionCheck;
+          const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+
+          if (!lastCheck || lastCheck < fiveMinutesAgo) {
+            // It's been a while since we checked subscription status, force refresh
+            config.log('🔄 Forcing auth and subscription refresh due to stale data...');
+            chrome.runtime.sendMessage({action: 'forceAuthRefresh'}, function(refreshResponse) {
+              if (refreshResponse && refreshResponse.success) {
+                config.log('✅ Post-checkout refresh successful');
+                // Store the check time
+                chrome.storage.local.set({ lastSubscriptionCheck: Date.now() });
+              }
+              loadSubscriptionStatus();
+            });
+          } else {
+            loadSubscriptionStatus();
+          }
+        });
+
         // Check if user needs onboarding
         checkOnboardingStatus();
       } else {
