@@ -1001,3 +1001,28 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, textarea::pla
 .summary-content br {
   margin: 4px 0;
 }
+
+/* Summary Sentence Style */
+.summary-sentence {
+  font-style: italic;
+  color: hsl(var(--foreground) / 0.8);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+/* Bullet Point Style */
+.bullet-point {
+  color: hsl(var(--primary));
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+/* Bold emphasis in summaries */
+.summary-content strong {
+  color: hsl(var(--foreground));
+  font-weight: 600;
+  background: hsl(var(--primary) / 0.1);
+  padding: 0 2px;
+  border-radius: 2px;
+}

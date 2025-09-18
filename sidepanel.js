@@ -270,10 +270,12 @@ document.addEventListener('DOMContentLoaded', function() {
           } else {
             // Display the summary for articles
             console.log('Raw summary from backend:', response.summary);
-            // Convert bullet points to proper HTML formatting
+            // Convert markdown and format properly
             let formattedSummary = response.summary
+              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Convert **bold** to <strong>
+              .replace(/^SUMMARY:\s*(.*)$/m, '<div class="summary-sentence">$1</div>') // Extract and format SUMMARY line
               .replace(/\n/g, '<br>') // Convert newlines to breaks
-              .replace(/•/g, '•') // Ensure bullet points are preserved
+              .replace(/•/g, '<span class="bullet-point">•</span>') // Style bullet points
               .replace(/\r/g, ''); // Remove carriage returns
             console.log('Formatted summary for display:', formattedSummary);
             analysisResult.innerHTML = `
@@ -335,10 +337,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                       // Display the summary for articles
                       console.log('Raw retry summary from backend:', retryResponse.summary);
-                      // Convert bullet points to proper HTML formatting
+                      // Convert markdown and format properly
                       let formattedRetrySummary = retryResponse.summary
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Convert **bold** to <strong>
+                        .replace(/^SUMMARY:\s*(.*)$/m, '<div class="summary-sentence">$1</div>') // Extract and format SUMMARY line
                         .replace(/\n/g, '<br>') // Convert newlines to breaks
-                        .replace(/•/g, '•') // Ensure bullet points are preserved
+                        .replace(/•/g, '<span class="bullet-point">•</span>') // Style bullet points
                         .replace(/\r/g, ''); // Remove carriage returns
                       console.log('Formatted retry summary for display:', formattedRetrySummary);
                       analysisResult.innerHTML = `

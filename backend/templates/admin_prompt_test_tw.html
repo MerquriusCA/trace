@@ -720,35 +720,47 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
         function generatePrompt(settings, article) {
             // Generate prompt based on reading level - matching production prompts exactly
             const readingLevelPrompts = {
-                simple: `Create exactly 1 bullet point summary:
-• [Single most important point in simple, clear language]
+                simple: `Provide a summary in this exact format:
 
-ONLY return the bullet point above, nothing else.`,
-                balanced: `Create exactly 2 bullet point summary:
-• [First main point in clear, accessible language]
-• [Second main point in clear, accessible language]
+SUMMARY: [One simple sentence that captures what this article is about]
 
-ONLY return the 2 bullet points above, nothing else.`,
-                detailed: `Create exactly 3 bullet point summary:
-• [First key point with comprehensive detail]
-• [Second key point with comprehensive detail]
-• [Third key point with comprehensive detail]
+• [Single most important point in simple, clear language - use **bold** for key phrases]
 
-ONLY return the 3 bullet points above, nothing else.`,
-                technical: `Create exactly 5 bullet point summary:
-• [First technical point with precise detail]
-• [Second technical point with precise detail]
-• [Third technical point with precise detail]
-• [Fourth technical point with precise detail]
-• [Fifth technical point with precise detail]
+Format: Start with SUMMARY: line, then blank line, then bullet point. Use **bold** markdown for emphasis.`,
+                balanced: `Provide a summary in this exact format:
 
-ONLY return the 5 bullet points above, nothing else.`
+SUMMARY: [One clear sentence that captures the main idea of this article]
+
+• [First main point in clear, accessible language - use **bold** for key phrases]
+• [Second main point in clear, accessible language - use **bold** for key phrases]
+
+Format: Start with SUMMARY: line, then blank line, then bullet points. Use **bold** markdown for emphasis.`,
+                detailed: `Provide a summary in this exact format:
+
+SUMMARY: [One comprehensive sentence that captures the essence and significance of this article]
+
+• [First key point with comprehensive detail - use **bold** for important concepts]
+• [Second key point with comprehensive detail - use **bold** for important concepts]
+• [Third key point with comprehensive detail - use **bold** for important concepts]
+
+Format: Start with SUMMARY: line, then blank line, then bullet points. Use **bold** markdown for emphasis.`,
+                technical: `Provide a summary in this exact format:
+
+SUMMARY: [One precise technical sentence that captures the core concept and implications]
+
+• [First technical point with precise detail - use **bold** for technical terms and key findings]
+• [Second technical point with precise detail - use **bold** for technical terms and key findings]
+• [Third technical point with precise detail - use **bold** for technical terms and key findings]
+• [Fourth technical point with precise detail - use **bold** for technical terms and key findings]
+• [Fifth technical point with precise detail - use **bold** for technical terms and key findings]
+
+Format: Start with SUMMARY: line, then blank line, then bullet points. Use **bold** markdown for emphasis.`
             };
 
             let basePrompt = readingLevelPrompts[settings.reading_level] || readingLevelPrompts['balanced'];
 
             // Add the same note about fewer points
-            basePrompt += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count.';
+            basePrompt += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count. Always include the SUMMARY line regardless.';
 
             // Add article info
             basePrompt += `\n\nArticle Title: ${article.title}`;

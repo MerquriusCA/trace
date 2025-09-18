@@ -1654,7 +1654,7 @@ def admin_test_prompt(current_user):
                 'messages': [
                     {
                         'role': 'system',
-                        'content': 'You are a helpful assistant that creates summaries using bullet points. You MUST follow the exact formatting instructions provided, including the specific number of bullet points requested and using the • symbol for each point.'
+                        'content': 'You are a helpful assistant that creates structured summaries with a summary sentence followed by bullet points. You MUST follow the exact formatting instructions provided, including starting with "SUMMARY:", using the • symbol for bullet points, and using **bold** markdown for emphasis on key phrases.'
                     },
                     {
                         'role': 'user',
@@ -2080,36 +2080,48 @@ def summarize_with_auth(current_user):
             # Use custom prompt if provided, otherwise generate based on user's reading level
             prompt_to_use = custom_prompt
             if not prompt_to_use and current_user.reading_level:
-                # Generate prompt based on user's reading level - return bullet points
+                # Generate prompt based on user's reading level - return summary sentence + bullet points
                 reading_level_prompts = {
-                    'simple': '''Create exactly 1 bullet point summary:
-• [Single most important point in simple, clear language]
+                    'simple': '''Provide a summary in this exact format:
 
-ONLY return the bullet point above, nothing else.''',
-                    'balanced': '''Create exactly 2 bullet point summary:
-• [First main point in clear, accessible language]
-• [Second main point in clear, accessible language]
+SUMMARY: [One simple sentence that captures what this article is about]
 
-ONLY return the 2 bullet points above, nothing else.''',
-                    'detailed': '''Create exactly 3 bullet point summary:
-• [First key point with comprehensive detail]
-• [Second key point with comprehensive detail]
-• [Third key point with comprehensive detail]
+• [Single most important point in simple, clear language - use **bold** for key phrases]
 
-ONLY return the 3 bullet points above, nothing else.''',
-                    'technical': '''Create exactly 5 bullet point summary:
-• [First technical point with precise detail]
-• [Second technical point with precise detail]
-• [Third technical point with precise detail]
-• [Fourth technical point with precise detail]
-• [Fifth technical point with precise detail]
+Format: Start with SUMMARY: line, then blank line, then bullet point. Use **bold** markdown for emphasis.''',
+                    'balanced': '''Provide a summary in this exact format:
 
-ONLY return the 5 bullet points above, nothing else.'''
+SUMMARY: [One clear sentence that captures the main idea of this article]
+
+• [First main point in clear, accessible language - use **bold** for key phrases]
+• [Second main point in clear, accessible language - use **bold** for key phrases]
+
+Format: Start with SUMMARY: line, then blank line, then bullet points. Use **bold** markdown for emphasis.''',
+                    'detailed': '''Provide a summary in this exact format:
+
+SUMMARY: [One comprehensive sentence that captures the essence and significance of this article]
+
+• [First key point with comprehensive detail - use **bold** for important concepts]
+• [Second key point with comprehensive detail - use **bold** for important concepts]
+• [Third key point with comprehensive detail - use **bold** for important concepts]
+
+Format: Start with SUMMARY: line, then blank line, then bullet points. Use **bold** markdown for emphasis.''',
+                    'technical': '''Provide a summary in this exact format:
+
+SUMMARY: [One precise technical sentence that captures the core concept and implications]
+
+• [First technical point with precise detail - use **bold** for technical terms and key findings]
+• [Second technical point with precise detail - use **bold** for technical terms and key findings]
+• [Third technical point with precise detail - use **bold** for technical terms and key findings]
+• [Fourth technical point with precise detail - use **bold** for technical terms and key findings]
+• [Fifth technical point with precise detail - use **bold** for technical terms and key findings]
+
+Format: Start with SUMMARY: line, then blank line, then bullet points. Use **bold** markdown for emphasis.'''
                 }
                 prompt_to_use = reading_level_prompts.get(current_user.reading_level, reading_level_prompts['balanced'])
 
                 # Add instruction to return fewer points if content only has fewer valid main points
-                prompt_to_use += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count.'
+                prompt_to_use += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count. Always include the SUMMARY line regardless.'
             
             result = call_openai_summarize(page_content, api_key, prompt_to_use)
         
@@ -2566,9 +2578,9 @@ def call_openai_summarize(content, api_key, custom_prompt=None):
         
         # Use custom prompt if provided, otherwise use default
         if custom_prompt:
-            system_content = 'You are a helpful assistant that creates summaries using bullet points. You MUST follow the exact formatting instructions provided, including the specific number of bullet points requested and using the • symbol for each point.'
+            system_content = 'You are a helpful assistant that creates structured summaries with a summary sentence followed by bullet points. You MUST follow the exact formatting instructions provided, including starting with "SUMMARY:", using the • symbol for bullet points, and using **bold** markdown for emphasis on key phrases.'
             user_content = f'{custom_prompt}\n\nWeb page content:\n\n{content}'
-            max_tokens = 300  # Allow more tokens for bullet point lists
+            max_tokens = 400  # Allow more tokens for summary sentence + bullet points
         else:
             system_content = 'You are a helpful assistant that creates concise summaries of web pages. Provide a brief 2-3 sentence summary that captures the main purpose and key information of the page.'
             user_content = f'Please summarize this web page content in 2-3 sentences:\n\n{content}'
