@@ -2641,8 +2641,12 @@ def check_if_article(content, api_key):
         print(f"📊 Content length: {len(content)} characters")
         print(f"📝 Content preview (first 300 chars):")
         print(f"   {content[:300]}...")
-        print(f"📝 Content sample being sent to AI (first 500 chars of 3000):")
-        content_sample = content[:3000]
+        # Increase content limit significantly for better analysis
+        # GPT-3.5-turbo can handle up to ~16k tokens, so we'll use more content
+        content_limit = min(len(content), 12000)  # Send up to 12k characters
+        content_sample = content[:content_limit]
+
+        print(f"📝 Content sample being sent to AI (first 500 chars of {content_limit}):")
         print(f"   {content_sample[:500]}...")
         print(f"🔍 Looking for Substack indicators in content...")
 
@@ -2706,11 +2710,11 @@ Respond with JSON: {"is_article": true/false, "confidence": 0-100, "page_type": 
                 },
                 {
                     'role': 'user',
-                    'content': f'Analyze this page content and determine if it\'s a single article:\n\n{content[:3000]}'
+                    'content': f'Analyze this page content and determine if it\'s a single article:\n\n{content_sample}'
                 }
             ],
             'temperature': 0.1,
-            'max_tokens': 250
+            'max_tokens': 350
         }
         
         req = urllib.request.Request(
