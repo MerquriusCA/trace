@@ -323,6 +323,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 isAuthenticated = true;
                 currentUser = refreshResponse.auth.user;
 
+                // Also update subscription status if available
+                if (refreshResponse.subscription && refreshResponse.subscription.success) {
+                  if (currentUser && refreshResponse.subscription.subscription) {
+                    currentUser.subscription_status = refreshResponse.subscription.subscription.status;
+                  }
+                }
+
                 setTimeout(() => {
                   messageDiv.textContent = '';
                 }, 2000);
@@ -455,6 +462,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update our local auth state
                 isAuthenticated = true;
                 currentUser = refreshResponse.auth.user;
+
+                // Also update subscription status if available
+                if (refreshResponse.subscription && refreshResponse.subscription.success) {
+                  if (currentUser && refreshResponse.subscription.subscription) {
+                    currentUser.subscription_status = refreshResponse.subscription.subscription.status;
+                  }
+                }
 
                 setTimeout(() => {
                   messageDiv.textContent = '';
@@ -742,6 +756,12 @@ document.addEventListener('DOMContentLoaded', function() {
             chrome.runtime.sendMessage({action: 'forceAuthRefresh'}, function(refreshResponse) {
               if (refreshResponse && refreshResponse.success) {
                 config.log('✅ Post-checkout refresh successful');
+
+                // Update current user with fresh data from refresh
+                if (refreshResponse.auth && refreshResponse.auth.user) {
+                  currentUser = refreshResponse.auth.user;
+                }
+
                 // Store the check time
                 chrome.storage.local.set({ lastSubscriptionCheck: Date.now() });
               }

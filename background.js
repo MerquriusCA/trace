@@ -891,7 +891,12 @@ async function forceAuthRefresh(sendResponse) {
       return;
     }
 
-    // Verify token is still valid
+    // First refresh subscription status from Stripe (this updates the database)
+    const subscriptionResult = await new Promise((resolve) => {
+      refreshSubscriptionStatus(resolve);
+    });
+
+    // Then verify token and get updated user data (including fresh subscription status)
     const authCheckResult = await new Promise((resolve) => {
       checkAuthStatus(resolve);
     });
@@ -900,11 +905,6 @@ async function forceAuthRefresh(sendResponse) {
       sendResponse({ success: false, error: 'Authentication expired' });
       return;
     }
-
-    // Refresh subscription status from Stripe
-    const subscriptionResult = await new Promise((resolve) => {
-      refreshSubscriptionStatus(resolve);
-    });
 
     sendResponse({
       success: true,
