@@ -187,16 +187,6 @@ button:disabled {
   box-shadow: 0 0 20px hsl(var(--secondary) / 0.4);
 }
 
-.btn-purple {
-  background: var(--gradient-primary);
-  color: white;
-  box-shadow: var(--shadow-glow);
-}
-
-.btn-purple:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 0 30px hsl(var(--primary) / 0.5);
-}
 
 .btn-small {
   padding: 6px 8px;
@@ -550,20 +540,6 @@ input:checked + .slider:before {
   color: hsl(var(--foreground));
 }
 
-.analysis-result button {
-  width: auto;
-  margin: 6px 4px 0 0;
-  padding: 4px 8px;
-  font-size: 10px;
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
-  border-radius: calc(var(--radius) - 2px);
-}
-
-.analysis-result button:hover {
-  background: hsl(var(--primary-hover));
-  transform: translateY(-1px);
-}
 
 /* Highlighted Sentence */
 .highlighted-sentence {

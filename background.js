@@ -59,9 +59,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({enabled: extensionEnabled});
       break;
       
-    case 'analyzeWithGPT':
-      handleAnalyzeWithGPT(request, sendResponse);
-      return true; // Keep message channel open for async response
       
     case 'summarizePage':
       handleSummarizePage(request, sendResponse);
@@ -450,90 +447,6 @@ async function refreshSubscriptionStatus(sendResponse) {
 }
 
 // Handler functions for different message types
-function handleAnalyzeWithGPT(request, sendResponse) {
-    config.log('Received analyzeWithGPT request with tabId:', request.tabId);
-    chrome.storage.local.get(['backendUrl'], async (result) => {
-      
-      // Get the current tab info
-      let tab, url;
-      try {
-        tab = await chrome.tabs.get(request.tabId);
-        config.log('Full tab object for analyze:', tab);
-        url = tab.url;
-        config.log('Got tab URL for analyze:', url);
-        if (!url) {
-          config.error('Tab exists but URL is undefined:', tab);
-          sendResponse({success: false, error: 'Tab URL is not available'});
-          return;
-        }
-      } catch (error) {
-        config.error('Failed to get tab for analyze:', error);
-        sendResponse({success: false, error: 'Unable to get current tab URL'});
-        return;
-      }
-      
-      // Always use backend service for all URLs
-      const backendUrl = `${config.getBackendUrl()}${config.api.summarize}`;
-      
-      try {
-        config.log('🔗 API CALL: Backend Service');
-        config.log('📍 Endpoint:', backendUrl);
-        config.log('🎯 Action: analyzeWithGPT');
-        config.log('🌐 Page URL:', url);
-        config.log('📦 Request body:', JSON.stringify({
-          url: url,
-          action: 'analyze'
-        }, null, 2));
-        
-        const headers = {
-          'Content-Type': 'application/json'
-        };
-        
-        // Add auth token if available
-        if (authToken) {
-          headers['Authorization'] = `Bearer ${authToken}`;
-        }
-        
-        const response = await fetch(backendUrl, {
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify({
-            url: url,
-            action: 'analyze'
-          })
-        });
-
-        // Check content type before parsing
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          const text = await response.text();
-          config.error('Non-JSON response:', text.substring(0, 200));
-          throw new Error('Backend returned non-JSON response. Check if the backend URL is correct.');
-        }
-
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.error || 'Backend service error');
-        }
-
-        const data = await response.json();
-        sendResponse({
-          success: true,
-          analysis: data.analysis
-        });
-      } catch (error) {
-        config.error('Analysis error:', error);
-        let errorMessage = error.message;
-        if (error.message.includes('CORS') || error.message.includes('NetworkError')) {
-          errorMessage = 'Network error. This may be a CORS issue with the backend service.';
-        }
-        sendResponse({
-          success: false,
-          error: errorMessage
-        });
-      }
-    });
-}
 
 function handleSummarizePage(request, sendResponse) {
     config.log('Received summarizePage request with tabId:', request.tabId);

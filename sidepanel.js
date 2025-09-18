@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
   const config = window.TRACE_CONFIG;
-  const analyzeButton = document.getElementById('analyzeButton');
   const summarizeButton = document.getElementById('summarizeButton');
   const testBackendButton = document.getElementById('testBackendButton');
   const checkPageButton = document.getElementById('checkPageButton');
@@ -81,7 +80,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Show AI features if enabled and authenticated
     if (isEnabled && isAuthenticated) {
-      analyzeButton.classList.remove('hidden');
       summarizeButton.classList.remove('hidden');
     }
   });
@@ -96,14 +94,12 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (isEnabled) {
         displayCurrentPageInfo();
-        // Show analyze button if authenticated and subscription is active
+        // Show summarize button if authenticated and subscription is active
         if (isAuthenticated && currentUser && currentUser.subscription_status === 'active') {
-          analyzeButton.classList.remove('hidden');
           summarizeButton.classList.remove('hidden');
         }
       } else {
         pageInfo.classList.add('hidden');
-        analyzeButton.classList.add('hidden');
         summarizeButton.classList.add('hidden');
         analysisResult.classList.add('hidden');
       }
@@ -205,168 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   
-  // Handle analyze button with authentication check
-  analyzeButton.addEventListener('click', function(e) {
-    // Check authentication first
-    if (!isAuthenticated) {
-      e.preventDefault();
-      messageDiv.textContent = 'Please sign in to use AI features';
-      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-      setTimeout(() => {
-        messageDiv.textContent = '';
-      }, 3000);
-      return;
-    }
-    
-    // Check subscription status for AI features
-    if (currentUser && currentUser.subscription_status !== 'active') {
-      e.preventDefault();
-      messageDiv.textContent = 'Active subscription required for AI features';
-      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-      setTimeout(() => {
-        messageDiv.textContent = '';
-      }, 3000);
-      return;
-    }
-    // Get current tab
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      config.log('Analyze - Query result tabs:', tabs);
-      if (!tabs[0]) {
-        messageDiv.textContent = 'Unable to get current tab';
-        setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
-        return;
-      }
-      
-      config.log('Analyze - Current tab:', tabs[0]);
-      config.log('Analyze - Tab ID:', tabs[0].id, 'Tab URL:', tabs[0].url);
-      
-      // No URL restriction check - backend service will handle all URLs
-      
-      analyzeButton.disabled = true;
-      messageDiv.textContent = 'Analyzing page content with GPT-3.5...';
-      setMessageColor(messageDiv, messageDiv.textContent, '#9c27b0');
-      
-      chrome.runtime.sendMessage({
-        action: 'analyzeWithGPT',
-        tabId: tabs[0].id
-      }, function(response) {
-        analyzeButton.disabled = false;
-        
-        if (response.success) {
-          // Parse the numbered list from GPT response
-          const sentences = parseNumberedList(response.analysis);
-          
-          // Create formatted display with color coding and anchor links
-          const colors = ['#ffeb3b', '#ff9800', '#4caf50', '#2196f3', '#e91e63'];
-          let formattedHTML = '<h4>Top 5 Sentences Conveying Page Purpose:</h4>';
-          
-          sentences.forEach((sentence, index) => {
-            const color = colors[index % colors.length];
-            formattedHTML += `
-              <div class="sentence-item">
-                <div class="sentence-number" style="background-color: ${color};">${index + 1}</div>
-                <div class="sentence-text">${sentence}</div>
-                <button class="jump-to-sentence" data-sentence-index="${index + 1}" onclick="jumpToSentence(${index + 1})" style="margin-left: 8px; padding: 4px 8px; background: #666; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">
-                  Jump to Text
-                </button>
-              </div>
-            `;
-          });
-          
-          analysisResult.innerHTML = formattedHTML;
-          analysisResult.classList.remove('hidden');
-          
-          // Highlight the sentences on the page
-          if (sentences.length > 0) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-              action: 'highlightSentences',
-              sentences: sentences
-            }, function(highlightResponse) {
-              if (chrome.runtime.lastError) {
-                messageDiv.textContent = 'Analysis complete! (Unable to highlight on page)';
-                setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-              } else {
-                const count = highlightResponse.count || 0;
-                const total = highlightResponse.total || sentences.length;
-                if (count === total) {
-                  messageDiv.textContent = `Analysis complete! Highlighted all ${count} sentences.`;
-                  setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
-                } else if (count > 0) {
-                  messageDiv.textContent = `Analysis complete! Highlighted ${count}/${total} sentences.`;
-                  setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-                } else {
-                  messageDiv.textContent = 'Analysis complete! No sentences could be highlighted on this page.';
-                  setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
-                }
-                config.log('Highlighting debug info:', highlightResponse.debug);
-              }
-            });
-          } else {
-            messageDiv.textContent = 'Analysis complete!';
-            setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
-          }
-        } else {
-          const errorMsg = response.error || 'Analysis failed';
-
-          // Check if it's an auth token error - trigger refresh and retry
-          if (errorMsg.includes('Authorization token required') || errorMsg.includes('Token has expired') || errorMsg.includes('Invalid token')) {
-            messageDiv.textContent = 'Refreshing authentication...';
-            setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-
-            // Force auth refresh and retry
-            chrome.runtime.sendMessage({action: 'forceAuthRefresh'}, function(refreshResponse) {
-              if (refreshResponse && refreshResponse.success) {
-                messageDiv.textContent = 'Authentication refreshed. Please try again.';
-                setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
-
-                // Update our local auth state
-                isAuthenticated = true;
-                currentUser = refreshResponse.auth.user;
-
-                // Also update subscription status if available
-                if (refreshResponse.subscription && refreshResponse.subscription.success) {
-                  if (currentUser && refreshResponse.subscription.subscription) {
-                    currentUser.subscription_status = refreshResponse.subscription.subscription.status;
-                  }
-                }
-
-                setTimeout(() => {
-                  messageDiv.textContent = '';
-                }, 2000);
-              } else {
-                messageDiv.textContent = 'Please sign in again to use AI features';
-                setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
-                isAuthenticated = false;
-                currentUser = null;
-                showLoginSection();
-              }
-            });
-          } else {
-            messageDiv.textContent = 'Error: ' + errorMsg;
-            setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
-          }
-        }
-        
-        setTimeout(() => {
-          messageDiv.textContent = '';
-        }, 3000);
-      });
-    });
-  });
   
-  // Function to parse numbered list from GPT response
-  function parseNumberedList(text) {
-    const sentences = [];
-    // Match lines that start with a number followed by a period
-    const lines = text.split('\n');
-    for (const line of lines) {
-      const match = line.match(/^\d+\.\s*(.+)/);
-      if (match && match[1]) {
-        sentences.push(match[1].trim());
-      }
-    }
-    return sentences;
-  }
   
   // Handle summarize button with authentication check
   summarizeButton.addEventListener('click', async function(e) {
@@ -878,7 +713,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Hide AI features when not authenticated
-    analyzeButton.classList.add('hidden');
     summarizeButton.classList.add('hidden');
     
     // Hide settings tab when not authenticated
@@ -942,10 +776,8 @@ document.addEventListener('DOMContentLoaded', function() {
       // Show AI features if extension is enabled AND user has active subscription
       chrome.storage.local.get(['extensionEnabled'], function(result) {
         if (result.extensionEnabled !== false && currentUser.subscription_status === 'active') {
-          analyzeButton.classList.remove('hidden');
           summarizeButton.classList.remove('hidden');
         } else {
-          analyzeButton.classList.add('hidden');
           summarizeButton.classList.add('hidden');
         }
       });
@@ -1332,45 +1164,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Note: Authentication checks are now integrated directly into the button click handlers above
   
-  // Function to jump to a specific sentence on the page
-  window.jumpToSentence = function(sentenceIndex) {
-    console.log(`Jumping to sentence ${sentenceIndex}`);
-    
-    // Get the current active tab
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      if (!tabs[0]) {
-        console.error('No active tab found');
-        return;
-      }
-      
-      // Send message to content script to scroll to the sentence
-      chrome.tabs.sendMessage(tabs[0].id, {
-        action: 'scrollToSentence',
-        sentenceIndex: sentenceIndex
-      }, function(response) {
-        if (chrome.runtime.lastError) {
-          console.error('Error scrolling to sentence:', chrome.runtime.lastError);
-          messageDiv.textContent = 'Could not scroll to sentence on this page';
-          setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-          setTimeout(() => {
-            messageDiv.textContent = '';
-          }, 3000);
-        } else if (response && response.success) {
-          messageDiv.textContent = `Scrolled to sentence ${sentenceIndex}`;
-          setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
-          setTimeout(() => {
-            messageDiv.textContent = '';
-          }, 2000);
-        } else {
-          messageDiv.textContent = 'Sentence not found on page';
-          setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-          setTimeout(() => {
-            messageDiv.textContent = '';
-          }, 3000);
-        }
-      });
-    });
-  };
 
   // Tab Navigation Functions
   function initializeTabs() {
