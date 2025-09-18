@@ -2455,24 +2455,39 @@ def check_if_article(content, api_key):
             'messages': [
                 {
                     'role': 'system',
-                    'content': '''You are an expert at identifying web page types. Analyze the given content and determine if it's a single article/blog post or a homepage/index/listing page.
-                    
-Article indicators:
-- Has a clear title and author
-- Contains a coherent narrative or argument
-- Focuses on a single topic
-- Has substantial body text
-- Includes publication date
+                    'content': '''You are an expert at identifying web page types. Analyze the given content and determine if it contains a single, substantial article worth summarizing or if it's a different type of page.
 
-Non-article indicators:
-- Lists of links to other pages
-- Multiple unrelated topics
-- Navigation menus dominate
-- Homepage or landing page
-- Category/tag listing page
-- Search results page
+ARTICLE/SUMMARIZABLE CONTENT - Look for:
+- Single coherent piece of writing (news article, blog post, research paper, tutorial, etc.)
+- Clear main topic or thesis
+- Substantial body text (typically 200+ words of meaningful content)
+- Focused narrative, argument, or information
+- May have: author byline, publication date, article headline
 
-Respond with JSON: {"is_article": true/false, "confidence": 0-100, "page_type": "article|homepage|listing|navigation|other", "reason": "brief explanation"}'''
+NON-SUMMARIZABLE CONTENT - Reject if it's:
+- Homepage/landing pages (multiple sections, various topics)
+- Article listing/category pages (multiple article links/previews)
+- Product catalog/shopping pages (multiple products, e-commerce listings)
+- Search results pages
+- Navigation/directory pages
+- Social media feeds or timelines
+- Forum index pages
+- Wiki category pages
+- News site front pages (multiple story headlines)
+- Corporate "About Us" or contact pages
+- FAQ pages with multiple unrelated questions
+- Course catalogs or event listings
+- Restaurant menus or business directories
+
+EDGE CASES:
+- Long-form reviews (single product/service): SUMMARIZABLE
+- Detailed how-to guides: SUMMARIZABLE
+- Academic papers or documentation: SUMMARIZABLE
+- Company blog posts (single topic): SUMMARIZABLE
+- Press releases (single announcement): SUMMARIZABLE
+- Wikipedia articles (single topic): SUMMARIZABLE
+
+Respond with JSON: {"is_article": true/false, "confidence": 0-100, "page_type": "article|homepage|listing|navigation|ecommerce|social|other", "reason": "brief explanation of why this is/isn't suitable for summarization"}'''
                 },
                 {
                     'role': 'user',
@@ -2501,13 +2516,17 @@ Respond with JSON: {"is_article": true/false, "confidence": 0-100, "page_type": 
             
             if not is_article:
                 if page_type == 'homepage':
-                    message = "This appears to be a homepage or main site page. This tool is designed for summarizing individual articles."
+                    message = "🏠 This appears to be a homepage or main page. Try navigating to a specific article or blog post to summarize."
                 elif page_type == 'listing':
-                    message = "This appears to be a listing or category page with multiple articles. Please navigate to a specific article to summarize."
+                    message = "📋 This appears to be a listing or category page with multiple articles. Please click on a specific article to summarize it."
                 elif page_type == 'navigation':
-                    message = "This appears to be a navigation or menu page. Please select a specific article to summarize."
+                    message = "🧭 This appears to be a navigation or directory page. Please select a specific article or content page to summarize."
+                elif page_type == 'ecommerce':
+                    message = "🛒 This appears to be a shopping or product catalog page. This tool is designed for summarizing articles and written content."
+                elif page_type == 'social':
+                    message = "📱 This appears to be a social media feed or timeline. Try summarizing individual posts or articles instead."
                 else:
-                    message = f"This doesn't appear to be a single article. It looks like a {page_type} page. This tool works best with individual articles or blog posts."
+                    message = f"🔍 This doesn't appear to be a single article suitable for summarization. It looks like a {page_type} page. Try navigating to a specific article, blog post, or news story."
                 
                 return {
                     'is_article': False,
