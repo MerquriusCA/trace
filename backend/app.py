@@ -1753,6 +1753,7 @@ def admin_check_article(current_user):
         print(f"🔍 Checking article status for {article_url}")
         print(f"   Content length: {len(clean_content)} characters")
         print(f"   Source: {'Custom URL' if is_custom_url else 'Test Article'}")
+        print(f"   First 500 chars of content: {clean_content[:500]}...")
 
         # Call the article detection function
         article_check_result = check_if_article(clean_content, openai_api_key)
@@ -2689,11 +2690,11 @@ Respond with JSON: {"is_article": true/false, "confidence": 0-100, "page_type": 
                 },
                 {
                     'role': 'user',
-                    'content': f'Analyze this page content and determine if it\'s a single article:\n\n{content[:2000]}'
+                    'content': f'Analyze this page content and determine if it\'s a single article:\n\n{content[:3000]}'
                 }
             ],
             'temperature': 0.1,
-            'max_tokens': 150
+            'max_tokens': 250
         }
         
         req = urllib.request.Request(
