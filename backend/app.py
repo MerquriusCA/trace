@@ -1587,14 +1587,46 @@ def admin_test_prompt(current_user):
         prompt = data.get('prompt')
         article_url = data.get('article_url')
         article_title = data.get('article_title')
+        article_content = data.get('article_content')
+        is_custom_url = data.get('is_custom_url', False)
         settings = data.get('settings', {})
-        
+
         if not prompt:
             return jsonify({
                 'success': False,
                 'error': 'Prompt is required'
             }), 400
-        
+
+        # If it's a custom URL, fetch the content
+        if is_custom_url and article_url:
+            print(f"🌐 Fetching content from custom URL: {article_url}")
+            try:
+                page_content = fetch_page_content(article_url)
+                if not page_content:
+                    return jsonify({
+                        'success': False,
+                        'error': f'Unable to fetch content from URL: {article_url}'
+                    }), 400
+
+                # Clean and extract text from HTML
+                clean_content = clean_html_content(page_content)
+
+                # Update the prompt to include the fetched content
+                if '[Content will be fetched from URL]' in prompt:
+                    prompt = prompt.replace('[Content will be fetched from URL]', clean_content)
+                else:
+                    # Append the content to the prompt
+                    prompt = f"{prompt}\n\n{clean_content}"
+
+                print(f"✅ Successfully fetched content ({len(clean_content)} characters)")
+
+            except Exception as e:
+                print(f"❌ Error fetching URL content: {e}")
+                return jsonify({
+                    'success': False,
+                    'error': f'Error fetching content from URL: {str(e)}'
+                }), 400
+
         # Use backend OpenAI API key
         openai_api_key = os.getenv('OPENAI_API_KEY')
         if not openai_api_key:
@@ -1602,14 +1634,15 @@ def admin_test_prompt(current_user):
                 'success': False,
                 'error': 'OpenAI API key not configured. Please set OPENAI_API_KEY in Railway environment variables.'
             }), 500
-        
+
         # Call OpenAI API
         import requests
-        
+
         print(f"🧪 Testing prompt for {settings.get('reader_type', 'unknown')} reader")
         print(f"   Reading level: {settings.get('reading_level', 'balanced')}")
         print(f"   Summary style: {settings.get('summary_style', 'eli8')}")
-        
+        print(f"   Source: {'Custom URL' if is_custom_url else 'Test Article'}")
+
         response = requests.post(
             'https://api.openai.com/v1/chat/completions',
             headers={

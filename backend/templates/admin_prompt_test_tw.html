@@ -128,9 +128,37 @@
             <!-- Configuration Panel - Horizontal Layout -->
             <div class="bg-card border border-border rounded-lg p-6 mb-6 hover-lift">
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    <!-- Test Articles -->
+                    <!-- Test Articles and URL Input -->
                     <div>
-                        <h3 class="text-md font-semibold text-gray-900 mb-3">Select Test Article</h3>
+                        <h3 class="text-md font-semibold text-gray-900 mb-3">Select Test Article or Enter URL</h3>
+
+                        <!-- URL Input Option -->
+                        <div class="mb-3">
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="article" value="custom" class="mr-2">
+                                <div class="flex-1">
+                                    <div class="font-medium">🌐 Custom URL</div>
+                                    <div class="text-xs text-gray-500">Enter any webpage URL</div>
+                                </div>
+                            </label>
+                            <div id="urlInputContainer" class="mt-2 ml-6 hidden">
+                                <input type="url" id="customUrl" placeholder="https://example.com/article"
+                                       class="w-full px-3 py-2 text-sm bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-all">
+                                <div class="text-xs text-gray-500 mt-1">⚠️ Some sites may block automated access</div>
+                            </div>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="relative mb-3">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-gray-200"></div>
+                            </div>
+                            <div class="relative flex justify-center text-xs text-gray-500">
+                                <span class="bg-white px-2">Or choose test article</span>
+                            </div>
+                        </div>
+
+                        <!-- Test Articles -->
                         <div class="space-y-1">
                             <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
                                 <input type="radio" name="article" value="tech" class="mr-2" checked>
@@ -139,7 +167,7 @@
                                     <div class="text-xs text-gray-500">AI developments</div>
                                 </div>
                             </label>
-                            
+
                             <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
                                 <input type="radio" name="article" value="science" class="mr-2">
                                 <div>
@@ -147,7 +175,7 @@
                                     <div class="text-xs text-gray-500">Ocean currents</div>
                                 </div>
                             </label>
-                            
+
                             <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
                                 <input type="radio" name="article" value="business" class="mr-2">
                                 <div>
@@ -155,7 +183,7 @@
                                     <div class="text-xs text-gray-500">Tech stocks analysis</div>
                                 </div>
                             </label>
-                            
+
                             <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
                                 <input type="radio" name="article" value="health" class="mr-2">
                                 <div>
@@ -163,7 +191,7 @@
                                     <div class="text-xs text-gray-500">Sleep research</div>
                                 </div>
                             </label>
-                            
+
                             <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
                                 <input type="radio" name="article" value="history" class="mr-2">
                                 <div>
@@ -328,6 +356,21 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Handle article selection and URL input visibility
+            const articleRadios = document.querySelectorAll('input[name="article"]');
+            const urlInputContainer = document.getElementById('urlInputContainer');
+
+            articleRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'custom') {
+                        urlInputContainer.classList.remove('hidden');
+                        document.getElementById('customUrl').focus();
+                    } else {
+                        urlInputContainer.classList.add('hidden');
+                    }
+                });
+            });
+
             // Preserve token in navigation links
             if (token) {
                 const adminLink = document.getElementById('adminLink');
@@ -436,7 +479,24 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
             const readingLevel = document.querySelector('input[name="readingLevel"]:checked').value;
             const summaryStyle = document.querySelector('input[name="summaryStyle"]:checked').value;
 
-            const article = testArticles[selectedArticle];
+            let article;
+
+            if (selectedArticle === 'custom') {
+                const customUrl = document.getElementById('customUrl').value.trim();
+                if (!customUrl) {
+                    alert('Please enter a URL to test');
+                    return;
+                }
+
+                article = {
+                    title: 'Custom URL Article',
+                    url: customUrl,
+                    content: '[Content will be fetched from URL]'
+                };
+            } else {
+                article = testArticles[selectedArticle];
+            }
+
             const settings = {
                 reader_type: readerType,
                 reading_level: readingLevel,
@@ -445,7 +505,7 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
 
             // Generate prompt based on settings
             let prompt = generatePrompt(settings, article);
-            
+
             document.getElementById('promptDisplay').textContent = prompt;
             document.getElementById('customPrompt').value = prompt;
             document.getElementById('promptSection').classList.remove('hidden');
@@ -454,7 +514,25 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
         // Summarize with current settings
         document.getElementById('summarizeBtn').addEventListener('click', async function() {
             const selectedArticle = document.querySelector('input[name="article"]:checked').value;
-            const article = testArticles[selectedArticle];
+
+            let article;
+
+            if (selectedArticle === 'custom') {
+                const customUrl = document.getElementById('customUrl').value.trim();
+                if (!customUrl) {
+                    alert('Please enter a URL to test');
+                    return;
+                }
+
+                article = {
+                    title: 'Custom URL Article',
+                    url: customUrl,
+                    content: null // Will be fetched by backend
+                };
+            } else {
+                article = testArticles[selectedArticle];
+            }
+
             const settings = {
                 reader_type: document.querySelector('input[name="readerType"]:checked').value,
                 reading_level: document.querySelector('input[name="readingLevel"]:checked').value,
@@ -473,7 +551,7 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
                 document.getElementById('resultSection').classList.add('hidden');
 
                 const startTime = Date.now();
-                
+
                 const response = await fetch('/api/admin/test-prompt', {
                     method: 'POST',
                     headers: {
@@ -484,6 +562,8 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
                         prompt: prompt,
                         article_url: article.url,
                         article_title: article.title,
+                        article_content: article.content, // Pass content if it's a test article
+                        is_custom_url: selectedArticle === 'custom',
                         settings: settings
                     })
                 });

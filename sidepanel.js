@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
   const config = window.TRACE_CONFIG;
   const summarizeButton = document.getElementById('summarizeButton');
-  const htmlSummarizeButton = document.getElementById('htmlSummarizeButton');
   const testBackendButton = document.getElementById('testBackendButton');
   const checkPageButton = document.getElementById('checkPageButton');
   const feedbackButton = document.getElementById('feedbackButton');
@@ -82,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show AI features if enabled and authenticated
     if (isEnabled && isAuthenticated) {
       summarizeButton.classList.remove('hidden');
-      htmlSummarizeButton.classList.remove('hidden');
     }
   });
 
@@ -99,12 +97,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show summarize buttons if authenticated and subscription is active
         if (isAuthenticated && currentUser && currentUser.subscription_status === 'active') {
           summarizeButton.classList.remove('hidden');
-          htmlSummarizeButton.classList.remove('hidden');
         }
       } else {
         pageInfo.classList.add('hidden');
         summarizeButton.classList.add('hidden');
-        htmlSummarizeButton.classList.add('hidden');
         analysisResult.classList.add('hidden');
       }
     });
@@ -289,15 +285,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
           // Check if it's an auth token error - trigger refresh and retry
           if (errorMsg.includes('Authorization token required') || errorMsg.includes('Token has expired') || errorMsg.includes('Invalid token')) {
-            messageDiv.textContent = 'Refreshing authentication...';
+            messageDiv.textContent = 'Refreshing authentication and retrying...';
             setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
 
             // Force auth refresh and retry
             chrome.runtime.sendMessage({action: 'forceAuthRefresh'}, function(refreshResponse) {
               if (refreshResponse && refreshResponse.success) {
-                messageDiv.textContent = 'Authentication refreshed. Please try again.';
-                setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
-
                 // Update our local auth state
                 isAuthenticated = true;
                 currentUser = refreshResponse.auth.user;
@@ -309,10 +302,58 @@ document.addEventListener('DOMContentLoaded', function() {
                   }
                 }
 
-                setTimeout(() => {
-                  messageDiv.textContent = '';
-                }, 2000);
+                // Automatically retry the summarize call
+                messageDiv.textContent = 'Authentication refreshed. Retrying summarization...';
+                setMessageColor(messageDiv, messageDiv.textContent, '#2196f3');
+
+                chrome.runtime.sendMessage({
+                  action: 'summarizePage',
+                  tabId: tabs[0].id,
+                  customPrompt: customPrompt
+                }, function(retryResponse) {
+                  summarizeButton.disabled = false;
+
+                  if (retryResponse && retryResponse.success) {
+                    // Check if it's an article or not
+                    if (retryResponse.is_article === false) {
+                      // Display the message for non-article pages
+                      analysisResult.innerHTML = `
+                        <h4>🟡 Not Suitable for Summarization</h4>
+                        <p>${retryResponse.summary}</p>
+                      `;
+                      analysisResult.classList.remove('hidden');
+                      // Clear any existing status message for non-articles
+                      messageDiv.textContent = '';
+                      messageDiv.classList.add('hidden');
+                    } else {
+                      // Display the summary for articles
+                      analysisResult.innerHTML = `
+                        <h4>Page Summary:</h4>
+                        <p>${retryResponse.summary}</p>
+                      `;
+                      analysisResult.classList.remove('hidden');
+
+                      messageDiv.textContent = 'Summary complete!';
+                      setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
+                      messageDiv.classList.remove('hidden');
+                    }
+
+                    // Clear status message after delay for successful summaries
+                    if (retryResponse.is_article !== false) {
+                      setTimeout(() => {
+                        messageDiv.textContent = '';
+                      }, 3000);
+                    }
+                  } else {
+                    messageDiv.textContent = 'Error: ' + (retryResponse?.error || 'Summary failed after retry');
+                    setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+                    setTimeout(() => {
+                      messageDiv.textContent = '';
+                    }, 3000);
+                  }
+                });
               } else {
+                summarizeButton.disabled = false;
                 messageDiv.textContent = 'Please sign in again to use AI features';
                 setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
                 isAuthenticated = false;
@@ -340,219 +381,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Handle HTML summarize button with authentication check
-  htmlSummarizeButton.addEventListener('click', async function(e) {
-    // Check authentication first
-    if (!isAuthenticated) {
-      e.preventDefault();
-      messageDiv.textContent = 'Please sign in to use AI features';
-      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-      setTimeout(() => {
-        messageDiv.textContent = '';
-      }, 3000);
-      return;
-    }
-
-    // Check subscription status for AI features
-    if (currentUser && currentUser.subscription_status !== 'active') {
-      e.preventDefault();
-      messageDiv.textContent = 'Active subscription required for AI features';
-      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-      setTimeout(() => {
-        messageDiv.textContent = '';
-      }, 3000);
-      return;
-    }
-
-    // Get current tab and HTML content
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      if (!tabs[0]) {
-        messageDiv.textContent = 'Unable to get current tab';
-        setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
-        return;
-      }
-
-      htmlSummarizeButton.disabled = true;
-      messageDiv.textContent = 'Getting page HTML and summarizing...';
-      setMessageColor(messageDiv, messageDiv.textContent, '#9c27b0');
-
-      // Try to inject and get HTML directly using scripting API (more reliable)
-      chrome.scripting.executeScript({
-        target: { tabId: tabs[0].id },
-        func: () => {
-          return {
-            html: document.documentElement.outerHTML,
-            url: window.location.href,
-            title: document.title
-          };
-        }
-      }, (injectionResults) => {
-        let htmlData = null;
-
-        // Check if scripting API worked
-        if (!chrome.runtime.lastError && injectionResults && injectionResults[0] && injectionResults[0].result) {
-          config.log('Got HTML via scripting API');
-          htmlData = injectionResults[0].result;
-          processHtmlData(htmlData);
-        } else {
-          // Fallback to content script method
-          config.log('Scripting API failed, trying content script method');
-          chrome.tabs.sendMessage(tabs[0].id, {action: 'getHTML'}, function(htmlResponse) {
-        if (chrome.runtime.lastError) {
-          config.log('Content script error:', chrome.runtime.lastError.message);
-          htmlSummarizeButton.disabled = false;
-
-          // Check if it's a specific type of error and offer fallback
-          if (chrome.runtime.lastError.message.includes('Could not establish connection')) {
-            messageDiv.textContent = 'Content script not loaded. Trying regular summarize method...';
-            setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-
-            // Fallback to regular URL-based summarization
-            setTimeout(() => {
-              chrome.runtime.sendMessage({
-                action: 'summarizePage',
-                tabId: tabs[0].id
-              }, function(fallbackResponse) {
-                htmlSummarizeButton.disabled = false;
-                if (fallbackResponse && fallbackResponse.success) {
-                  if (fallbackResponse.is_article === false) {
-                    analysisResult.innerHTML = `
-                      <h4>🟡 Not Suitable for Summarization</h4>
-                      <p>${fallbackResponse.summary}</p>
-                    `;
-                    analysisResult.classList.remove('hidden');
-                    messageDiv.textContent = '';
-                    messageDiv.classList.add('hidden');
-                  } else {
-                    analysisResult.innerHTML = `
-                      <h4>HTML Summary (via URL):</h4>
-                      <p>${fallbackResponse.summary}</p>
-                    `;
-                    analysisResult.classList.remove('hidden');
-                    messageDiv.textContent = 'HTML summary complete (used fallback method)!';
-                    setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
-                    messageDiv.classList.remove('hidden');
-                  }
-                } else {
-                  messageDiv.textContent = 'Error: Both HTML and URL methods failed';
-                  setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
-                }
-              });
-            }, 1000);
-            return;
-          } else if (chrome.runtime.lastError.message.includes('Cannot access')) {
-            messageDiv.textContent = 'Error: Cannot access this page (restricted site)';
-          } else {
-            messageDiv.textContent = 'Error: Unable to access page content - ' + chrome.runtime.lastError.message;
-          }
-
-          setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
-          setTimeout(() => {
-            messageDiv.textContent = '';
-          }, 3000);
-          return;
-        }
-
-        if (!htmlResponse || !htmlResponse.html) {
-          config.log('Invalid response from content script:', htmlResponse);
-          htmlSummarizeButton.disabled = false;
-          messageDiv.textContent = 'Error: Content script returned empty response';
-          setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
-          setTimeout(() => {
-            messageDiv.textContent = '';
-          }, 3000);
-          return;
-        }
-
-        // Send HTML content to backend for summarization
-        chrome.runtime.sendMessage({
-          action: 'summarizeHTML',
-          html: htmlResponse.html,
-          url: tabs[0].url,
-          title: tabs[0].title
-        }, function(response) {
-          htmlSummarizeButton.disabled = false;
-
-          if (response && response.success) {
-            // Check if it's an article or not
-            if (response.is_article === false) {
-              // Display the message for non-article pages
-              analysisResult.innerHTML = `
-                <h4>🟡 Not Suitable for Summarization</h4>
-                <p>${response.summary}</p>
-              `;
-              analysisResult.classList.remove('hidden');
-              // Clear any existing status message for non-articles
-              messageDiv.textContent = '';
-              messageDiv.classList.add('hidden');
-            } else {
-              // Display the summary for articles
-              analysisResult.innerHTML = `
-                <h4>HTML Summary:</h4>
-                <p>${response.summary}</p>
-              `;
-              analysisResult.classList.remove('hidden');
-
-              messageDiv.textContent = 'HTML summary complete!';
-              setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
-              messageDiv.classList.remove('hidden');
-            }
-          } else {
-            const errorMsg = response?.error || 'HTML summary failed';
-
-            // Check if it's an auth token error - trigger refresh and retry
-            if (errorMsg.includes('Authorization token required') || errorMsg.includes('Token has expired') || errorMsg.includes('Invalid token')) {
-              messageDiv.textContent = 'Refreshing authentication...';
-              setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
-
-              // Force auth refresh and retry
-              chrome.runtime.sendMessage({action: 'forceAuthRefresh'}, function(refreshResponse) {
-                if (refreshResponse && refreshResponse.success) {
-                  messageDiv.textContent = 'Authentication refreshed. Please try again.';
-                  setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
-
-                  // Update our local auth state
-                  isAuthenticated = true;
-                  currentUser = refreshResponse.auth.user;
-
-                  // Also update subscription status if available
-                  if (refreshResponse.subscription && refreshResponse.subscription.success) {
-                    if (currentUser && refreshResponse.subscription.subscription) {
-                      currentUser.subscription_status = refreshResponse.subscription.subscription.status;
-                    }
-                  }
-
-                  setTimeout(() => {
-                    messageDiv.textContent = '';
-                  }, 2000);
-                } else {
-                  messageDiv.textContent = 'Please sign in again to use AI features';
-                  setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
-                  isAuthenticated = false;
-                  currentUser = null;
-                  showLoginSection();
-                }
-              });
-            } else {
-              messageDiv.textContent = 'Error: ' + errorMsg;
-              setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
-            }
-          }
-
-          // Only clear status message for successful summaries and errors, not for non-articles
-          if (response && response.success && response.is_article !== false) {
-            setTimeout(() => {
-              messageDiv.textContent = '';
-            }, 3000);
-          } else if (!response || !response.success) {
-            setTimeout(() => {
-              messageDiv.textContent = '';
-            }, 3000);
-          }
-        });
-      });
-    });
-  });
 
   // Test backend button
   testBackendButton.addEventListener('click', function() {
@@ -939,7 +767,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Hide AI features when not authenticated
     summarizeButton.classList.add('hidden');
-    htmlSummarizeButton.classList.add('hidden');
     
     // Hide settings tab when not authenticated
     settingsTabButton.classList.add('hidden');
@@ -1003,10 +830,8 @@ document.addEventListener('DOMContentLoaded', function() {
       chrome.storage.local.get(['extensionEnabled'], function(result) {
         if (result.extensionEnabled !== false && currentUser.subscription_status === 'active') {
           summarizeButton.classList.remove('hidden');
-          htmlSummarizeButton.classList.remove('hidden');
         } else {
           summarizeButton.classList.add('hidden');
-          htmlSummarizeButton.classList.add('hidden');
         }
       });
     }
