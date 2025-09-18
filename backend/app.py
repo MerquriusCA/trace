@@ -2557,6 +2557,9 @@ ARTICLE/SUMMARIZABLE CONTENT - Look for:
 - Substantial body text (typically 200+ words of meaningful content)
 - Focused narrative, argument, or information
 - May have: author byline, publication date, article headline
+- Newsletter posts (Substack, ConvertKit, etc.) with substantial content
+- Medium articles, Ghost blog posts, and similar platforms
+- Opinion pieces, essays, and editorial content
 
 NON-SUMMARIZABLE CONTENT - Reject if it's:
 - Homepage/landing pages (multiple sections, various topics)
@@ -2564,7 +2567,7 @@ NON-SUMMARIZABLE CONTENT - Reject if it's:
 - Product catalog/shopping pages (multiple products, e-commerce listings)
 - Search results pages
 - Navigation/directory pages
-- Social media feeds or timelines
+- Social media feeds or timelines (multiple posts)
 - Forum index pages
 - Wiki category pages
 - News site front pages (multiple story headlines)
@@ -2573,13 +2576,19 @@ NON-SUMMARIZABLE CONTENT - Reject if it's:
 - Course catalogs or event listings
 - Restaurant menus or business directories
 
-EDGE CASES:
-- Long-form reviews (single product/service): SUMMARIZABLE
-- Detailed how-to guides: SUMMARIZABLE
-- Academic papers or documentation: SUMMARIZABLE
-- Company blog posts (single topic): SUMMARIZABLE
-- Press releases (single announcement): SUMMARIZABLE
-- Wikipedia articles (single topic): SUMMARIZABLE
+ALWAYS SUMMARIZABLE (prioritize these):
+- Substack newsletter posts (even with author bio, subscription prompts, etc.)
+- Medium articles with social elements
+- Blog posts on personal or company blogs
+- Long-form reviews (single product/service)
+- Detailed how-to guides
+- Academic papers or documentation
+- Press releases (single announcement)
+- Wikipedia articles (single topic)
+- Newsletter articles from platforms like ConvertKit, Mailchimp, etc.
+- Substacks, even if they have sidebars, comments, or subscription elements
+
+IMPORTANT: If the content appears to be from Substack (newsletter platform), LinkedIn articles, Medium, or similar publishing platforms, it should almost always be considered summarizable as long as there's substantial written content.
 
 Respond with JSON: {"is_article": true/false, "confidence": 0-100, "page_type": "article|homepage|listing|navigation|ecommerce|social|other", "reason": "brief explanation of why this is/isn't suitable for summarization"}'''
                 },
