@@ -260,14 +260,13 @@ document.addEventListener('DOMContentLoaded', function() {
           if (response.is_article === false) {
             // Display the message for non-article pages
             analysisResult.innerHTML = `
-              <h4>⚠️ Not a Single Article</h4>
+              <h4>🟡 Not Suitable for Summarization</h4>
               <p>${response.summary}</p>
             `;
             analysisResult.classList.remove('hidden');
-            // Border color is now handled by CSS classes
-            
-            messageDiv.textContent = 'Page analyzed';
-            setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+            // Clear any existing status message for non-articles
+            messageDiv.textContent = '';
+            messageDiv.classList.add('hidden');
           } else {
             // Display the summary for articles
             analysisResult.innerHTML = `
@@ -279,6 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             messageDiv.textContent = 'Summary complete!';
             setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
+            messageDiv.classList.remove('hidden');
           }
         } else {
           const errorMsg = response.error || 'Summary failed';
@@ -321,10 +321,17 @@ document.addEventListener('DOMContentLoaded', function() {
             setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
           }
         }
-        
-        setTimeout(() => {
-          messageDiv.textContent = '';
-        }, 3000);
+
+        // Only clear status message for successful summaries and errors, not for non-articles
+        if (response.success && response.is_article !== false) {
+          setTimeout(() => {
+            messageDiv.textContent = '';
+          }, 3000);
+        } else if (!response.success) {
+          setTimeout(() => {
+            messageDiv.textContent = '';
+          }, 3000);
+        }
       });
     });
   });
