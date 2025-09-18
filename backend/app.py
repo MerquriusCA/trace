@@ -2635,11 +2635,27 @@ def call_openai_analyze(content, api_key):
 def check_if_article(content, api_key):
     """Check if the page content is a single article vs index/landing page"""
     try:
+        print(f"\n{'='*60}")
+        print(f"🔍 CHECK_IF_ARTICLE FUNCTION CALLED")
+        print(f"{'='*60}")
+        print(f"📊 Content length: {len(content)} characters")
+        print(f"📝 Content preview (first 300 chars):")
+        print(f"   {content[:300]}...")
+        print(f"📝 Content sample being sent to AI (first 500 chars of 3000):")
+        content_sample = content[:3000]
+        print(f"   {content_sample[:500]}...")
+        print(f"🔍 Looking for Substack indicators in content...")
+
+        # Check for Substack indicators
+        substack_indicators = ['substack', 'newsletter', 'subscribe', 'casualarchivist']
+        found_indicators = [indicator for indicator in substack_indicators if indicator.lower() in content.lower()]
+        print(f"🔎 Found Substack indicators: {found_indicators}")
+
         headers = {
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {api_key}'
         }
-        
+
         data = {
             'model': 'gpt-3.5-turbo',
             'messages': [
@@ -2703,15 +2719,28 @@ Respond with JSON: {"is_article": true/false, "confidence": 0-100, "page_type": 
             headers=headers
         )
         
+        print(f"🤖 Sending request to OpenAI...")
+
         with urllib.request.urlopen(req, timeout=30) as response:
             result = json.loads(response.read().decode('utf-8'))
-        
+
         gpt_response = result['choices'][0]['message']['content']
-        
+
+        print(f"🤖 OpenAI raw response:")
+        print(f"   {gpt_response}")
+
         try:
             analysis = json.loads(gpt_response)
             is_article = analysis.get('is_article', False)
             page_type = analysis.get('page_type', 'unknown')
+            confidence = analysis.get('confidence', 0)
+            reason = analysis.get('reason', 'No reason provided')
+
+            print(f"📊 PARSED ANALYSIS RESULTS:")
+            print(f"   ✅ Is Article: {is_article}")
+            print(f"   🎯 Confidence: {confidence}%")
+            print(f"   📁 Page Type: {page_type}")
+            print(f"   💭 Reason: {reason}")
             
             if not is_article:
                 if page_type == 'homepage':
@@ -2726,25 +2755,45 @@ Respond with JSON: {"is_article": true/false, "confidence": 0-100, "page_type": 
                     message = "📱 This appears to be a social media feed or timeline. Try summarizing individual posts or articles instead."
                 else:
                     message = f"🔍 This doesn't appear to be a single article suitable for summarization. It looks like a {page_type} page. Try navigating to a specific article, blog post, or news story."
-                
+
+                print(f"❌ FINAL RESULT: NOT AN ARTICLE")
+                print(f"   Message: {message}")
+                print(f"{'='*60}\n")
+
                 return {
                     'is_article': False,
                     'message': message,
-                    'page_type': page_type
+                    'page_type': page_type,
+                    'confidence': confidence,
+                    'reason': reason
                 }
             else:
+                print(f"✅ FINAL RESULT: IS AN ARTICLE")
+                print(f"   Page Type: {page_type}")
+                print(f"   Confidence: {confidence}%")
+                print(f"{'='*60}\n")
+
                 return {
                     'is_article': True,
-                    'page_type': page_type
+                    'page_type': page_type,
+                    'confidence': confidence,
+                    'reason': reason
                 }
-                
-        except json.JSONDecodeError:
+
+        except json.JSONDecodeError as e:
+            print(f"❌ JSON DECODE ERROR: {e}")
+            print(f"   Raw response was: {gpt_response}")
+            print(f"   Defaulting to: IS AN ARTICLE")
+            print(f"{'='*60}\n")
             return {
                 'is_article': True,
                 'page_type': 'unknown'
             }
-            
+
     except Exception as e:
+        print(f"❌ GENERAL ERROR in check_if_article: {e}")
+        print(f"   Defaulting to: IS AN ARTICLE")
+        print(f"{'='*60}\n")
         return {
             'is_article': True,
             'page_type': 'unknown'
