@@ -718,37 +718,50 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
         });
 
         function generatePrompt(settings, article) {
-            // Generate prompt based on user settings and article
-            const readerTypePrompts = {
-                student: "You are helping a student understand this content for academic purposes.",
-                business: "You are helping a business professional quickly grasp key insights for decision-making.",
-                researcher: "You are helping a researcher understand this content with academic rigor and detail.",
-                tech: "You are helping a technical professional understand this content with focus on implementation and technical details.",
-                lifelong_learner: "You are helping a curious lifelong learner explore and understand this topic.",
-                creative: "You are helping a creative professional find inspiration and unique perspectives in this content."
-            };
-
+            // Generate prompt based on reading level - matching production prompts exactly
             const readingLevelPrompts = {
-                simple: "Use simple language and explain concepts in the most straightforward way possible.",
-                balanced: "Use clear, accessible language while maintaining accuracy and depth.",
-                detailed: "Provide comprehensive explanations with supporting details and context.",
-                technical: "Use precise technical language and detailed explanations for expert-level understanding."
+                simple: `Create exactly 1 bullet point summary:
+• [Single most important point in simple, clear language]
+
+ONLY return the bullet point above, nothing else.`,
+                balanced: `Create exactly 2 bullet point summary:
+• [First main point in clear, accessible language]
+• [Second main point in clear, accessible language]
+
+ONLY return the 2 bullet points above, nothing else.`,
+                detailed: `Create exactly 3 bullet point summary:
+• [First key point with comprehensive detail]
+• [Second key point with comprehensive detail]
+• [Third key point with comprehensive detail]
+
+ONLY return the 3 bullet points above, nothing else.`,
+                technical: `Create exactly 5 bullet point summary:
+• [First technical point with precise detail]
+• [Second technical point with precise detail]
+• [Third technical point with precise detail]
+• [Fourth technical point with precise detail]
+• [Fifth technical point with precise detail]
+
+ONLY return the 5 bullet points above, nothing else.`
             };
 
-            const summaryStylePrompts = {
-                quick: "Provide a concise one-sentence summary that captures the main point.",
-                eli8: "Explain the key points as if talking to an 8-year-old, using simple words and relatable examples.",
-                detailed: "Create a detailed summary with 5 key bullet points covering the most important aspects."
-            };
+            let basePrompt = readingLevelPrompts[settings.reading_level] || readingLevelPrompts['balanced'];
 
-            return `${readerTypePrompts[settings.reader_type]} ${readingLevelPrompts[settings.reading_level]} ${summaryStylePrompts[settings.summary_style]}
+            // Add the same note about fewer points
+            basePrompt += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count.';
 
-Article Title: ${article.title}
-Article URL: ${article.url}
+            // Add article info
+            basePrompt += `\n\nArticle Title: ${article.title}`;
+            basePrompt += `\nArticle URL: ${article.url}`;
 
-Please summarize the following article content:
+            // Only add content header if there's content to add
+            if (article.content) {
+                basePrompt += `\n\nPlease summarize the following article content:\n\n${article.content}`;
+            } else {
+                basePrompt += `\n\nPlease summarize the content from the above URL.`;
+            }
 
-${article.content}`;
+            return basePrompt;
         }
     </script>
 </body>

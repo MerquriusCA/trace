@@ -1654,14 +1654,14 @@ def admin_test_prompt(current_user):
                 'messages': [
                     {
                         'role': 'system',
-                        'content': 'You are a helpful assistant that summarizes content based on user preferences.'
+                        'content': 'You are a helpful assistant that creates summaries using bullet points. You MUST follow the exact formatting instructions provided, including the specific number of bullet points requested and using the • symbol for each point.'
                     },
                     {
                         'role': 'user',
                         'content': prompt
                     }
                 ],
-                'temperature': 0.7,
+                'temperature': 0.3,
                 'max_tokens': 500
             }
         )
