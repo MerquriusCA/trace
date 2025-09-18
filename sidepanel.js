@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   const config = window.TRACE_CONFIG;
   const summarizeButton = document.getElementById('summarizeButton');
+  const htmlSummarizeButton = document.getElementById('htmlSummarizeButton');
   const testBackendButton = document.getElementById('testBackendButton');
   const checkPageButton = document.getElementById('checkPageButton');
   const feedbackButton = document.getElementById('feedbackButton');
@@ -81,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show AI features if enabled and authenticated
     if (isEnabled && isAuthenticated) {
       summarizeButton.classList.remove('hidden');
+      htmlSummarizeButton.classList.remove('hidden');
     }
   });
 
@@ -94,13 +96,15 @@ document.addEventListener('DOMContentLoaded', function() {
       
       if (isEnabled) {
         displayCurrentPageInfo();
-        // Show summarize button if authenticated and subscription is active
+        // Show summarize buttons if authenticated and subscription is active
         if (isAuthenticated && currentUser && currentUser.subscription_status === 'active') {
           summarizeButton.classList.remove('hidden');
+          htmlSummarizeButton.classList.remove('hidden');
         }
       } else {
         pageInfo.classList.add('hidden');
         summarizeButton.classList.add('hidden');
+        htmlSummarizeButton.classList.add('hidden');
         analysisResult.classList.add('hidden');
       }
     });
@@ -335,7 +339,145 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   });
-  
+
+  // Handle HTML summarize button with authentication check
+  htmlSummarizeButton.addEventListener('click', async function(e) {
+    // Check authentication first
+    if (!isAuthenticated) {
+      e.preventDefault();
+      messageDiv.textContent = 'Please sign in to use AI features';
+      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+      setTimeout(() => {
+        messageDiv.textContent = '';
+      }, 3000);
+      return;
+    }
+
+    // Check subscription status for AI features
+    if (currentUser && currentUser.subscription_status !== 'active') {
+      e.preventDefault();
+      messageDiv.textContent = 'Active subscription required for AI features';
+      setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+      setTimeout(() => {
+        messageDiv.textContent = '';
+      }, 3000);
+      return;
+    }
+
+    // Get current tab and HTML content
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      if (!tabs[0]) {
+        messageDiv.textContent = 'Unable to get current tab';
+        setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+        return;
+      }
+
+      htmlSummarizeButton.disabled = true;
+      messageDiv.textContent = 'Getting page HTML and summarizing...';
+      setMessageColor(messageDiv, messageDiv.textContent, '#9c27b0');
+
+      // Get HTML content from content script
+      chrome.tabs.sendMessage(tabs[0].id, {action: 'getHTML'}, function(htmlResponse) {
+        if (chrome.runtime.lastError || !htmlResponse || !htmlResponse.html) {
+          htmlSummarizeButton.disabled = false;
+          messageDiv.textContent = 'Error: Unable to access page content';
+          setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+          setTimeout(() => {
+            messageDiv.textContent = '';
+          }, 3000);
+          return;
+        }
+
+        // Send HTML content to backend for summarization
+        chrome.runtime.sendMessage({
+          action: 'summarizeHTML',
+          html: htmlResponse.html,
+          url: tabs[0].url,
+          title: tabs[0].title
+        }, function(response) {
+          htmlSummarizeButton.disabled = false;
+
+          if (response && response.success) {
+            // Check if it's an article or not
+            if (response.is_article === false) {
+              // Display the message for non-article pages
+              analysisResult.innerHTML = `
+                <h4>🟡 Not Suitable for Summarization</h4>
+                <p>${response.summary}</p>
+              `;
+              analysisResult.classList.remove('hidden');
+              // Clear any existing status message for non-articles
+              messageDiv.textContent = '';
+              messageDiv.classList.add('hidden');
+            } else {
+              // Display the summary for articles
+              analysisResult.innerHTML = `
+                <h4>HTML Summary:</h4>
+                <p>${response.summary}</p>
+              `;
+              analysisResult.classList.remove('hidden');
+
+              messageDiv.textContent = 'HTML summary complete!';
+              setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
+              messageDiv.classList.remove('hidden');
+            }
+          } else {
+            const errorMsg = response?.error || 'HTML summary failed';
+
+            // Check if it's an auth token error - trigger refresh and retry
+            if (errorMsg.includes('Authorization token required') || errorMsg.includes('Token has expired') || errorMsg.includes('Invalid token')) {
+              messageDiv.textContent = 'Refreshing authentication...';
+              setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+
+              // Force auth refresh and retry
+              chrome.runtime.sendMessage({action: 'forceAuthRefresh'}, function(refreshResponse) {
+                if (refreshResponse && refreshResponse.success) {
+                  messageDiv.textContent = 'Authentication refreshed. Please try again.';
+                  setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
+
+                  // Update our local auth state
+                  isAuthenticated = true;
+                  currentUser = refreshResponse.auth.user;
+
+                  // Also update subscription status if available
+                  if (refreshResponse.subscription && refreshResponse.subscription.success) {
+                    if (currentUser && refreshResponse.subscription.subscription) {
+                      currentUser.subscription_status = refreshResponse.subscription.subscription.status;
+                    }
+                  }
+
+                  setTimeout(() => {
+                    messageDiv.textContent = '';
+                  }, 2000);
+                } else {
+                  messageDiv.textContent = 'Please sign in again to use AI features';
+                  setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+                  isAuthenticated = false;
+                  currentUser = null;
+                  showLoginSection();
+                }
+              });
+            } else {
+              messageDiv.textContent = 'Error: ' + errorMsg;
+              setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+            }
+          }
+
+          // Only clear status message for successful summaries and errors, not for non-articles
+          if (response && response.success && response.is_article !== false) {
+            setTimeout(() => {
+              messageDiv.textContent = '';
+            }, 3000);
+          } else if (!response || !response.success) {
+            setTimeout(() => {
+              messageDiv.textContent = '';
+            }, 3000);
+          }
+        });
+      });
+    });
+  });
+
   // Test backend button
   testBackendButton.addEventListener('click', function() {
     settingsMessage.textContent = 'Testing backend connection...';
@@ -721,6 +863,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Hide AI features when not authenticated
     summarizeButton.classList.add('hidden');
+    htmlSummarizeButton.classList.add('hidden');
     
     // Hide settings tab when not authenticated
     settingsTabButton.classList.add('hidden');
@@ -784,8 +927,10 @@ document.addEventListener('DOMContentLoaded', function() {
       chrome.storage.local.get(['extensionEnabled'], function(result) {
         if (result.extensionEnabled !== false && currentUser.subscription_status === 'active') {
           summarizeButton.classList.remove('hidden');
+          htmlSummarizeButton.classList.remove('hidden');
         } else {
           summarizeButton.classList.add('hidden');
+          htmlSummarizeButton.classList.add('hidden');
         }
       });
     }

@@ -1932,10 +1932,17 @@ def summarize_with_auth(current_user):
         if not api_key:
             return jsonify({'success': False, 'error': 'OpenAI API key not configured on server'}), 500
         
-        # Fetch page content
-        page_content = fetch_page_content(url)
-        if not page_content:
-            return jsonify({'success': False, 'error': 'Unable to fetch page content'}), 400
+        # Check if HTML content is provided directly (to bypass 403 errors)
+        html_content = data.get('html')
+        if html_content:
+            print(f"📄 Using provided HTML content (length: {len(html_content)})")
+            # Clean the provided HTML content
+            page_content = clean_html_content(html_content)
+        else:
+            # Fetch page content from URL
+            page_content = fetch_page_content(url)
+            if not page_content:
+                return jsonify({'success': False, 'error': 'Unable to fetch page content'}), 400
         
         # Call OpenAI API
         if action == 'analyze':
@@ -2363,6 +2370,29 @@ def fetch_page_content(url):
             return None
     except Exception as e:
         print(f"Error fetching content: {e}")
+        return None
+
+def clean_html_content(html):
+    """Clean HTML content for summarization"""
+    try:
+        print(f"Cleaning HTML content (length: {len(html)})")
+
+        # Clean HTML - same logic as fetch_page_content
+        html = re.sub(r'<script\b[^<]*(?:(?!</script>)<[^<]*)*</script>', '', html, flags=re.IGNORECASE)
+        html = re.sub(r'<style\b[^<]*(?:(?!</style>)<[^<]*)*</style>', '', html, flags=re.IGNORECASE)
+        html = re.sub(r'<[^>]+>', ' ', html)
+        html = re.sub(r'\s+', ' ', html).strip()
+
+        # Limit text length for OpenAI API
+        text = html
+        if len(text) > 5000:
+            text = text[:5000]
+
+        print(f"Cleaned HTML content (final length: {len(text)})")
+        return text
+
+    except Exception as e:
+        print(f"Error cleaning HTML content: {e}")
         return None
 
 def call_openai_summarize(content, api_key, custom_prompt=None):

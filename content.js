@@ -43,6 +43,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       status: 'First sentence highlighted!',
       sentence: highlightedSentence
     });
+  } else if (request.action === 'getHTML') {
+    // Return the HTML content of the page
+    sendResponse({
+      html: document.documentElement.outerHTML,
+      url: window.location.href,
+      title: document.title
+    });
   }
 });
 

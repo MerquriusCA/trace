@@ -63,7 +63,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     case 'summarizePage':
       handleSummarizePage(request, sendResponse);
       return true;
-      
+
+    case 'summarizeHTML':
+      handleSummarizeHTML(request, sendResponse);
+      return true;
+
     case 'testBackend':
       handleTestBackend(sendResponse);
       return true;
@@ -550,6 +554,79 @@ function handleSummarizePage(request, sendResponse) {
           error: errorMessage
         });
       }
+    });
+}
+
+function handleSummarizeHTML(request, sendResponse) {
+    config.log('Received summarizeHTML request');
+
+    if (!request.html) {
+        sendResponse({success: false, error: 'No HTML content provided'});
+        return;
+    }
+
+    chrome.storage.local.get(['backendUrl'], async (result) => {
+        // Always use backend service
+        const backendUrl = `${config.getBackendUrl()}${config.api.summarize}`;
+
+        try {
+            config.log('🔗 API CALL: Backend Service (HTML)');
+            config.log('📍 Endpoint:', backendUrl);
+            config.log('🎯 Action: summarizeHTML');
+            config.log('🌐 Page URL:', request.url);
+            config.log('📄 HTML length:', request.html.length);
+
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            // Add auth token if available
+            if (authToken) {
+                headers['Authorization'] = `Bearer ${authToken}`;
+            }
+
+            const response = await fetch(backendUrl, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    html: request.html,
+                    url: request.url,
+                    title: request.title,
+                    action: 'summarize'
+                })
+            });
+
+            // Check content type before parsing
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                config.error('Non-JSON response:', text.substring(0, 200));
+                throw new Error('Backend returned non-JSON response. Check if the backend URL is correct.');
+            }
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Backend service error');
+            }
+
+            const data = await response.json();
+            config.log('✅ HTML summarization successful');
+            sendResponse({
+                success: true,
+                summary: data.summary,
+                is_article: data.is_article
+            });
+        } catch (error) {
+            config.error('HTML Summarization error:', error);
+            let errorMessage = error.message;
+            if (error.message.includes('CORS') || error.message.includes('NetworkError')) {
+                errorMessage = 'Network error. This may be a CORS issue with the backend service.';
+            }
+            sendResponse({
+                success: false,
+                error: errorMessage
+            });
+        }
     });
 }
 
