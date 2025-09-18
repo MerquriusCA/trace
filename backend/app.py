@@ -2305,19 +2305,40 @@ def webhook_status():
 # Utility functions (reuse from existing server)
 def fetch_page_content(url):
     """Fetch and clean page content from URL"""
+    import time
+
     try:
         print(f"Fetching content from: {url}")
-        
+
+        # Add small delay to be more respectful to servers
+        time.sleep(0.5)
+
         req = urllib.request.Request(url, headers={
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'DNT': '1',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Cache-Control': 'max-age=0'
         })
-        
+
         context = ssl.create_default_context()
         context.check_hostname = False
         context.verify_mode = ssl.CERT_NONE
-        
-        with urllib.request.urlopen(req, context=context, timeout=10) as response:
-            html = response.read().decode('utf-8', errors='ignore')
+
+        with urllib.request.urlopen(req, context=context, timeout=15) as response:
+            # Handle gzip compression
+            content = response.read()
+            if response.headers.get('Content-Encoding') == 'gzip':
+                import gzip
+                content = gzip.decompress(content)
+            html = content.decode('utf-8', errors='ignore')
         
         # Clean HTML
         html = re.sub(r'<script\b[^<]*(?:(?!</script>)<[^<]*)*</script>', '', html, flags=re.IGNORECASE)
@@ -2330,6 +2351,16 @@ def fetch_page_content(url):
         
         return text
         
+    except urllib.error.HTTPError as e:
+        if e.code == 403:
+            print(f"403 Forbidden error: Website blocked the request. This often happens with e-commerce sites and pages with anti-bot protection.")
+            return None
+        elif e.code == 404:
+            print(f"404 Not Found: Page does not exist")
+            return None
+        else:
+            print(f"HTTP Error {e.code}: {e.reason}")
+            return None
     except Exception as e:
         print(f"Error fetching content: {e}")
         return None
