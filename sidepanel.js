@@ -376,8 +376,28 @@ document.addEventListener('DOMContentLoaded', function() {
       messageDiv.textContent = 'Getting page HTML and summarizing...';
       setMessageColor(messageDiv, messageDiv.textContent, '#9c27b0');
 
-      // Get HTML content from content script
-      chrome.tabs.sendMessage(tabs[0].id, {action: 'getHTML'}, function(htmlResponse) {
+      // Try to inject and get HTML directly using scripting API (more reliable)
+      chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        func: () => {
+          return {
+            html: document.documentElement.outerHTML,
+            url: window.location.href,
+            title: document.title
+          };
+        }
+      }, (injectionResults) => {
+        let htmlData = null;
+
+        // Check if scripting API worked
+        if (!chrome.runtime.lastError && injectionResults && injectionResults[0] && injectionResults[0].result) {
+          config.log('Got HTML via scripting API');
+          htmlData = injectionResults[0].result;
+          processHtmlData(htmlData);
+        } else {
+          // Fallback to content script method
+          config.log('Scripting API failed, trying content script method');
+          chrome.tabs.sendMessage(tabs[0].id, {action: 'getHTML'}, function(htmlResponse) {
         if (chrome.runtime.lastError) {
           config.log('Content script error:', chrome.runtime.lastError.message);
           htmlSummarizeButton.disabled = false;
