@@ -276,8 +276,11 @@
                         
                         <!-- Action Buttons -->
                         <div class="space-y-2">
+                            <button id="checkArticleBtn" class="w-full px-3 py-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground rounded-lg font-medium text-sm transition-all hover-lift">
+                                🔍 Check if Article
+                            </button>
                             <button id="showPromptBtn" class="w-full px-3 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg font-medium text-sm transition-all hover-lift">
-                                🔍 Show Prompt
+                                📝 Show Prompt
                             </button>
                             <button id="summarizeBtn" class="w-full px-3 py-2 bg-gradient-primary text-white rounded-lg font-medium text-sm shadow-glow hover:shadow-glow-lg transition-all hover-lift">
                                 ⚡ Summarize
@@ -312,6 +315,31 @@
                             <h3 class="text-sm font-heading font-medium text-destructive">Error</h3>
                             <div class="mt-2 text-sm text-destructive/80">
                                 <p id="errorMessage"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article Detection Result -->
+                <div id="articleCheckSection" class="bg-card border border-border rounded-lg p-6 hidden hover-lift">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-lg font-heading font-semibold text-foreground">Article Detection Result</h2>
+                        <div class="text-sm text-muted-foreground">
+                            <span id="checkResponseTime"></span>
+                        </div>
+                    </div>
+                    <div id="articleCheckContent" class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div id="articleStatus" class="px-3 py-1 rounded-full text-sm font-medium"></div>
+                            <div id="articleConfidence" class="text-sm text-muted-foreground"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-foreground mb-2">Analysis Details:</h4>
+                            <div class="bg-input p-3 rounded-lg">
+                                <div class="text-sm space-y-1">
+                                    <div><strong>Page Type:</strong> <span id="pageType"></span></div>
+                                    <div><strong>Reason:</strong> <span id="checkReason"></span></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -472,6 +500,87 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
             }
         };
 
+        // Check if article
+        document.getElementById('checkArticleBtn').addEventListener('click', async function() {
+            const selectedArticle = document.querySelector('input[name="article"]:checked').value;
+
+            let article;
+
+            if (selectedArticle === 'custom') {
+                const customUrl = document.getElementById('customUrl').value.trim();
+                if (!customUrl) {
+                    alert('Please enter a URL to check');
+                    return;
+                }
+
+                article = {
+                    title: 'Custom URL Article',
+                    url: customUrl,
+                    content: null // Will be fetched by backend
+                };
+            } else {
+                article = testArticles[selectedArticle];
+            }
+
+            try {
+                document.getElementById('loadingSection').classList.remove('hidden');
+                document.getElementById('errorSection').classList.add('hidden');
+                document.getElementById('articleCheckSection').classList.add('hidden');
+
+                const startTime = Date.now();
+
+                const response = await fetch('/api/admin/check-article', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        article_url: article.url,
+                        article_content: article.content,
+                        is_custom_url: selectedArticle === 'custom'
+                    })
+                });
+
+                const data = await response.json();
+                const responseTime = Date.now() - startTime;
+
+                if (data.success) {
+                    // Display results
+                    const isArticle = data.analysis.is_article;
+                    const confidence = data.analysis.confidence;
+                    const pageType = data.analysis.page_type;
+                    const reason = data.analysis.reason;
+
+                    // Update status badge
+                    const statusEl = document.getElementById('articleStatus');
+                    if (isArticle) {
+                        statusEl.textContent = '✅ Summarizable Article';
+                        statusEl.className = 'px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800';
+                    } else {
+                        statusEl.textContent = '❌ Not an Article';
+                        statusEl.className = 'px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800';
+                    }
+
+                    // Update other fields
+                    document.getElementById('articleConfidence').textContent = `${confidence}% confidence`;
+                    document.getElementById('pageType').textContent = pageType;
+                    document.getElementById('checkReason').textContent = reason;
+                    document.getElementById('checkResponseTime').textContent = `${responseTime}ms`;
+
+                    document.getElementById('articleCheckSection').classList.remove('hidden');
+                } else {
+                    throw new Error(data.error || 'Article check failed');
+                }
+            } catch (error) {
+                console.error('Article check error:', error);
+                document.getElementById('errorMessage').textContent = error.message;
+                document.getElementById('errorSection').classList.remove('hidden');
+            } finally {
+                document.getElementById('loadingSection').classList.add('hidden');
+            }
+        });
+
         // Show prompt generation
         document.getElementById('showPromptBtn').addEventListener('click', function() {
             const selectedArticle = document.querySelector('input[name="article"]:checked').value;
@@ -593,6 +702,7 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
             document.getElementById('promptSection').classList.add('hidden');
             document.getElementById('resultSection').classList.add('hidden');
             document.getElementById('errorSection').classList.add('hidden');
+            document.getElementById('articleCheckSection').classList.add('hidden');
             document.getElementById('customPrompt').value = '';
         });
 

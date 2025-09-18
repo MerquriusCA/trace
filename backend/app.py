@@ -1695,6 +1695,101 @@ def admin_test_prompt(current_user):
             'error': str(e)
         }), 500
 
+@app.route('/api/admin/check-article', methods=['POST'])
+@require_auth
+def admin_check_article(current_user):
+    """Test article detection for admin prompt testing"""
+    try:
+        data = request.get_json()
+        article_url = data.get('article_url')
+        article_content = data.get('article_content')
+        is_custom_url = data.get('is_custom_url', False)
+
+        if not article_url:
+            return jsonify({
+                'success': False,
+                'error': 'Article URL is required'
+            }), 400
+
+        # Use backend OpenAI API key
+        openai_api_key = os.getenv('OPENAI_API_KEY')
+        if not openai_api_key:
+            return jsonify({
+                'success': False,
+                'error': 'OpenAI API key not configured.'
+            }), 500
+
+        # Get content for analysis
+        if is_custom_url:
+            print(f"🌐 Fetching content from URL for article check: {article_url}")
+            try:
+                page_content = fetch_page_content(article_url)
+                if not page_content:
+                    return jsonify({
+                        'success': False,
+                        'error': f'Unable to fetch content from URL: {article_url}'
+                    }), 400
+
+                # Clean and extract text from HTML
+                clean_content = clean_html_content(page_content)
+                print(f"✅ Successfully fetched content ({len(clean_content)} characters)")
+
+            except Exception as e:
+                print(f"❌ Error fetching URL content: {e}")
+                return jsonify({
+                    'success': False,
+                    'error': f'Error fetching content from URL: {str(e)}'
+                }), 400
+        else:
+            # Use provided test article content
+            clean_content = article_content
+
+        if not clean_content:
+            return jsonify({
+                'success': False,
+                'error': 'No content available for analysis'
+            }), 400
+
+        print(f"🔍 Checking article status for {article_url}")
+        print(f"   Content length: {len(clean_content)} characters")
+        print(f"   Source: {'Custom URL' if is_custom_url else 'Test Article'}")
+
+        # Call the article detection function
+        article_check_result = check_if_article(clean_content, openai_api_key)
+
+        if article_check_result.get('success', True):
+            # Extract analysis data
+            analysis = {
+                'is_article': article_check_result.get('is_article', False),
+                'confidence': article_check_result.get('confidence', 0),
+                'page_type': article_check_result.get('page_type', 'unknown'),
+                'reason': article_check_result.get('reason', 'No reason provided')
+            }
+
+            print(f"✅ Article check completed")
+            print(f"   Is Article: {analysis['is_article']}")
+            print(f"   Confidence: {analysis['confidence']}%")
+            print(f"   Page Type: {analysis['page_type']}")
+
+            return jsonify({
+                'success': True,
+                'analysis': analysis,
+                'url': article_url,
+                'content_length': len(clean_content)
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': article_check_result.get('error', 'Article check failed')
+            }), 500
+
+    except Exception as e:
+        print(f"❌ Admin article check error: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @app.route('/api/admin/feedback', methods=['GET'])
 @require_auth
 def admin_get_feedback(current_user):
