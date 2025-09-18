@@ -2642,8 +2642,8 @@ def check_if_article(content, api_key):
         print(f"📝 Content preview (first 300 chars):")
         print(f"   {content[:300]}...")
         # Increase content limit significantly for better analysis
-        # GPT-3.5-turbo can handle up to ~16k tokens, so we'll use more content
-        content_limit = min(len(content), 12000)  # Send up to 12k characters
+        # GPT-3.5-turbo can handle up to ~16k tokens, so we'll use substantial content
+        content_limit = min(len(content), 25000)  # Send up to 25k characters
         content_sample = content[:content_limit]
 
         print(f"📝 Content sample being sent to AI (first 500 chars of {content_limit}):")
