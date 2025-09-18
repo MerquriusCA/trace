@@ -2082,15 +2082,34 @@ def summarize_with_auth(current_user):
             if not prompt_to_use and current_user.reading_level:
                 # Generate prompt based on user's reading level - return bullet points
                 reading_level_prompts = {
-                    'simple': 'Summarize this content as exactly 1 main bullet point using simple, clear language. Return only the single most important point. Format as: • [main point]',
-                    'balanced': 'Summarize this content as exactly 2 main bullet points using clear, accessible language. Return only the 2 most important points. Format as: • [point 1]\n• [point 2]',
-                    'detailed': 'Summarize this content as exactly 3 main bullet points using comprehensive language. Return only the 3 most important points. Format as: • [point 1]\n• [point 2]\n• [point 3]',
-                    'technical': 'Summarize this content as exactly 5 main bullet points using precise, technical language. Return only the 5 most important points. Format as: • [point 1]\n• [point 2]\n• [point 3]\n• [point 4]\n• [point 5]'
+                    'simple': '''Create exactly 1 bullet point summary:
+• [Single most important point in simple, clear language]
+
+ONLY return the bullet point above, nothing else.''',
+                    'balanced': '''Create exactly 2 bullet point summary:
+• [First main point in clear, accessible language]
+• [Second main point in clear, accessible language]
+
+ONLY return the 2 bullet points above, nothing else.''',
+                    'detailed': '''Create exactly 3 bullet point summary:
+• [First key point with comprehensive detail]
+• [Second key point with comprehensive detail]
+• [Third key point with comprehensive detail]
+
+ONLY return the 3 bullet points above, nothing else.''',
+                    'technical': '''Create exactly 5 bullet point summary:
+• [First technical point with precise detail]
+• [Second technical point with precise detail]
+• [Third technical point with precise detail]
+• [Fourth technical point with precise detail]
+• [Fifth technical point with precise detail]
+
+ONLY return the 5 bullet points above, nothing else.'''
                 }
                 prompt_to_use = reading_level_prompts.get(current_user.reading_level, reading_level_prompts['balanced'])
 
                 # Add instruction to return fewer points if content only has fewer valid main points
-                prompt_to_use += '\n\nIMPORTANT: If the article genuinely has fewer main points than requested, return only the valid points that exist. For example, if an article only has 1 true main point, return just 1 bullet point regardless of the reading level.'
+                prompt_to_use += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count.'
             
             result = call_openai_summarize(page_content, api_key, prompt_to_use)
         
@@ -2547,9 +2566,9 @@ def call_openai_summarize(content, api_key, custom_prompt=None):
         
         # Use custom prompt if provided, otherwise use default
         if custom_prompt:
-            system_content = 'You are a helpful assistant that creates summaries of web pages based on user preferences.'
+            system_content = 'You are a helpful assistant that creates summaries using bullet points. You MUST follow the exact formatting instructions provided, including the specific number of bullet points requested and using the • symbol for each point.'
             user_content = f'{custom_prompt}\n\nWeb page content:\n\n{content}'
-            max_tokens = 200  # Allow more tokens for custom prompts
+            max_tokens = 300  # Allow more tokens for bullet point lists
         else:
             system_content = 'You are a helpful assistant that creates concise summaries of web pages. Provide a brief 2-3 sentence summary that captures the main purpose and key information of the page.'
             user_content = f'Please summarize this web page content in 2-3 sentences:\n\n{content}'
