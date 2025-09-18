@@ -2579,10 +2579,15 @@ def call_openai_summarize(content, api_key, custom_prompt=None):
         
         with urllib.request.urlopen(req, timeout=30) as response:
             result = json.loads(response.read().decode('utf-8'))
-        
+
+        summary_content = result['choices'][0]['message']['content']
+        print(f"🤖 Generated summary content:")
+        print(f"   Raw: {repr(summary_content)}")
+        print(f"   Display: {summary_content}")
+
         return {
             'success': True,
-            'summary': result['choices'][0]['message']['content'],
+            'summary': summary_content,
             'is_article': True
         }
         

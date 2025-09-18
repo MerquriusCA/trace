@@ -269,8 +269,13 @@ document.addEventListener('DOMContentLoaded', function() {
             messageDiv.classList.add('hidden');
           } else {
             // Display the summary for articles
+            console.log('Raw summary from backend:', response.summary);
             // Convert bullet points to proper HTML formatting
-            const formattedSummary = response.summary.replace(/\n/g, '<br>');
+            let formattedSummary = response.summary
+              .replace(/\n/g, '<br>') // Convert newlines to breaks
+              .replace(/•/g, '•') // Ensure bullet points are preserved
+              .replace(/\r/g, ''); // Remove carriage returns
+            console.log('Formatted summary for display:', formattedSummary);
             analysisResult.innerHTML = `
               <h4>Page Summary:</h4>
               <div class="summary-content">${formattedSummary}</div>
@@ -329,8 +334,13 @@ document.addEventListener('DOMContentLoaded', function() {
                       messageDiv.classList.add('hidden');
                     } else {
                       // Display the summary for articles
+                      console.log('Raw retry summary from backend:', retryResponse.summary);
                       // Convert bullet points to proper HTML formatting
-                      const formattedRetrySummary = retryResponse.summary.replace(/\n/g, '<br>');
+                      let formattedRetrySummary = retryResponse.summary
+                        .replace(/\n/g, '<br>') // Convert newlines to breaks
+                        .replace(/•/g, '•') // Ensure bullet points are preserved
+                        .replace(/\r/g, ''); // Remove carriage returns
+                      console.log('Formatted retry summary for display:', formattedRetrySummary);
                       analysisResult.innerHTML = `
                         <h4>Page Summary:</h4>
                         <div class="summary-content">${formattedRetrySummary}</div>
