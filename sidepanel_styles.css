@@ -991,3 +991,13 @@ input[type="text"]:focus, input[type="email"]:focus, textarea:focus, select:focu
 input[type="text"]::placeholder, input[type="email"]::placeholder, textarea::placeholder {
   color: hsl(var(--muted-foreground));
 }
+
+/* Summary Content Styles */
+.summary-content {
+  line-height: 1.6;
+  margin: 8px 0;
+}
+
+.summary-content br {
+  margin: 4px 0;
+}

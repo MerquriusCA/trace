@@ -269,9 +269,11 @@ document.addEventListener('DOMContentLoaded', function() {
             messageDiv.classList.add('hidden');
           } else {
             // Display the summary for articles
+            // Convert bullet points to proper HTML formatting
+            const formattedSummary = response.summary.replace(/\n/g, '<br>');
             analysisResult.innerHTML = `
               <h4>Page Summary:</h4>
-              <p>${response.summary}</p>
+              <div class="summary-content">${formattedSummary}</div>
             `;
             analysisResult.classList.remove('hidden');
             // Border color is now handled by CSS classes
@@ -327,9 +329,11 @@ document.addEventListener('DOMContentLoaded', function() {
                       messageDiv.classList.add('hidden');
                     } else {
                       // Display the summary for articles
+                      // Convert bullet points to proper HTML formatting
+                      const formattedRetrySummary = retryResponse.summary.replace(/\n/g, '<br>');
                       analysisResult.innerHTML = `
                         <h4>Page Summary:</h4>
-                        <p>${retryResponse.summary}</p>
+                        <div class="summary-content">${formattedRetrySummary}</div>
                       `;
                       analysisResult.classList.remove('hidden');
 

@@ -2077,16 +2077,20 @@ def summarize_with_auth(current_user):
         if action == 'analyze':
             result = call_openai_analyze(page_content, api_key)
         else:
-            # Use custom prompt if provided, otherwise fallback to user's saved preference
+            # Use custom prompt if provided, otherwise generate based on user's reading level
             prompt_to_use = custom_prompt
-            if not prompt_to_use and current_user.summary_style:
-                # Generate prompt based on user's saved preference
-                style_prompts = {
-                    'quick': 'Summarize this content in exactly one clear, concise sentence that captures the main point.',
-                    'eli8': 'Explain this content like I\'m 8 years old - use simple, clear language that busy people can quickly understand.',
-                    'detailed': 'Provide a thorough summary of this content in exactly 5 bullet points, covering all key aspects and important details.'
+            if not prompt_to_use and current_user.reading_level:
+                # Generate prompt based on user's reading level - return bullet points
+                reading_level_prompts = {
+                    'simple': 'Summarize this content as exactly 1 main bullet point using simple, clear language. Return only the single most important point. Format as: • [main point]',
+                    'balanced': 'Summarize this content as exactly 2 main bullet points using clear, accessible language. Return only the 2 most important points. Format as: • [point 1]\n• [point 2]',
+                    'detailed': 'Summarize this content as exactly 3 main bullet points using comprehensive language. Return only the 3 most important points. Format as: • [point 1]\n• [point 2]\n• [point 3]',
+                    'technical': 'Summarize this content as exactly 5 main bullet points using precise, technical language. Return only the 5 most important points. Format as: • [point 1]\n• [point 2]\n• [point 3]\n• [point 4]\n• [point 5]'
                 }
-                prompt_to_use = style_prompts.get(current_user.summary_style, style_prompts['eli8'])
+                prompt_to_use = reading_level_prompts.get(current_user.reading_level, reading_level_prompts['balanced'])
+
+                # Add instruction to return fewer points if content only has fewer valid main points
+                prompt_to_use += '\n\nIMPORTANT: If the article genuinely has fewer main points than requested, return only the valid points that exist. For example, if an article only has 1 true main point, return just 1 bullet point regardless of the reading level.'
             
             result = call_openai_summarize(page_content, api_key, prompt_to_use)
         
