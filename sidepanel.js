@@ -378,9 +378,65 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Get HTML content from content script
       chrome.tabs.sendMessage(tabs[0].id, {action: 'getHTML'}, function(htmlResponse) {
-        if (chrome.runtime.lastError || !htmlResponse || !htmlResponse.html) {
+        if (chrome.runtime.lastError) {
+          config.log('Content script error:', chrome.runtime.lastError.message);
           htmlSummarizeButton.disabled = false;
-          messageDiv.textContent = 'Error: Unable to access page content';
+
+          // Check if it's a specific type of error and offer fallback
+          if (chrome.runtime.lastError.message.includes('Could not establish connection')) {
+            messageDiv.textContent = 'Content script not loaded. Trying regular summarize method...';
+            setMessageColor(messageDiv, messageDiv.textContent, '#ff9800');
+
+            // Fallback to regular URL-based summarization
+            setTimeout(() => {
+              chrome.runtime.sendMessage({
+                action: 'summarizePage',
+                tabId: tabs[0].id
+              }, function(fallbackResponse) {
+                htmlSummarizeButton.disabled = false;
+                if (fallbackResponse && fallbackResponse.success) {
+                  if (fallbackResponse.is_article === false) {
+                    analysisResult.innerHTML = `
+                      <h4>🟡 Not Suitable for Summarization</h4>
+                      <p>${fallbackResponse.summary}</p>
+                    `;
+                    analysisResult.classList.remove('hidden');
+                    messageDiv.textContent = '';
+                    messageDiv.classList.add('hidden');
+                  } else {
+                    analysisResult.innerHTML = `
+                      <h4>HTML Summary (via URL):</h4>
+                      <p>${fallbackResponse.summary}</p>
+                    `;
+                    analysisResult.classList.remove('hidden');
+                    messageDiv.textContent = 'HTML summary complete (used fallback method)!';
+                    setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
+                    messageDiv.classList.remove('hidden');
+                  }
+                } else {
+                  messageDiv.textContent = 'Error: Both HTML and URL methods failed';
+                  setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+                }
+              });
+            }, 1000);
+            return;
+          } else if (chrome.runtime.lastError.message.includes('Cannot access')) {
+            messageDiv.textContent = 'Error: Cannot access this page (restricted site)';
+          } else {
+            messageDiv.textContent = 'Error: Unable to access page content - ' + chrome.runtime.lastError.message;
+          }
+
+          setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
+          setTimeout(() => {
+            messageDiv.textContent = '';
+          }, 3000);
+          return;
+        }
+
+        if (!htmlResponse || !htmlResponse.html) {
+          config.log('Invalid response from content script:', htmlResponse);
+          htmlSummarizeButton.disabled = false;
+          messageDiv.textContent = 'Error: Content script returned empty response';
           setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
           setTimeout(() => {
             messageDiv.textContent = '';

@@ -45,11 +45,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
   } else if (request.action === 'getHTML') {
     // Return the HTML content of the page
-    sendResponse({
-      html: document.documentElement.outerHTML,
-      url: window.location.href,
-      title: document.title
-    });
+    console.log('Trace extension: getHTML request received');
+    try {
+      const html = document.documentElement.outerHTML;
+      console.log('Trace extension: HTML extracted, length:', html.length);
+      sendResponse({
+        html: html,
+        url: window.location.href,
+        title: document.title
+      });
+    } catch (error) {
+      console.error('Trace extension: Error getting HTML:', error);
+      sendResponse({
+        error: error.message,
+        html: null
+      });
+    }
   }
 });
 
