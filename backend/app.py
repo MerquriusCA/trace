@@ -2233,15 +2233,14 @@ Use **bold** markdown for emphasis. Include exactly 5 key takeaways with 3-5 sup
                                 print(f"📄 Added QUOTES line: 'QUOTES: {quotes_str}'")
                             formatted_summary += "\n"
 
-                        result['summary'] = formatted_summary.strip()
-                        print(f"✅ Successfully parsed JSON summary and converted to text format")
-                        print(f"📝 Full formatted summary:")
-                        print(f"'{formatted_summary}'")
-                        print(f"📊 Summary stats:")
-                        print(f"   Length: {len(formatted_summary)}")
-                        print(f"   Contains bullets (•): {formatted_summary.count('•')}")
-                        print(f"   Contains QUOTES: {formatted_summary.count('QUOTES:')}")
-                        print(f"   Lines: {len(formatted_summary.split(chr(10)))}")
+                        # Return structured data for the sidebar to parse
+                        result['summary_data'] = {
+                            'summary': summary_text,
+                            'points': points_list
+                        }
+                        result['summary'] = formatted_summary.strip()  # Keep for backward compatibility
+                        print(f"✅ Successfully parsed JSON and returning structured data to sidebar")
+                        print(f"📊 Structured data: {result['summary_data']}")
 
                     except (json.JSONDecodeError, KeyError) as e:
                         # If JSON parsing fails, keep the original summary

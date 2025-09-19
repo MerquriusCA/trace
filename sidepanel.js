@@ -271,8 +271,17 @@ document.addEventListener('DOMContentLoaded', function() {
             // Display the summary for articles
             console.log('Raw summary from backend:', response.summary);
 
-            // Use the helper function to format the summary with expandable quotes
-            let formattedHTML = formatSummaryWithQuotes(response.summary);
+            let formattedHTML = '';
+
+            // Check if we have structured data from the backend
+            if (response.summary_data) {
+              console.log('📋 Using structured summary data:', response.summary_data);
+              formattedHTML = formatStructuredSummary(response.summary_data);
+            } else {
+              console.log('📋 Using text-based summary formatting');
+              formattedHTML = formatSummaryWithQuotes(response.summary);
+            }
+
             console.log('Formatted summary for display:', formattedHTML);
 
             analysisResult.innerHTML = `
@@ -334,8 +343,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                       // Display the summary for articles
                       console.log('Raw retry summary from backend:', retryResponse.summary);
-                      // Use the helper function to format the summary with expandable quotes
-                      let formattedRetrySummary = formatSummaryWithQuotes(retryResponse.summary);
+
+                      let formattedRetrySummary = '';
+                      if (retryResponse.summary_data) {
+                        console.log('📋 Using structured retry summary data:', retryResponse.summary_data);
+                        formattedRetrySummary = formatStructuredSummary(retryResponse.summary_data);
+                      } else {
+                        console.log('📋 Using text-based retry summary formatting');
+                        formattedRetrySummary = formatSummaryWithQuotes(retryResponse.summary);
+                      }
+
                       console.log('Formatted retry summary for display:', formattedRetrySummary);
                       analysisResult.innerHTML = `
                         <h4>Page Summary:</h4>

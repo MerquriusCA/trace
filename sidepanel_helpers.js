@@ -153,11 +153,65 @@ function toggleQuotes(bulletId) {
   }
 }
 
+// Function to format structured summary data from backend
+function formatStructuredSummary(summaryData) {
+  console.log('📋 Formatting structured summary:', summaryData);
+  let formattedHTML = '';
+  let bulletCounter = 0;
+
+  // Add summary sentence
+  if (summaryData.summary) {
+    let summaryText = summaryData.summary.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    formattedHTML += `<div class="summary-sentence">${summaryText}</div>`;
+  }
+
+  // Add bullet points with quotes
+  if (summaryData.points && summaryData.points.length > 0) {
+    summaryData.points.forEach(point => {
+      bulletCounter++;
+      let bulletText = point.text || point.point || String(point);
+      // Convert markdown bold to HTML
+      bulletText = bulletText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+      formattedHTML += `<div class="bullet-item">`;
+      formattedHTML += `<div class="bullet-main">`;
+      formattedHTML += `<span class="bullet-point">•</span> ${bulletText}`;
+
+      // Check if this point has quotes
+      let quotes = point.quotes || point.QUOTES || [];
+      if (quotes && quotes.length > 0) {
+        console.log(`📖 Point ${bulletCounter} has ${quotes.length} quotes:`, quotes);
+
+        formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletCounter}" onclick="toggleQuotes(${bulletCounter})" title="Show supporting quotes">📖</button>`;
+        formattedHTML += `</div>`; // Close bullet-main
+
+        formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletCounter}">`;
+        formattedHTML += `<div class="quotes-header">Supporting Evidence:</div>`;
+
+        quotes.forEach(quote => {
+          formattedHTML += `<blockquote class="article-quote">${quote}</blockquote>`;
+        });
+
+        formattedHTML += `</div>`; // Close quotes-section
+      } else {
+        console.log(`📝 Point ${bulletCounter} has no quotes`);
+        formattedHTML += `</div>`; // Close bullet-main if no quotes
+      }
+
+      formattedHTML += `</div>`; // Close bullet-item
+    });
+  }
+
+  console.log(`✅ Generated HTML for ${bulletCounter} bullet points`);
+  return formattedHTML;
+}
+
 // Export functions for use in sidepanel.js
 window.showMessage = showMessage;
 window.hideMessage = hideMessage;
 window.setMessageColor = setMessageColor;
 window.formatSummaryWithQuotes = formatSummaryWithQuotes;
+window.formatStructuredSummary = formatStructuredSummary;
 window.toggleQuotes = toggleQuotes;
 
 // Override the style.color setter to use our classes instead
