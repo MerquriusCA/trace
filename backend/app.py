@@ -2079,6 +2079,8 @@ def summarize_with_auth(current_user):
         else:
             # Use custom prompt if provided, otherwise generate based on user's reading level
             prompt_to_use = custom_prompt
+            print(f"🔧 Custom prompt provided: {bool(custom_prompt)}")
+            print(f"🔧 User reading level: {current_user.reading_level}")
             if not prompt_to_use and current_user.reading_level:
                 # Generate prompt based on user's reading level - return summary sentence + bullet points
                 reading_level_prompts = {
@@ -2167,7 +2169,9 @@ Use **bold** markdown for emphasis. Include exactly 5 points with 2-3 supporting
 
                 # Add instruction to return fewer points if content only has fewer valid main points
                 prompt_to_use += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count. Always include the SUMMARY line regardless.'
-            
+
+            print(f"🔧 Final prompt being used: {prompt_to_use[:200]}...")
+            print(f"🔧 Using JSON-structured prompt: {bool(prompt_to_use and 'JSON object' in prompt_to_use)}")
             result = call_openai_summarize(page_content, api_key, prompt_to_use)
 
             # Only try to parse JSON for actual articles (not for non-article messages)
