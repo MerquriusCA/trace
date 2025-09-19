@@ -1654,7 +1654,7 @@ def admin_test_prompt(current_user):
                 'messages': [
                     {
                         'role': 'system',
-                        'content': 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST follow the exact formatting instructions provided, including starting with "SUMMARY:", using the • symbol for bullet points, adding "QUOTES:" lines with direct quotes from the article, and using **bold** markdown for emphasis on key phrases. Always extract actual direct quotes from the article text provided.'
+                        'content': 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST return a valid JSON object with the exact structure requested. Extract actual direct quotes from the article text provided. Use **bold** markdown for emphasis on key phrases within the text fields.'
                     },
                     {
                         'role': 'user',
@@ -2082,52 +2082,86 @@ def summarize_with_auth(current_user):
             if not prompt_to_use and current_user.reading_level:
                 # Generate prompt based on user's reading level - return summary sentence + bullet points
                 reading_level_prompts = {
-                    'simple': '''Provide a summary with supporting quotes in this exact format:
+                    'simple': '''Return a JSON object with this exact structure:
 
-SUMMARY: [One simple sentence that captures what this article is about]
+{
+  "summary": "One simple sentence that captures what this article is about",
+  "points": [
+    {
+      "text": "Single most important point in simple, clear language - use **bold** for key phrases",
+      "quotes": ["Direct quote from the article that supports this point"]
+    }
+  ]
+}
 
-• [Single most important point in simple, clear language - use **bold** for key phrases]
-  QUOTES: "[Direct quote from the article that supports this point]"
+Use **bold** markdown for emphasis. Include exactly 1 bullet point with 1 supporting quote.''',
+                    'balanced': '''Return a JSON object with this exact structure:
 
-Format: Start with SUMMARY line, then bullet point with QUOTES line indented underneath. Use **bold** for emphasis. Include 1 direct quote.''',
-                    'balanced': '''Provide a summary with supporting quotes in this exact format:
+{
+  "summary": "One clear sentence that captures the main idea of this article",
+  "points": [
+    {
+      "text": "First main point in clear, accessible language - use **bold** for key phrases",
+      "quotes": ["First direct quote", "Second supporting quote if relevant"]
+    },
+    {
+      "text": "Second main point in clear, accessible language - use **bold** for key phrases",
+      "quotes": ["First direct quote", "Second supporting quote if relevant"]
+    }
+  ]
+}
 
-SUMMARY: [One clear sentence that captures the main idea of this article]
+Use **bold** markdown for emphasis. Include exactly 2 bullet points with 1-2 supporting quotes each.''',
+                    'detailed': '''Return a JSON object with this exact structure:
 
-• [First main point in clear, accessible language - use **bold** for key phrases]
-  QUOTES: "[First direct quote]", "[Second supporting quote if relevant]"
-• [Second main point in clear, accessible language - use **bold** for key phrases]
-  QUOTES: "[First direct quote]", "[Second supporting quote if relevant]"
+{
+  "summary": "One comprehensive sentence that captures the essence and significance of this article",
+  "points": [
+    {
+      "text": "First key point with comprehensive detail - use **bold** for important concepts",
+      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
+    },
+    {
+      "text": "Second key point with comprehensive detail - use **bold** for important concepts",
+      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
+    },
+    {
+      "text": "Third key point with comprehensive detail - use **bold** for important concepts",
+      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
+    }
+  ]
+}
 
-Format: Start with SUMMARY line, then bullet points with QUOTES lines indented underneath. Use **bold** for emphasis. Include 1-2 direct quotes per point.''',
-                    'detailed': '''Provide a summary with supporting quotes in this exact format:
+Use **bold** markdown for emphasis. Include exactly 3 bullet points with 2-3 supporting quotes each.''',
+                    'technical': '''Return a JSON object with this exact structure:
 
-SUMMARY: [One comprehensive sentence that captures the essence and significance of this article]
+{
+  "summary": "One precise technical sentence that captures the core concept and implications",
+  "points": [
+    {
+      "text": "First technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    },
+    {
+      "text": "Second technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    },
+    {
+      "text": "Third technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    },
+    {
+      "text": "Fourth technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    },
+    {
+      "text": "Fifth technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    }
+  ]
+}
 
-• [First key point with comprehensive detail - use **bold** for important concepts]
-  QUOTES: "[First supporting quote]", "[Second supporting quote]", "[Third quote if highly relevant]"
-• [Second key point with comprehensive detail - use **bold** for important concepts]
-  QUOTES: "[First supporting quote]", "[Second supporting quote]", "[Third quote if highly relevant]"
-• [Third key point with comprehensive detail - use **bold** for important concepts]
-  QUOTES: "[First supporting quote]", "[Second supporting quote]", "[Third quote if highly relevant]"
-
-Format: Start with SUMMARY line, then bullet points with QUOTES lines indented underneath. Use **bold** for emphasis. Include 2-3 direct quotes per point.''',
-                    'technical': '''Provide a summary with supporting quotes in this exact format:
-
-SUMMARY: [One precise technical sentence that captures the core concept and implications]
-
-• [First technical point with precise detail - use **bold** for technical terms and key findings]
-  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
-• [Second technical point with precise detail - use **bold** for technical terms and key findings]
-  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
-• [Third technical point with precise detail - use **bold** for technical terms and key findings]
-  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
-• [Fourth technical point with precise detail - use **bold** for technical terms and key findings]
-  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
-• [Fifth technical point with precise detail - use **bold** for technical terms and key findings]
-  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
-
-Format: Start with SUMMARY line, then bullet points with QUOTES lines indented underneath. Use **bold** for emphasis. Include 2-3 direct quotes/data points per bullet.'''
+Use **bold** markdown for emphasis. Include exactly 5 bullet points with 2-3 supporting quotes each.'''
                 }
                 prompt_to_use = reading_level_prompts.get(current_user.reading_level, reading_level_prompts['balanced'])
 
@@ -2135,6 +2169,30 @@ Format: Start with SUMMARY line, then bullet points with QUOTES lines indented u
                 prompt_to_use += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count. Always include the SUMMARY line regardless.'
             
             result = call_openai_summarize(page_content, api_key, prompt_to_use)
+
+            # If we got a JSON response, parse it and format for the frontend
+            if result.get('success') and result.get('is_article', True):
+                try:
+                    import json
+                    # Try to parse as JSON
+                    summary_data = json.loads(result['summary'])
+
+                    # Convert JSON to the expected text format for the frontend
+                    formatted_summary = f"SUMMARY: {summary_data['summary']}\n\n"
+
+                    for i, point in enumerate(summary_data['points'], 1):
+                        formatted_summary += f"• {point['text']}\n"
+                        if point.get('quotes'):
+                            quotes_str = ', '.join([f'"{quote}"' for quote in point['quotes']])
+                            formatted_summary += f"  QUOTES: {quotes_str}\n"
+                        formatted_summary += "\n"
+
+                    result['summary'] = formatted_summary.strip()
+
+                except (json.JSONDecodeError, KeyError) as e:
+                    # If JSON parsing fails, keep the original summary
+                    print(f"📝 Could not parse JSON summary, using original: {e}")
+                    pass
         
         # Track usage
         usage_record = APIUsage(
@@ -2589,7 +2647,7 @@ def call_openai_summarize(content, api_key, custom_prompt=None):
         
         # Use custom prompt if provided, otherwise use default
         if custom_prompt:
-            system_content = 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST follow the exact formatting instructions provided, including starting with "SUMMARY:", using the • symbol for bullet points, adding "QUOTES:" lines with direct quotes from the article, and using **bold** markdown for emphasis on key phrases. Always extract actual direct quotes from the article text provided.'
+            system_content = 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST return a valid JSON object if the prompt requests JSON format, or follow the exact formatting instructions provided. Extract actual direct quotes from the article text provided. Use **bold** markdown for emphasis on key phrases.'
             user_content = f'{custom_prompt}\n\nWeb page content:\n\n{content}'
             max_tokens = 800  # Allow more tokens for summary sentence + bullet points + quotes
         else:

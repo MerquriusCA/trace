@@ -814,22 +814,35 @@ SUMMARY: [One comprehensive sentence that captures the essence and significance 
   QUOTES: "[First supporting quote]", "[Second supporting quote]", "[Third quote if highly relevant]"
 
 Format: Start with SUMMARY line, then bullet points with QUOTES lines indented underneath. Use **bold** for emphasis. Include 2-3 direct quotes per point.`,
-                technical: `Provide a summary with supporting quotes in this exact format:
+                technical: `Return a JSON object with this exact structure:
 
-SUMMARY: [One precise technical sentence that captures the core concept and implications]
+{
+  "summary": "One precise technical sentence that captures the core concept and implications",
+  "points": [
+    {
+      "text": "First technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    },
+    {
+      "text": "Second technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    },
+    {
+      "text": "Third technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    },
+    {
+      "text": "Fourth technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    },
+    {
+      "text": "Fifth technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    }
+  ]
+}
 
-• [First technical point with precise detail - use **bold** for technical terms and key findings]
-  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
-• [Second technical point with precise detail - use **bold** for technical terms and key findings]
-  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
-• [Third technical point with precise detail - use **bold** for technical terms and key findings]
-  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
-• [Fourth technical point with precise detail - use **bold** for technical terms and key findings]
-  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
-• [Fifth technical point with precise detail - use **bold** for technical terms and key findings]
-  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
-
-Format: Start with SUMMARY line, then bullet points with QUOTES lines indented underneath. Use **bold** for emphasis. Include 2-3 direct quotes/data points per bullet.`
+Use **bold** markdown for emphasis. Include exactly 5 bullet points with 2-3 supporting quotes each.`
             };
 
             let basePrompt = readingLevelPrompts[settings.reading_level] || readingLevelPrompts['balanced'];
