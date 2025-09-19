@@ -35,8 +35,15 @@ function setMessageColor(messageDiv, text, color) {
 
 // Function to format summary with expandable quotes
 function formatSummaryWithQuotes(summaryText) {
-  console.log('📋 Formatting summary with quotes:', summaryText.substring(0, 200) + '...');
+  console.log('📋 Formatting summary with quotes:');
+  console.log('📋 Full summary text:', summaryText);
+  console.log('📋 Summary length:', summaryText.length);
+  console.log('📋 Contains SUMMARY:', summaryText.includes('SUMMARY:'));
+  console.log('📋 Contains bullet (•):', summaryText.includes('•'));
+  console.log('📋 Contains QUOTES:', summaryText.includes('QUOTES:'));
+
   let lines = summaryText.split('\n');
+  console.log('📋 Split into', lines.length, 'lines:', lines);
   let formattedHTML = '';
   let bulletCounter = 0;
 
@@ -69,16 +76,18 @@ function formatSummaryWithQuotes(summaryText) {
         if (nextLine.startsWith('QUOTES:') || nextLine.includes('QUOTES:')) {
           quotesFound = true;
           quotesLine = nextLine;
+          console.log(`✅ QUOTES found for bullet ${bulletCounter}: "${nextLine}"`);
 
           formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletCounter}" onclick="toggleQuotes(${bulletCounter})" title="Show supporting quotes">📖</button>`;
           formattedHTML += `</div>`; // Close bullet-main
 
           // Extract quotes content
           let quotesContent = quotesLine.replace(/^.*QUOTES:/, '').trim();
+          console.log(`📝 Extracted quotes content: "${quotesContent}"`);
 
           // Parse quotes - they're comma-separated and in quotes
           let quotes = quotesContent.match(/"([^"]*)"/g) || [];
-          console.log(`📖 Found ${quotes.length} quotes for bullet ${bulletCounter}`);
+          console.log(`📖 Found ${quotes.length} quotes for bullet ${bulletCounter}:`, quotes);
 
           formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletCounter}">`;
           formattedHTML += `<div class="quotes-header">Supporting Evidence:</div>`;
