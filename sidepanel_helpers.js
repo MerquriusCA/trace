@@ -35,12 +35,18 @@ function setMessageColor(messageDiv, text, color) {
 
 // Function to format summary with expandable quotes
 function formatSummaryWithQuotes(summaryText) {
+  console.log('Raw summary text received:', summaryText);
   let lines = summaryText.split('\n');
+  console.log('Split into lines:', lines);
   let formattedHTML = '';
   let bulletCounter = 0;
 
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i].trim();
+    console.log(`Line ${i}: "${line}"`);
+    if (i + 1 < lines.length) {
+      console.log(`Next line ${i+1}: "${lines[i+1].trim()}"`);
+    }
 
     // Handle SUMMARY line
     if (line.startsWith('SUMMARY:')) {
@@ -57,27 +63,57 @@ function formatSummaryWithQuotes(summaryText) {
       formattedHTML += `<div class="bullet-main">`;
       formattedHTML += `<span class="bullet-point">•</span> ${bulletContent}`;
 
-      // Check if next line contains QUOTES
-      if (i + 1 < lines.length && lines[i + 1].trim().startsWith('QUOTES:')) {
-        formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletCounter}" onclick="toggleQuotes(${bulletCounter})" title="Show supporting quotes">📖</button>`;
-        formattedHTML += `</div>`; // Close bullet-main
+      // Look for QUOTES in the next few lines (handle various formatting)
+      let quotesFound = false;
+      let quotesLine = '';
 
-        // Add the quotes section (hidden by default)
-        let quotesLine = lines[i + 1].trim().replace('QUOTES:', '').trim();
-        // Parse quotes - they're comma-separated and in quotes
-        let quotes = quotesLine.match(/"([^"]*)"/g) || [];
+      // Check next 3 lines for QUOTES (sometimes there might be empty lines)
+      for (let j = 1; j <= 3 && i + j < lines.length; j++) {
+        let nextLine = lines[i + j].trim();
+        console.log(`Checking for QUOTES in line ${i+j}: "${nextLine}"`);
 
-        formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletCounter}">`;
-        formattedHTML += `<div class="quotes-header">Supporting Evidence:</div>`;
-        quotes.forEach(quote => {
-          // Remove surrounding quotes
-          let cleanQuote = quote.slice(1, -1);
-          formattedHTML += `<blockquote class="article-quote">${cleanQuote}</blockquote>`;
-        });
-        formattedHTML += `</div>`; // Close quotes-section
+        if (nextLine.startsWith('QUOTES:') || nextLine.includes('QUOTES:')) {
+          quotesFound = true;
+          quotesLine = nextLine;
 
-        i++; // Skip the QUOTES line since we've processed it
-      } else {
+          formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletCounter}" onclick="toggleQuotes(${bulletCounter})" title="Show supporting quotes">📖</button>`;
+          formattedHTML += `</div>`; // Close bullet-main
+
+          // Extract quotes content
+          let quotesContent = quotesLine.replace(/^.*QUOTES:/, '').trim();
+          console.log(`Found QUOTES content: "${quotesContent}"`);
+
+          // Parse quotes - they're comma-separated and in quotes
+          let quotes = quotesContent.match(/"([^"]*)"/g) || [];
+          console.log(`Parsed ${quotes.length} quotes:`, quotes);
+
+          formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletCounter}">`;
+          formattedHTML += `<div class="quotes-header">Supporting Evidence:</div>`;
+
+          if (quotes.length === 0 && quotesContent) {
+            // If no quotes found in proper format, show the raw content
+            formattedHTML += `<blockquote class="article-quote">${quotesContent}</blockquote>`;
+          } else {
+            quotes.forEach(quote => {
+              // Remove surrounding quotes
+              let cleanQuote = quote.slice(1, -1);
+              formattedHTML += `<blockquote class="article-quote">${cleanQuote}</blockquote>`;
+            });
+          }
+
+          formattedHTML += `</div>`; // Close quotes-section
+          i += j; // Skip the lines we've processed
+          break;
+        }
+
+        // Stop looking if we hit another bullet point
+        if (nextLine.startsWith('•')) {
+          break;
+        }
+      }
+
+      if (!quotesFound) {
+        console.log(`No QUOTES found for bullet ${bulletCounter}`);
         formattedHTML += `</div>`; // Close bullet-main if no quotes
       }
 

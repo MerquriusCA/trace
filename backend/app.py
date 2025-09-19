@@ -1662,7 +1662,7 @@ def admin_test_prompt(current_user):
                     }
                 ],
                 'temperature': 0.3,
-                'max_tokens': 500
+                'max_tokens': 1000
             }
         )
         
@@ -2591,7 +2591,7 @@ def call_openai_summarize(content, api_key, custom_prompt=None):
         if custom_prompt:
             system_content = 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST follow the exact formatting instructions provided, including starting with "SUMMARY:", using the • symbol for bullet points, adding "QUOTES:" lines with direct quotes from the article, and using **bold** markdown for emphasis on key phrases. Always extract actual direct quotes from the article text provided.'
             user_content = f'{custom_prompt}\n\nWeb page content:\n\n{content}'
-            max_tokens = 400  # Allow more tokens for summary sentence + bullet points
+            max_tokens = 800  # Allow more tokens for summary sentence + bullet points + quotes
         else:
             system_content = 'You are a helpful assistant that creates concise summaries of web pages. Provide a brief 2-3 sentence summary that captures the main purpose and key information of the page.'
             user_content = f'Please summarize this web page content in 2-3 sentences:\n\n{content}'
