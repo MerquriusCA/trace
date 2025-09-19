@@ -1723,6 +1723,44 @@ def get_standardized_prompts(current_user):
             'error': str(e)
         }), 500
 
+@app.route('/api/admin/generate-prompt', methods=['POST'])
+@require_auth
+def generate_complete_prompt(current_user):
+    """Generate complete prompt with content - unified for both test page and summarize"""
+    try:
+        data = request.get_json()
+        reading_level = data.get('reading_level', 'balanced')
+        content = data.get('content', '')
+
+        print(f"🎯 GENERATE-PROMPT: Reading level: {reading_level}")
+        print(f"🎯 GENERATE-PROMPT: Content length: {len(content)}")
+
+        # Use the exact same logic as test page
+        prompts = get_reading_level_prompts()
+        base_prompt = prompts.get(reading_level, prompts['balanced'])
+
+        # Add the same note about fewer points
+        base_prompt += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count. Always include the SUMMARY line regardless.'
+
+        # Add content exactly like test page does
+        if content:
+            base_prompt += f'\n\nPlease summarize the following article content:\n\n{content}'
+
+        print(f"🎯 GENERATE-PROMPT: Generated prompt length: {len(base_prompt)}")
+        print(f"🎯 GENERATE-PROMPT: Contains 'JSON object': {('JSON object' in base_prompt)}")
+        print(f"🎯 GENERATE-PROMPT: First 300 chars: {base_prompt[:300]}")
+
+        return jsonify({
+            'success': True,
+            'prompt': base_prompt
+        })
+
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @app.route('/api/admin/check-article', methods=['POST'])
 @require_auth
 def admin_check_article(current_user):
@@ -2110,15 +2148,25 @@ def summarize_with_auth(current_user):
             print(f"🔧 User reading level: {current_user.reading_level}")
 
             if custom_prompt:
-                prompt_to_use = custom_prompt
+                final_prompt = custom_prompt
+                print(f"🔧 Using provided custom prompt")
             else:
-                # Generate prompt template using EXACT same logic as prompt test page
+                # Use UNIFIED prompt generation - same as test page
                 user_level = current_user.reading_level if current_user.reading_level else 'balanced'
-                prompt_to_use = generate_standardized_prompt_template_only(user_level)
-                print(f"🔧 Generated standardized prompt template for level: {user_level}")
+                print(f"🔧 Generating unified prompt for level: {user_level}")
 
-            print(f"🔧 Final prompt being used: {prompt_to_use[:200]}...")
-            print(f"🔧 Using JSON-structured prompt: {bool(prompt_to_use and 'JSON object' in prompt_to_use)}")
+                # Generate complete prompt using the exact same backend logic as test page
+                prompts = get_reading_level_prompts()
+                base_prompt = prompts.get(user_level, prompts['balanced'])
+                base_prompt += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count. Always include the SUMMARY line regardless.'
+                final_prompt = base_prompt + f'\n\nPlease summarize the following article content:\n\n{page_content}'
+
+                print(f"🎯 UNIFIED prompt generation complete")
+
+            print(f"🔧 Final prompt length: {len(final_prompt)}")
+            print(f"🔧 Contains 'JSON object': {('JSON object' in final_prompt)}")
+            print(f"🔧 First 300 chars: {final_prompt[:300]}")
+
             # Use EXACT same OpenAI call mechanism as test page
             import requests
 
@@ -2138,7 +2186,7 @@ def summarize_with_auth(current_user):
                         },
                         {
                             'role': 'user',
-                            'content': f'{prompt_to_use}\n\nWeb page content:\n\n{page_content}'
+                            'content': final_prompt
                         }
                     ],
                     'temperature': 0.3,

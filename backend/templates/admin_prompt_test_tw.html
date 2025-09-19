@@ -720,7 +720,7 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
         });
 
         // Show prompt generation
-        document.getElementById('showPromptBtn').addEventListener('click', function() {
+        document.getElementById('showPromptBtn').addEventListener('click', async function() {
             const selectedArticle = document.querySelector('input[name="article"]:checked').value;
             const readerType = document.querySelector('input[name="readerType"]:checked').value;
             const readingLevel = document.querySelector('input[name="readingLevel"]:checked').value;
@@ -751,7 +751,7 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
             };
 
             // Generate prompt based on settings
-            let prompt = generatePrompt(settings, article);
+            let prompt = await generatePrompt(settings, article);
 
             document.getElementById('promptDisplay').textContent = prompt;
             document.getElementById('customPrompt').value = prompt;
@@ -789,7 +789,7 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
             // Use custom prompt if available, otherwise generate
             let prompt = document.getElementById('customPrompt').value;
             if (!prompt) {
-                prompt = generatePrompt(settings, article);
+                prompt = await generatePrompt(settings, article);
             }
 
             try {
@@ -929,23 +929,52 @@ Use **bold** markdown for emphasis. Include exactly 2 points with 1-2 supporting
             };
         }
 
-        function generatePrompt(settings, article) {
-            // Use prompts loaded from backend
+        async function generatePrompt(settings, article) {
+            // Use UNIFIED backend prompt generation - same as summarize endpoint
+            try {
+                console.log('🎯 Using unified backend prompt generation');
 
+                const response = await fetch('/api/admin/generate-prompt', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        reading_level: settings.reading_level,
+                        content: article.content || `Article Title: ${article.title}\nArticle URL: ${article.url}`
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        console.log('✅ Generated unified prompt from backend');
+                        return data.prompt;
+                    } else {
+                        console.error('❌ Backend prompt generation failed:', data.error);
+                        return generateFallbackPrompt(settings, article);
+                    }
+                } else {
+                    console.error('❌ HTTP error generating prompt:', response.status);
+                    return generateFallbackPrompt(settings, article);
+                }
+            } catch (error) {
+                console.error('❌ Error generating prompt:', error);
+                return generateFallbackPrompt(settings, article);
+            }
+        }
+
+        function generateFallbackPrompt(settings, article) {
+            // Fallback if backend prompt generation fails
+            console.log('🔄 Using fallback prompt generation');
             let basePrompt = readingLevelPrompts[settings.reading_level] || readingLevelPrompts['balanced'];
-
-            // Add the same note about fewer points
             basePrompt += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count. Always include the SUMMARY line regardless.';
 
-            // Add article info
-            basePrompt += `\n\nArticle Title: ${article.title}`;
-            basePrompt += `\nArticle URL: ${article.url}`;
-
-            // Only add content header if there's content to add
             if (article.content) {
                 basePrompt += `\n\nPlease summarize the following article content:\n\n${article.content}`;
             } else {
-                basePrompt += `\n\nPlease summarize the content from the above URL.`;
+                basePrompt += `\n\nArticle Title: ${article.title}\nArticle URL: ${article.url}\n\nPlease summarize the content from the above URL.`;
             }
 
             return basePrompt;
