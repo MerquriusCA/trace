@@ -2259,14 +2259,11 @@ Use **bold** markdown for emphasis. Include exactly 5 points with 2-3 supporting
                                 print(f"📄 Added QUOTES line: 'QUOTES: {quotes_str}'")
                             formatted_summary += "\n"
 
-                        # Return structured data for the sidebar to parse
-                        result['summary_data'] = {
-                            'summary': summary_text,
-                            'points': points_list
-                        }
+                        # Return the raw JSON structure directly to the sidebar
+                        result['summary_data'] = summary_data  # Return the original JSON structure
                         result['summary'] = formatted_summary.strip()  # Keep for backward compatibility
-                        print(f"✅ Successfully parsed JSON and returning structured data to sidebar")
-                        print(f"📊 Structured data: {result['summary_data']}")
+                        print(f"✅ Successfully parsed JSON and returning raw structure to sidebar")
+                        print(f"📊 Raw JSON structure: {summary_data}")
 
                     except (json.JSONDecodeError, KeyError) as e:
                         # If JSON parsing fails, keep the original summary
