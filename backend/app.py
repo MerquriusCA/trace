@@ -2218,20 +2218,30 @@ Use **bold** markdown for emphasis. Include exactly 5 key takeaways with 3-5 sup
 
                         # Convert to expected text format for the frontend
                         formatted_summary = f"SUMMARY: {summary_text}\n\n"
+                        print(f"📋 Processing {len(points_list)} points:")
 
                         for i, point in enumerate(points_list, 1):
                             point_text = point['text'] if isinstance(point, dict) else str(point)
+                            print(f"📍 Point {i}: '{point_text}'")
                             formatted_summary += f"• {point_text}\n"
 
                             point_quotes = point.get('quotes', []) if isinstance(point, dict) else []
+                            print(f"📝 Point {i} quotes: {point_quotes}")
                             if point_quotes:
                                 quotes_str = ', '.join([f'"{quote}"' for quote in point_quotes])
                                 formatted_summary += f"  QUOTES: {quotes_str}\n"
+                                print(f"📄 Added QUOTES line: 'QUOTES: {quotes_str}'")
                             formatted_summary += "\n"
 
                         result['summary'] = formatted_summary.strip()
                         print(f"✅ Successfully parsed JSON summary and converted to text format")
-                        print(f"📝 Final formatted summary preview: {formatted_summary[:200]}...")
+                        print(f"📝 Full formatted summary:")
+                        print(f"'{formatted_summary}'")
+                        print(f"📊 Summary stats:")
+                        print(f"   Length: {len(formatted_summary)}")
+                        print(f"   Contains bullets (•): {formatted_summary.count('•')}")
+                        print(f"   Contains QUOTES: {formatted_summary.count('QUOTES:')}")
+                        print(f"   Lines: {len(formatted_summary.split(chr(10)))}")
 
                     except (json.JSONDecodeError, KeyError) as e:
                         # If JSON parsing fails, keep the original summary
