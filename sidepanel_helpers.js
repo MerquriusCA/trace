@@ -35,18 +35,13 @@ function setMessageColor(messageDiv, text, color) {
 
 // Function to format summary with expandable quotes
 function formatSummaryWithQuotes(summaryText) {
-  console.log('Raw summary text received:', summaryText);
+  console.log('📋 Formatting summary with quotes:', summaryText.substring(0, 200) + '...');
   let lines = summaryText.split('\n');
-  console.log('Split into lines:', lines);
   let formattedHTML = '';
   let bulletCounter = 0;
 
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i].trim();
-    console.log(`Line ${i}: "${line}"`);
-    if (i + 1 < lines.length) {
-      console.log(`Next line ${i+1}: "${lines[i+1].trim()}"`);
-    }
 
     // Handle SUMMARY line
     if (line.startsWith('SUMMARY:')) {
@@ -70,7 +65,6 @@ function formatSummaryWithQuotes(summaryText) {
       // Check next 3 lines for QUOTES (sometimes there might be empty lines)
       for (let j = 1; j <= 3 && i + j < lines.length; j++) {
         let nextLine = lines[i + j].trim();
-        console.log(`Checking for QUOTES in line ${i+j}: "${nextLine}"`);
 
         if (nextLine.startsWith('QUOTES:') || nextLine.includes('QUOTES:')) {
           quotesFound = true;
@@ -81,11 +75,10 @@ function formatSummaryWithQuotes(summaryText) {
 
           // Extract quotes content
           let quotesContent = quotesLine.replace(/^.*QUOTES:/, '').trim();
-          console.log(`Found QUOTES content: "${quotesContent}"`);
 
           // Parse quotes - they're comma-separated and in quotes
           let quotes = quotesContent.match(/"([^"]*)"/g) || [];
-          console.log(`Parsed ${quotes.length} quotes:`, quotes);
+          console.log(`📖 Found ${quotes.length} quotes for bullet ${bulletCounter}`);
 
           formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletCounter}">`;
           formattedHTML += `<div class="quotes-header">Supporting Evidence:</div>`;
@@ -113,7 +106,6 @@ function formatSummaryWithQuotes(summaryText) {
       }
 
       if (!quotesFound) {
-        console.log(`No QUOTES found for bullet ${bulletCounter}`);
         formattedHTML += `</div>`; // Close bullet-main if no quotes
       }
 

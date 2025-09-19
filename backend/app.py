@@ -2170,29 +2170,34 @@ Use **bold** markdown for emphasis. Include exactly 5 bullet points with 2-3 sup
             
             result = call_openai_summarize(page_content, api_key, prompt_to_use)
 
-            # If we got a JSON response, parse it and format for the frontend
-            if result.get('success') and result.get('is_article', True):
-                try:
-                    import json
-                    # Try to parse as JSON
-                    summary_data = json.loads(result['summary'])
+            # Only try to parse JSON for actual articles (not for non-article messages)
+            if result.get('success') and result.get('is_article') is not False:
+                # Check if this is actually an article response (vs non-article message)
+                if not result.get('summary', '').startswith('🔍 This doesn\'t appear to be'):
+                    try:
+                        import json
+                        # Try to parse as JSON only for article summaries
+                        summary_data = json.loads(result['summary'])
 
-                    # Convert JSON to the expected text format for the frontend
-                    formatted_summary = f"SUMMARY: {summary_data['summary']}\n\n"
+                        # Convert JSON to the expected text format for the frontend
+                        formatted_summary = f"SUMMARY: {summary_data['summary']}\n\n"
 
-                    for i, point in enumerate(summary_data['points'], 1):
-                        formatted_summary += f"• {point['text']}\n"
-                        if point.get('quotes'):
-                            quotes_str = ', '.join([f'"{quote}"' for quote in point['quotes']])
-                            formatted_summary += f"  QUOTES: {quotes_str}\n"
-                        formatted_summary += "\n"
+                        for i, point in enumerate(summary_data['points'], 1):
+                            formatted_summary += f"• {point['text']}\n"
+                            if point.get('quotes'):
+                                quotes_str = ', '.join([f'"{quote}"' for quote in point['quotes']])
+                                formatted_summary += f"  QUOTES: {quotes_str}\n"
+                            formatted_summary += "\n"
 
-                    result['summary'] = formatted_summary.strip()
+                        result['summary'] = formatted_summary.strip()
+                        print(f"✅ Successfully parsed JSON summary and converted to text format")
 
-                except (json.JSONDecodeError, KeyError) as e:
-                    # If JSON parsing fails, keep the original summary
-                    print(f"📝 Could not parse JSON summary, using original: {e}")
-                    pass
+                    except (json.JSONDecodeError, KeyError) as e:
+                        # If JSON parsing fails, keep the original summary
+                        print(f"📝 Could not parse JSON summary, using original: {e}")
+                        pass
+                else:
+                    print(f"📋 Non-article message detected, skipping JSON parsing")
         
         # Track usage
         usage_record = APIUsage(
