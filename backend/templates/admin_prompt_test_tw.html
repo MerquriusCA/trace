@@ -519,6 +519,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Load standardized prompts from backend first
+            loadStandardizedPrompts();
+
             // Handle article selection and URL input visibility
             const articleRadios = document.querySelectorAll('input[name="article"]');
             const urlInputContainer = document.getElementById('urlInputContainer');
@@ -872,22 +875,40 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
             });
         });
 
-        function generatePrompt(settings, article) {
-            // Generate prompt based on reading level - matching production prompts exactly
-            const readingLevelPrompts = {
-                simple: `Return a JSON object with this exact structure:
+        // Global variable to store prompts fetched from backend
+        let readingLevelPrompts = {};
 
-{
-  "SUMMARY": "One simple sentence that captures what this article is about",
-  "POINTS": [
-    {
-      "point": "Single most important point in simple, clear language - use **bold** for key phrases",
-      "quotes": ["Direct quote from the article that supports this point"]
-    }
-  ]
-}
+        // Fetch standardized prompts from backend
+        async function loadStandardizedPrompts() {
+            try {
+                const response = await fetch('/api/admin/reading-level-prompts', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
 
-Use **bold** markdown for emphasis. Include exactly 1 point with 1 supporting quote.`,
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        readingLevelPrompts = data.prompts;
+                        console.log('✅ Loaded standardized prompts from backend:', Object.keys(readingLevelPrompts));
+                    } else {
+                        console.error('❌ Failed to load prompts:', data.error);
+                        useFallbackPrompts();
+                    }
+                } else {
+                    console.error('❌ HTTP error loading prompts:', response.status);
+                    useFallbackPrompts();
+                }
+            } catch (error) {
+                console.error('❌ Error loading prompts:', error);
+                useFallbackPrompts();
+            }
+        }
+
+        // Fallback prompts in case backend fetch fails
+        function useFallbackPrompts() {
+            readingLevelPrompts = {
                 balanced: `Return a JSON object with this exact structure:
 
 {
@@ -904,58 +925,12 @@ Use **bold** markdown for emphasis. Include exactly 1 point with 1 supporting qu
   ]
 }
 
-Use **bold** markdown for emphasis. Include exactly 2 points with 1-2 supporting quotes each.`,
-                detailed: `Return a JSON object with this exact structure:
-
-{
-  "SUMMARY": "One comprehensive sentence that captures the essence and significance of this article",
-  "POINTS": [
-    {
-      "point": "First key point with comprehensive detail - use **bold** for important concepts",
-      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
-    },
-    {
-      "point": "Second key point with comprehensive detail - use **bold** for important concepts",
-      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
-    },
-    {
-      "point": "Third key point with comprehensive detail - use **bold** for important concepts",
-      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
-    }
-  ]
-}
-
-Use **bold** markdown for emphasis. Include exactly 3 points with 2-3 supporting quotes each.`,
-                technical: `Return a JSON object with this exact structure:
-
-{
-  "SUMMARY": "One precise technical sentence that captures the core concept and implications",
-  "POINTS": [
-    {
-      "point": "First technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    },
-    {
-      "point": "Second technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    },
-    {
-      "point": "Third technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    },
-    {
-      "point": "Fourth technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    },
-    {
-      "point": "Fifth technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    }
-  ]
-}
-
-Use **bold** markdown for emphasis. Include exactly 5 points with 2-3 supporting quotes each.`
+Use **bold** markdown for emphasis. Include exactly 2 points with 1-2 supporting quotes each.`
             };
+        }
+
+        function generatePrompt(settings, article) {
+            // Use prompts loaded from backend
 
             let basePrompt = readingLevelPrompts[settings.reading_level] || readingLevelPrompts['balanced'];
 

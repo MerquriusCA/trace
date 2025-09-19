@@ -1707,6 +1707,22 @@ def admin_test_prompt(current_user):
             'error': str(e)
         }), 500
 
+@app.route('/api/admin/reading-level-prompts', methods=['GET'])
+@require_auth
+def get_standardized_prompts(current_user):
+    """Get standardized reading level prompts for frontend use"""
+    try:
+        prompts = get_reading_level_prompts()
+        return jsonify({
+            'success': True,
+            'prompts': prompts
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @app.route('/api/admin/check-article', methods=['POST'])
 @require_auth
 def admin_check_article(current_user):
