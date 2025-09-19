@@ -265,24 +265,70 @@ document.addEventListener('DOMContentLoaded', function() {
             messageDiv.textContent = '';
             messageDiv.classList.add('hidden');
           } else {
-            // Display the raw response for debugging
+            // Display the structured summary
             console.log('Raw response from backend:', response);
 
-            // Create a simple display of the raw response
-            const rawResponseHTML = `
-              <div style="font-family: monospace; background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 10px 0;">
-                <h5 style="margin-top: 0;">Raw Response from Summarize Endpoint:</h5>
-                <pre style="white-space: pre-wrap; word-wrap: break-word;">${JSON.stringify(response, null, 2)}</pre>
-              </div>
-            `;
+            let formattedHTML = '';
+
+            // Try to parse the JSON summary
+            try {
+              const summaryData = JSON.parse(response.summary);
+              console.log('📋 Parsed JSON summary:', summaryData);
+
+              // Display the summary
+              if (summaryData.SUMMARY) {
+                formattedHTML += `<div class="summary-sentence">${summaryData.SUMMARY}</div>`;
+              }
+
+              // Display the key points with quotes
+              if (summaryData.POINTS && Array.isArray(summaryData.POINTS)) {
+                summaryData.POINTS.forEach((point, index) => {
+                  const bulletId = index + 1;
+
+                  formattedHTML += `<div class="bullet-item">`;
+                  formattedHTML += `<div class="bullet-main">`;
+                  formattedHTML += `<span class="bullet-point">•</span> ${point.point.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}`;
+
+                  // Add quotes toggle button if quotes exist
+                  if (point.quotes && point.quotes.length > 0) {
+                    formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletId}" onclick="toggleQuotes(${bulletId})" title="Show supporting quotes">📖</button>`;
+                    formattedHTML += `</div>`; // Close bullet-main
+
+                    // Add quotes section (hidden by default)
+                    formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletId}">`;
+                    formattedHTML += `<div class="quotes-header">Supporting Evidence:</div>`;
+
+                    point.quotes.forEach(quote => {
+                      formattedHTML += `<blockquote class="article-quote">${quote}</blockquote>`;
+                    });
+
+                    formattedHTML += `</div>`; // Close quotes-section
+                  } else {
+                    formattedHTML += `</div>`; // Close bullet-main if no quotes
+                  }
+
+                  formattedHTML += `</div>`; // Close bullet-item
+                });
+              }
+
+            } catch (error) {
+              console.error('Failed to parse JSON summary:', error);
+              formattedHTML = `
+                <div style="background: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #f44336;">
+                  <h5>Error parsing summary</h5>
+                  <p>Received non-JSON response:</p>
+                  <pre style="white-space: pre-wrap; font-size: 12px;">${response.summary}</pre>
+                </div>
+              `;
+            }
 
             analysisResult.innerHTML = `
-              <h4>Raw Summarize Response:</h4>
-              ${rawResponseHTML}
+              <h4>📄 Page Summary</h4>
+              <div class="summary-content">${formattedHTML}</div>
             `;
             analysisResult.classList.remove('hidden');
 
-            messageDiv.textContent = 'Raw response displayed!';
+            messageDiv.textContent = 'Summary complete!';
             setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
             messageDiv.classList.remove('hidden');
           }
