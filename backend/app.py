@@ -1642,6 +1642,10 @@ def admin_test_prompt(current_user):
         print(f"   Reading level: {settings.get('reading_level', 'balanced')}")
         print(f"   Summary style: {settings.get('summary_style', 'eli8')}")
         print(f"   Source: {'Custom URL' if is_custom_url else 'Test Article'}")
+        print(f"🧪 TEST-PROMPT Content being sent to OpenAI:")
+        print(f"   Prompt length: {len(prompt)}")
+        print(f"   Contains 'JSON object': {('JSON object' in prompt)}")
+        print(f"   First 300 chars: {prompt[:300]}")
 
         response = requests.post(
             'https://api.openai.com/v1/chat/completions',
@@ -1670,8 +1674,16 @@ def admin_test_prompt(current_user):
             result = response.json()
             summary = result['choices'][0]['message']['content']
             token_count = result.get('usage', {}).get('total_tokens', 0)
-            
+
             print(f"✅ Summary generated successfully ({token_count} tokens)")
+            print(f"🧪 TEST-PROMPT Generated summary content:")
+            print(f"   Raw: {repr(summary)}")
+            print(f"   Display: {summary}")
+            print(f"   Length: {len(summary)}")
+            print(f"   Starts with {{: {summary.strip().startswith('{')}")
+            print(f"   Contains 'SUMMARY': {('SUMMARY' in summary)}")
+            print(f"   Contains 'POINTS': {('POINTS' in summary)}")
+            print(f"   First 200 chars: {summary[:200]}")
             
             return jsonify({
                 'success': True,
@@ -2754,7 +2766,17 @@ def call_openai_summarize(content, api_key, custom_prompt=None):
             system_content = 'You are a helpful assistant that creates concise summaries of web pages. Provide a brief 2-3 sentence summary that captures the main purpose and key information of the page.'
             user_content = f'Please summarize this web page content in 2-3 sentences:\n\n{content}'
             max_tokens = 150
-        
+
+        print(f"🤖 SUMMARIZE OpenAI request details:")
+        print(f"   Custom prompt provided: {bool(custom_prompt)}")
+        print(f"   System content: {system_content[:200]}...")
+        print(f"   User content length: {len(user_content)}")
+        print(f"   Max tokens: {max_tokens}")
+        if custom_prompt:
+            print(f"   Custom prompt length: {len(custom_prompt)}")
+            print(f"   Contains 'JSON object': {('JSON object' in custom_prompt)}")
+            print(f"   Custom prompt first 300 chars: {custom_prompt[:300]}")
+
         data = {
             'model': 'gpt-3.5-turbo',
             'messages': [
@@ -2784,6 +2806,11 @@ def call_openai_summarize(content, api_key, custom_prompt=None):
         print(f"🤖 Generated summary content:")
         print(f"   Raw: {repr(summary_content)}")
         print(f"   Display: {summary_content}")
+        print(f"   Length: {len(summary_content)}")
+        print(f"   Starts with {{: {summary_content.strip().startswith('{')}")
+        print(f"   Contains 'SUMMARY': {('SUMMARY' in summary_content)}")
+        print(f"   Contains 'POINTS': {('POINTS' in summary_content)}")
+        print(f"   First 200 chars: {summary_content[:200]}")
 
         return {
             'success': True,
