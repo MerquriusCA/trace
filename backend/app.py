@@ -2119,7 +2119,60 @@ def summarize_with_auth(current_user):
 
             print(f"🔧 Final prompt being used: {prompt_to_use[:200]}...")
             print(f"🔧 Using JSON-structured prompt: {bool(prompt_to_use and 'JSON object' in prompt_to_use)}")
-            result = call_openai_summarize(page_content, api_key, prompt_to_use)
+            # Use EXACT same OpenAI call mechanism as test page
+            import requests
+
+            print(f"🔄 Making OpenAI call with EXACT same method as test page")
+            response = requests.post(
+                'https://api.openai.com/v1/chat/completions',
+                headers={
+                    'Authorization': f'Bearer {api_key}',
+                    'Content-Type': 'application/json'
+                },
+                json={
+                    'model': 'gpt-3.5-turbo',
+                    'messages': [
+                        {
+                            'role': 'system',
+                            'content': 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST return a valid JSON object with the exact structure requested. Extract actual direct quotes from the article text provided. Use **bold** markdown for emphasis on key phrases within the text fields.'
+                        },
+                        {
+                            'role': 'user',
+                            'content': f'{prompt_to_use}\n\nWeb page content:\n\n{page_content}'
+                        }
+                    ],
+                    'temperature': 0.3,
+                    'max_tokens': 1000
+                }
+            )
+
+            if response.status_code == 200:
+                openai_result = response.json()
+                summary_content = openai_result['choices'][0]['message']['content']
+                token_count = openai_result.get('usage', {}).get('total_tokens', 0)
+
+                print(f"✅ OpenAI call successful ({token_count} tokens)")
+                print(f"🤖 IDENTICAL TO TEST-PAGE Generated summary content:")
+                print(f"   Raw: {repr(summary_content)}")
+                print(f"   Display: {summary_content}")
+                print(f"   Length: {len(summary_content)}")
+                print(f"   Starts with {{: {summary_content.strip().startswith('{')}")
+                print(f"   Contains 'SUMMARY': {('SUMMARY' in summary_content)}")
+                print(f"   Contains 'POINTS': {('POINTS' in summary_content)}")
+                print(f"   First 200 chars: {summary_content[:200]}")
+
+                result = {
+                    'success': True,
+                    'summary': summary_content,
+                    'is_article': True
+                }
+            else:
+                error_data = response.json()
+                print(f"❌ OpenAI API error: {error_data}")
+                result = {
+                    'success': False,
+                    'error': error_data.get('error', {}).get('message', 'API request failed')
+                }
 
             # Only try to parse JSON for actual articles (not for non-article messages)
             if result.get('success') and result.get('is_article') is not False:
