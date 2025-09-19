@@ -276,7 +276,21 @@ document.addEventListener('DOMContentLoaded', function() {
             // Check if we have structured data from the backend
             if (response.summary_data) {
               console.log('📋 Using structured summary data:', response.summary_data);
+              console.log('📋 Raw JSON structure received:', JSON.stringify(response.summary_data, null, 2));
+
+              // Also display the raw JSON in the UI for debugging
+              const jsonDisplay = document.createElement('div');
+              jsonDisplay.style.background = '#f5f5f5';
+              jsonDisplay.style.padding = '10px';
+              jsonDisplay.style.margin = '10px 0';
+              jsonDisplay.style.borderRadius = '4px';
+              jsonDisplay.style.fontSize = '12px';
+              jsonDisplay.style.fontFamily = 'monospace';
+              jsonDisplay.style.whiteSpace = 'pre-wrap';
+              jsonDisplay.textContent = 'Raw JSON received:\n' + JSON.stringify(response.summary_data, null, 2);
+
               formattedHTML = formatStructuredSummary(response.summary_data);
+              formattedHTML += jsonDisplay.outerHTML;
             } else {
               console.log('📋 Using text-based summary formatting');
               formattedHTML = formatSummaryWithQuotes(response.summary);
