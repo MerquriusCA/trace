@@ -71,34 +71,39 @@ function formatSummaryWithQuotes(summaryText) {
 
       // Check next 3 lines for QUOTES (sometimes there might be empty lines)
       for (let j = 1; j <= 3 && i + j < lines.length; j++) {
-        let nextLine = lines[i + j].trim();
+        let nextLine = lines[i + j]; // Don't trim yet, keep original spacing
+        let trimmedLine = nextLine.trim();
 
-        if (nextLine.startsWith('QUOTES:') || nextLine.includes('QUOTES:')) {
+        console.log(`🔍 Checking line ${i+j}: "${nextLine}" (trimmed: "${trimmedLine}")`);
+
+        if (trimmedLine.includes('QUOTES:') || nextLine.includes('QUOTES:')) {
           quotesFound = true;
-          quotesLine = nextLine;
-          console.log(`✅ QUOTES found for bullet ${bulletCounter}: "${nextLine}"`);
+          quotesLine = trimmedLine;
+          console.log(`✅ QUOTES found for bullet ${bulletCounter}: "${quotesLine}"`);
 
           formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletCounter}" onclick="toggleQuotes(${bulletCounter})" title="Show supporting quotes">📖</button>`;
           formattedHTML += `</div>`; // Close bullet-main
 
-          // Extract quotes content
-          let quotesContent = quotesLine.replace(/^.*QUOTES:/, '').trim();
+          // Extract quotes content - handle both trimmed and untrimmed
+          let quotesContent = quotesLine.replace(/^.*QUOTES:\s*/, '').trim();
           console.log(`📝 Extracted quotes content: "${quotesContent}"`);
 
           // Parse quotes - they're comma-separated and in quotes
           let quotes = quotesContent.match(/"([^"]*)"/g) || [];
-          console.log(`📖 Found ${quotes.length} quotes for bullet ${bulletCounter}:`, quotes);
+          console.log(`📖 Parsed ${quotes.length} quotes for bullet ${bulletCounter}:`, quotes);
 
           formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletCounter}">`;
           formattedHTML += `<div class="quotes-header">Supporting Evidence:</div>`;
 
           if (quotes.length === 0 && quotesContent) {
             // If no quotes found in proper format, show the raw content
+            console.log(`⚠️ No quotes parsed, showing raw content: "${quotesContent}"`);
             formattedHTML += `<blockquote class="article-quote">${quotesContent}</blockquote>`;
           } else {
-            quotes.forEach(quote => {
+            quotes.forEach((quote, idx) => {
               // Remove surrounding quotes
               let cleanQuote = quote.slice(1, -1);
+              console.log(`📝 Quote ${idx + 1}: "${cleanQuote}"`);
               formattedHTML += `<blockquote class="article-quote">${cleanQuote}</blockquote>`;
             });
           }
@@ -109,7 +114,8 @@ function formatSummaryWithQuotes(summaryText) {
         }
 
         // Stop looking if we hit another bullet point
-        if (nextLine.startsWith('•')) {
+        if (trimmedLine.startsWith('•')) {
+          console.log(`🛑 Hit another bullet point, stopping search`);
           break;
         }
       }
