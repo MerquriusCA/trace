@@ -2167,45 +2167,54 @@ Use **bold** markdown for emphasis. Include exactly 5 key takeaways with 3-5 sup
                         # Handle different JSON formats the AI might return
                         summary_text = ""
                         points_list = []
-                        all_quotes = []
 
-                        # Extract summary text
-                        if 'summary' in summary_data:
+                        # Extract summary text - handle SUMMARY (caps) and summary (lowercase)
+                        if 'SUMMARY' in summary_data:
+                            summary_text = summary_data['SUMMARY']
+                        elif 'summary' in summary_data:
                             summary_text = summary_data['summary']
                         elif 'main_points' in summary_data and 'summary' in summary_data['main_points']:
                             summary_text = summary_data['main_points']['summary']
 
-                        # Extract points/key takeaways
-                        if 'points' in summary_data:
+                        # Extract points - handle the actual structure we're getting
+                        if 'main_points' in summary_data and isinstance(summary_data['main_points'], list):
+                            # Handle structure like: {"main_points": [{"point": "...", "QUOTES": ["..."]}]}
+                            for point_obj in summary_data['main_points']:
+                                if isinstance(point_obj, dict):
+                                    point_text = point_obj.get('point', point_obj.get('text', str(point_obj)))
+                                    point_quotes = point_obj.get('QUOTES', point_obj.get('quotes', []))
+                                    points_list.append({'text': point_text, 'quotes': point_quotes})
+                                else:
+                                    points_list.append({'text': str(point_obj), 'quotes': []})
+
+                        elif 'points' in summary_data:
                             points_list = summary_data['points']
-                        elif 'main_points' in summary_data and 'key_takeaways' in summary_data['main_points']:
-                            key_takeaways = summary_data['main_points']['key_takeaways']
-                            # Convert simple strings to point objects
-                            points_list = [{'text': point, 'quotes': []} for point in key_takeaways]
                         elif 'key_takeaways' in summary_data:
                             key_takeaways = summary_data['key_takeaways']
                             points_list = [{'text': point, 'quotes': []} for point in key_takeaways]
 
-                        # Extract quotes
-                        if 'quotes' in summary_data:
-                            quotes_obj = summary_data['quotes']
-                            if isinstance(quotes_obj, dict):
-                                # Convert quotes object to list
-                                all_quotes = list(quotes_obj.values())
-                            elif isinstance(quotes_obj, list):
-                                all_quotes = quotes_obj
+                        # If we don't have quotes embedded in points, try to extract and distribute them
+                        if not any(point.get('quotes') for point in points_list):
+                            all_quotes = []
+                            if 'quotes' in summary_data:
+                                quotes_obj = summary_data['quotes']
+                                if isinstance(quotes_obj, dict):
+                                    # Convert quotes object to list
+                                    all_quotes = list(quotes_obj.values())
+                                elif isinstance(quotes_obj, list):
+                                    all_quotes = quotes_obj
 
-                        # Distribute quotes among points if we have both
-                        if all_quotes and points_list:
-                            quotes_per_point = len(all_quotes) // len(points_list)
-                            remaining_quotes = len(all_quotes) % len(points_list)
+                            # Distribute quotes among points if we have both
+                            if all_quotes and points_list:
+                                quotes_per_point = len(all_quotes) // len(points_list)
+                                remaining_quotes = len(all_quotes) % len(points_list)
 
-                            quote_index = 0
-                            for i, point in enumerate(points_list):
-                                point_quotes = quotes_per_point + (1 if i < remaining_quotes else 0)
-                                if quote_index < len(all_quotes):
-                                    point['quotes'] = all_quotes[quote_index:quote_index + point_quotes]
-                                    quote_index += point_quotes
+                                quote_index = 0
+                                for i, point in enumerate(points_list):
+                                    point_quotes = quotes_per_point + (1 if i < remaining_quotes else 0)
+                                    if quote_index < len(all_quotes):
+                                        point['quotes'] = all_quotes[quote_index:quote_index + point_quotes]
+                                        quote_index += point_quotes
 
                         # Convert to expected text format for the frontend
                         formatted_summary = f"SUMMARY: {summary_text}\n\n"

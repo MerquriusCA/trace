@@ -387,68 +387,70 @@
         function formatJSONSummaryForTestPage(jsonData) {
             let formattedHTML = '';
 
-            // Extract summary text
+            // Extract summary text - handle various formats
             let summary_text = "";
-            if (jsonData.summary) {
+            if (jsonData.SUMMARY) {
+                summary_text = jsonData.SUMMARY;
+            } else if (jsonData.summary) {
                 summary_text = jsonData.summary;
             } else if (jsonData.main_points && jsonData.main_points.summary) {
                 summary_text = jsonData.main_points.summary;
             }
 
             if (summary_text) {
-                formattedHTML += `<div style="font-style: italic; color: #666; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #e0e0e0;">
+                // Convert markdown bold to HTML
+                summary_text = summary_text.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #333; background: rgba(59, 130, 246, 0.1); padding: 0 2px; border-radius: 2px;">$1</strong>');
+
+                formattedHTML += `<div style="font-style: italic; color: #666; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #e0e0e0; font-size: 16px; line-height: 1.5;">
                     <strong>Summary:</strong> ${summary_text}
                 </div>`;
             }
 
-            // Extract key takeaways/points
-            let key_takeaways = [];
-            if (jsonData.key_takeaways) {
-                key_takeaways = jsonData.key_takeaways;
-            } else if (jsonData.main_points && jsonData.main_points.key_takeaways) {
-                key_takeaways = jsonData.main_points.key_takeaways;
+            // Extract main points - handle the actual structure we're getting
+            let main_points = [];
+            if (jsonData.main_points && Array.isArray(jsonData.main_points)) {
+                main_points = jsonData.main_points;
+            } else if (jsonData.key_takeaways) {
+                main_points = jsonData.key_takeaways.map(point => ({ point: point, QUOTES: [] }));
             } else if (jsonData.points) {
-                key_takeaways = jsonData.points.map(p => p.text || p);
+                main_points = jsonData.points.map(p => ({ point: p.text || p, QUOTES: p.quotes || [] }));
             }
 
-            if (key_takeaways.length > 0) {
-                formattedHTML += `<div style="margin: 16px 0;"><strong>Key Takeaways:</strong></div>`;
-                key_takeaways.forEach((takeaway, index) => {
-                    let takeawayText = typeof takeaway === 'string' ? takeaway : takeaway.text || String(takeaway);
+            if (main_points.length > 0) {
+                formattedHTML += `<div style="margin: 20px 0;"><h3 style="color: #333; margin-bottom: 16px;">Key Points:</h3></div>`;
+
+                main_points.forEach((pointObj, index) => {
+                    let pointText = pointObj.point || pointObj.text || String(pointObj);
                     // Convert markdown bold to HTML
-                    takeawayText = takeawayText.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #333; background: rgba(59, 130, 246, 0.1); padding: 0 2px; border-radius: 2px;">$1</strong>');
+                    pointText = pointText.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #333; background: rgba(59, 130, 246, 0.1); padding: 0 2px; border-radius: 2px;">$1</strong>');
 
-                    formattedHTML += `<div style="margin: 12px 0;">`;
-                    formattedHTML += `<div style="display: flex; align-items: flex-start; gap: 8px;">`;
-                    formattedHTML += `<span style="color: #3b82f6;">•</span> ${takeawayText}`;
+                    formattedHTML += `<div style="margin: 16px 0; padding: 16px; background: #fafafa; border-radius: 8px; border-left: 4px solid #3b82f6;">`;
+                    formattedHTML += `<div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px;">`;
+                    formattedHTML += `<span style="color: #3b82f6; font-weight: bold; min-width: 20px;">${index + 1}.</span>`;
+                    formattedHTML += `<div style="flex: 1; font-size: 15px; line-height: 1.5;">${pointText}</div>`;
                     formattedHTML += `</div>`;
+
+                    // Display quotes for this point
+                    let quotes = pointObj.QUOTES || pointObj.quotes || [];
+                    if (quotes && quotes.length > 0) {
+                        formattedHTML += `<div style="margin-left: 28px;">`;
+                        formattedHTML += `<div style="font-size: 12px; font-weight: bold; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Supporting Evidence:</div>`;
+                        quotes.forEach(quote => {
+                            formattedHTML += `<blockquote style="margin: 6px 0; padding: 8px 12px; background: white; border-radius: 4px; border-left: 3px solid #3b82f6; font-size: 13px; line-height: 1.4; color: #444; font-style: italic;">
+                                "${quote}"
+                            </blockquote>`;
+                        });
+                        formattedHTML += `</div>`;
+                    }
+
                     formattedHTML += `</div>`;
-                });
-            }
-
-            // Extract and display quotes
-            let quotes = [];
-            if (jsonData.quotes) {
-                if (typeof jsonData.quotes === 'object' && !Array.isArray(jsonData.quotes)) {
-                    quotes = Object.values(jsonData.quotes);
-                } else if (Array.isArray(jsonData.quotes)) {
-                    quotes = jsonData.quotes;
-                }
-            }
-
-            if (quotes.length > 0) {
-                formattedHTML += `<div style="margin: 16px 0;"><strong>Supporting Quotes:</strong></div>`;
-                quotes.forEach((quote, index) => {
-                    formattedHTML += `<blockquote style="margin: 8px 0; padding: 8px 12px; background: #f9fafb; border-radius: 4px; border-left: 2px solid rgba(59, 130, 246, 0.3); font-size: 13px; line-height: 1.5; color: #333; font-style: italic;">
-                        ${quote}
-                    </blockquote>`;
                 });
             }
 
             // Show raw JSON structure for debugging
-            formattedHTML += `<details style="margin-top: 20px; padding: 12px; background: #f5f5f5; border-radius: 4px;">
-                <summary style="cursor: pointer; font-weight: bold;">Raw JSON Structure (for debugging)</summary>
-                <pre style="margin: 8px 0; padding: 8px; background: white; border-radius: 4px; overflow-x: auto; font-size: 12px;">${JSON.stringify(jsonData, null, 2)}</pre>
+            formattedHTML += `<details style="margin-top: 24px; padding: 12px; background: #f5f5f5; border-radius: 4px;">
+                <summary style="cursor: pointer; font-weight: bold; color: #666;">🔍 Raw JSON Structure (for debugging)</summary>
+                <pre style="margin: 8px 0; padding: 12px; background: white; border-radius: 4px; overflow-x: auto; font-size: 11px; line-height: 1.3; color: #333; border: 1px solid #e0e0e0;">${JSON.stringify(jsonData, null, 2)}</pre>
             </details>`;
 
             return formattedHTML;
