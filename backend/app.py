@@ -2088,7 +2088,7 @@ SUMMARY: [One simple sentence that captures what this article is about]
 
 • [Single most important point in simple, clear language - use **bold** for key phrases]
 
-Format: Start with SUMMARY: line, then blank line, then bullet point. Use **bold** markdown for emphasis.''',
+Format: Start with SUMMARY: line, then blank line, then exactly 1 bullet point. Use **bold** markdown for emphasis.''',
                     'balanced': '''Provide a summary in this exact format:
 
 SUMMARY: [One clear sentence that captures the main idea of this article]
@@ -2096,7 +2096,7 @@ SUMMARY: [One clear sentence that captures the main idea of this article]
 • [First main point in clear, accessible language - use **bold** for key phrases]
 • [Second main point in clear, accessible language - use **bold** for key phrases]
 
-Format: Start with SUMMARY: line, then blank line, then bullet points. Use **bold** markdown for emphasis.''',
+Format: Start with SUMMARY: line, then blank line, then exactly 2 bullet points. Use **bold** markdown for emphasis.''',
                     'detailed': '''Provide a summary in this exact format:
 
 SUMMARY: [One comprehensive sentence that captures the essence and significance of this article]
@@ -2105,7 +2105,7 @@ SUMMARY: [One comprehensive sentence that captures the essence and significance 
 • [Second key point with comprehensive detail - use **bold** for important concepts]
 • [Third key point with comprehensive detail - use **bold** for important concepts]
 
-Format: Start with SUMMARY: line, then blank line, then bullet points. Use **bold** markdown for emphasis.''',
+Format: Start with SUMMARY: line, then blank line, then exactly 3 bullet points. Use **bold** markdown for emphasis.''',
                     'technical': '''Provide a summary in this exact format:
 
 SUMMARY: [One precise technical sentence that captures the core concept and implications]
@@ -2116,7 +2116,7 @@ SUMMARY: [One precise technical sentence that captures the core concept and impl
 • [Fourth technical point with precise detail - use **bold** for technical terms and key findings]
 • [Fifth technical point with precise detail - use **bold** for technical terms and key findings]
 
-Format: Start with SUMMARY: line, then blank line, then bullet points. Use **bold** markdown for emphasis.'''
+Format: Start with SUMMARY: line, then blank line, then exactly 5 bullet points. Use **bold** markdown for emphasis.'''
                 }
                 prompt_to_use = reading_level_prompts.get(current_user.reading_level, reading_level_prompts['balanced'])
 
