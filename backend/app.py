@@ -2081,91 +2081,12 @@ def summarize_with_auth(current_user):
             prompt_to_use = custom_prompt
             print(f"🔧 Custom prompt provided: {bool(custom_prompt)}")
             print(f"🔧 User reading level: {current_user.reading_level}")
-            if not prompt_to_use and current_user.reading_level:
-                # Generate prompt based on user's reading level - return summary sentence + bullet points
-                reading_level_prompts = {
-                    'simple': '''Return a JSON object with this exact structure:
-
-{
-  "SUMMARY": "One simple sentence that captures what this article is about",
-  "POINTS": [
-    {
-      "point": "Single most important point in simple, clear language - use **bold** for key phrases",
-      "quotes": ["Direct quote from the article that supports this point"]
-    }
-  ]
-}
-
-Use **bold** markdown for emphasis. Include exactly 1 point with 1 supporting quote.''',
-                    'balanced': '''Return a JSON object with this exact structure:
-
-{
-  "SUMMARY": "One clear sentence that captures the main idea of this article",
-  "POINTS": [
-    {
-      "point": "First main point in clear, accessible language - use **bold** for key phrases",
-      "quotes": ["First direct quote", "Second supporting quote if relevant"]
-    },
-    {
-      "point": "Second main point in clear, accessible language - use **bold** for key phrases",
-      "quotes": ["First direct quote", "Second supporting quote if relevant"]
-    }
-  ]
-}
-
-Use **bold** markdown for emphasis. Include exactly 2 points with 1-2 supporting quotes each.''',
-                    'detailed': '''Return a JSON object with this exact structure:
-
-{
-  "SUMMARY": "One comprehensive sentence that captures the essence and significance of this article",
-  "POINTS": [
-    {
-      "point": "First key point with comprehensive detail - use **bold** for important concepts",
-      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
-    },
-    {
-      "point": "Second key point with comprehensive detail - use **bold** for important concepts",
-      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
-    },
-    {
-      "point": "Third key point with comprehensive detail - use **bold** for important concepts",
-      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
-    }
-  ]
-}
-
-Use **bold** markdown for emphasis. Include exactly 3 points with 2-3 supporting quotes each.''',
-                    'technical': '''Return a JSON object with this exact structure:
-
-{
-  "SUMMARY": "One precise technical sentence that captures the core concept and implications",
-  "POINTS": [
-    {
-      "point": "First technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    },
-    {
-      "point": "Second technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    },
-    {
-      "point": "Third technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    },
-    {
-      "point": "Fourth technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    },
-    {
-      "point": "Fifth technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    }
-  ]
-}
-
-Use **bold** markdown for emphasis. Include exactly 5 points with 2-3 supporting quotes each.'''
-                }
-                prompt_to_use = reading_level_prompts.get(current_user.reading_level, reading_level_prompts['balanced'])
+            if not prompt_to_use:
+                # Generate prompt based on user's reading level using shared prompts
+                reading_level_prompts = get_reading_level_prompts()
+                # Use user's reading level or default to 'balanced' if not set
+                user_level = current_user.reading_level if current_user.reading_level else 'balanced'
+                prompt_to_use = reading_level_prompts.get(user_level, reading_level_prompts['balanced'])
 
                 # Add instruction to return fewer points if content only has fewer valid main points
                 prompt_to_use += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count. Always include the SUMMARY line regardless.'
@@ -2721,6 +2642,91 @@ def clean_html_content(html):
     except Exception as e:
         print(f"Error cleaning HTML content: {e}")
         return None
+
+def get_reading_level_prompts():
+    """Get standardized prompts for different reading levels - matches admin prompt test page exactly"""
+    return {
+        'simple': '''Return a JSON object with this exact structure:
+
+{
+  "SUMMARY": "One simple sentence that captures what this article is about",
+  "POINTS": [
+    {
+      "point": "Single most important point in simple, clear language - use **bold** for key phrases",
+      "quotes": ["Direct quote from the article that supports this point"]
+    }
+  ]
+}
+
+Use **bold** markdown for emphasis. Include exactly 1 point with 1 supporting quote.''',
+        'balanced': '''Return a JSON object with this exact structure:
+
+{
+  "SUMMARY": "One clear sentence that captures the main idea of this article",
+  "POINTS": [
+    {
+      "point": "First main point in clear, accessible language - use **bold** for key phrases",
+      "quotes": ["First direct quote", "Second supporting quote if relevant"]
+    },
+    {
+      "point": "Second main point in clear, accessible language - use **bold** for key phrases",
+      "quotes": ["First direct quote", "Second supporting quote if relevant"]
+    }
+  ]
+}
+
+Use **bold** markdown for emphasis. Include exactly 2 points with 1-2 supporting quotes each.''',
+        'detailed': '''Return a JSON object with this exact structure:
+
+{
+  "SUMMARY": "One comprehensive sentence that captures the essence and significance of this article",
+  "POINTS": [
+    {
+      "point": "First key point with comprehensive detail - use **bold** for important concepts",
+      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
+    },
+    {
+      "point": "Second key point with comprehensive detail - use **bold** for important concepts",
+      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
+    },
+    {
+      "point": "Third key point with comprehensive detail - use **bold** for important concepts",
+      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
+    }
+  ]
+}
+
+Use **bold** markdown for emphasis. Include exactly 3 points with 2-3 supporting quotes each.''',
+        'technical': '''Return a JSON object with this exact structure:
+
+{
+  "SUMMARY": "One precise technical sentence that captures the core concept and implications",
+  "POINTS": [
+    {
+      "point": "First technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    },
+    {
+      "point": "Second technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    },
+    {
+      "point": "Third technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    },
+    {
+      "point": "Fourth technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    },
+    {
+      "point": "Fifth technical point with precise detail - use **bold** for technical terms and key findings",
+      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+    }
+  ]
+}
+
+Use **bold** markdown for emphasis. Include exactly 5 points with 2-3 supporting quotes each.'''
+    }
 
 def call_openai_summarize(content, api_key, custom_prompt=None):
     """Call OpenAI API for summarization"""
