@@ -2241,10 +2241,21 @@ def summarize_with_auth(current_user):
                         print(f"📋 Raw summary stripped: {repr(raw_summary.strip())}")
                         print(f"📋 First 100 chars: {repr(raw_summary[:100])}")
 
-                        # Strip whitespace before parsing
+                        # Strip whitespace and markdown code blocks before parsing
                         cleaned_summary = raw_summary.strip()
                         if not cleaned_summary:
                             raise ValueError("Empty summary content")
+
+                        # Remove markdown code block formatting if present
+                        if cleaned_summary.startswith('```json\n'):
+                            cleaned_summary = cleaned_summary[8:]  # Remove ```json\n
+                        if cleaned_summary.endswith('\n```'):
+                            cleaned_summary = cleaned_summary[:-4]  # Remove \n```
+                        elif cleaned_summary.endswith('```'):
+                            cleaned_summary = cleaned_summary[:-3]  # Remove ```
+
+                        cleaned_summary = cleaned_summary.strip()
+                        print(f"📋 Cleaned summary after markdown removal: {repr(cleaned_summary[:100])}")
 
                         summary_data = json.loads(cleaned_summary)
                         print(f"📋 Parsed JSON structure: {list(summary_data.keys())}")
