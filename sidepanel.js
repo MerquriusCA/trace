@@ -270,10 +270,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             let formattedHTML = '';
 
-            // Try to parse the JSON summary
-            try {
-              const summaryData = JSON.parse(response.summary);
-              console.log('📋 Parsed JSON summary:', summaryData);
+            // Use the already-parsed summary_data from backend
+            if (response.summary_data) {
+              const summaryData = response.summary_data;
+              console.log('📋 Using structured summary_data:', summaryData);
 
               // Display the summary
               if (summaryData.SUMMARY) {
@@ -311,15 +311,49 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
               }
 
-            } catch (error) {
-              console.error('Failed to parse JSON summary:', error);
-              formattedHTML = `
-                <div style="background: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #f44336;">
-                  <h5>Error parsing summary</h5>
-                  <p>Received non-JSON response:</p>
-                  <pre style="white-space: pre-wrap; font-size: 12px;">${response.summary}</pre>
-                </div>
-              `;
+            } else {
+              // Fallback: try to parse response.summary as JSON
+              try {
+                const summaryData = JSON.parse(response.summary);
+                console.log('📋 Fallback: parsed JSON from summary field:', summaryData);
+
+                // Same display logic as above
+                if (summaryData.SUMMARY) {
+                  formattedHTML += `<div class="summary-sentence">${summaryData.SUMMARY}</div>`;
+                }
+
+                if (summaryData.POINTS && Array.isArray(summaryData.POINTS)) {
+                  summaryData.POINTS.forEach((point, index) => {
+                    const bulletId = index + 1;
+                    formattedHTML += `<div class="bullet-item">`;
+                    formattedHTML += `<div class="bullet-main">`;
+                    formattedHTML += `<span class="bullet-point">•</span> ${point.point.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}`;
+
+                    if (point.quotes && point.quotes.length > 0) {
+                      formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletId}" onclick="toggleQuotes(${bulletId})" title="Show supporting quotes">📖</button>`;
+                      formattedHTML += `</div>`;
+                      formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletId}">`;
+                      formattedHTML += `<div class="quotes-header">Supporting Evidence:</div>`;
+                      point.quotes.forEach(quote => {
+                        formattedHTML += `<blockquote class="article-quote">${quote}</blockquote>`;
+                      });
+                      formattedHTML += `</div>`;
+                    } else {
+                      formattedHTML += `</div>`;
+                    }
+                    formattedHTML += `</div>`;
+                  });
+                }
+              } catch (error) {
+                console.error('Failed to parse JSON summary:', error);
+                formattedHTML = `
+                  <div style="background: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #f44336;">
+                    <h5>Error parsing summary</h5>
+                    <p>Received non-JSON response:</p>
+                    <pre style="white-space: pre-wrap; font-size: 12px;">${response.summary}</pre>
+                  </div>
+                `;
+              }
             }
 
             analysisResult.innerHTML = `
