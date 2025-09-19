@@ -2177,8 +2177,11 @@ Use **bold** markdown for emphasis. Include exactly 5 points with 2-3 supporting
                     try:
                         import json
                         # Try to parse as JSON only for article summaries
-                        summary_data = json.loads(result['summary'])
+                        raw_summary = result['summary']
+                        print(f"📋 Raw summary to parse: {raw_summary}")
+                        summary_data = json.loads(raw_summary)
                         print(f"📋 Parsed JSON structure: {list(summary_data.keys())}")
+                        print(f"📋 Full parsed JSON: {summary_data}")
 
                         # Handle different JSON formats the AI might return
                         summary_text = ""
@@ -2260,10 +2263,14 @@ Use **bold** markdown for emphasis. Include exactly 5 points with 2-3 supporting
                             formatted_summary += "\n"
 
                         # Return the raw JSON structure directly to the sidebar
+                        print(f"🔧 About to set summary_data in result")
+                        print(f"🔧 summary_data type: {type(summary_data)}")
+                        print(f"🔧 summary_data content: {summary_data}")
                         result['summary_data'] = summary_data  # Return the original JSON structure
                         result['summary'] = formatted_summary.strip()  # Keep for backward compatibility
                         print(f"✅ Successfully parsed JSON and returning raw structure to sidebar")
                         print(f"📊 Raw JSON structure: {summary_data}")
+                        print(f"🔧 result after setting summary_data: {list(result.keys())}")
 
                     except (json.JSONDecodeError, KeyError) as e:
                         # If JSON parsing fails, keep the original summary
