@@ -2209,11 +2209,17 @@ def summarize_with_auth(current_user):
                 print(f"   Contains 'POINTS': {('POINTS' in summary_content)}")
                 print(f"   First 200 chars: {summary_content[:200]}")
 
+                print(f"🔧 About to set result['summary'] = summary_content")
+                print(f"🔧 summary_content before assignment: {repr(summary_content[:100])}")
+
                 result = {
                     'success': True,
                     'summary': summary_content,
                     'is_article': True
                 }
+
+                print(f"🔧 result['summary'] after assignment: {repr(result['summary'][:100])}")
+                print(f"🔧 Are they equal? {summary_content == result['summary']}")
             else:
                 error_data = response.json()
                 print(f"❌ OpenAI API error: {error_data}")
@@ -2230,8 +2236,17 @@ def summarize_with_auth(current_user):
                         import json
                         # Try to parse as JSON only for article summaries
                         raw_summary = result['summary']
-                        print(f"📋 Raw summary to parse: {raw_summary}")
-                        summary_data = json.loads(raw_summary)
+                        print(f"📋 Raw summary to parse: {repr(raw_summary)}")
+                        print(f"📋 Raw summary length: {len(raw_summary)}")
+                        print(f"📋 Raw summary stripped: {repr(raw_summary.strip())}")
+                        print(f"📋 First 100 chars: {repr(raw_summary[:100])}")
+
+                        # Strip whitespace before parsing
+                        cleaned_summary = raw_summary.strip()
+                        if not cleaned_summary:
+                            raise ValueError("Empty summary content")
+
+                        summary_data = json.loads(cleaned_summary)
                         print(f"📋 Parsed JSON structure: {list(summary_data.keys())}")
                         print(f"📋 Full parsed JSON: {summary_data}")
 
