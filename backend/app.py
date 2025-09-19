@@ -2261,8 +2261,13 @@ Use **bold** markdown for emphasis. Include exactly 5 key takeaways with 3-5 sup
         db.session.commit()
         
         print(f"✅ Request completed successfully")
+        print(f"📋 Final result keys: {list(result.keys())}")
+        if 'summary_data' in result:
+            print(f"📊 summary_data included: {result['summary_data']}")
+        else:
+            print(f"❌ summary_data NOT included in result")
         print(f"{'='*50}\n")
-        
+
         return jsonify(result)
         
     except Exception as e:
