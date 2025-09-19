@@ -2105,19 +2105,17 @@ def summarize_with_auth(current_user):
         if action == 'analyze':
             result = call_openai_analyze(page_content, api_key)
         else:
-            # Use custom prompt if provided, otherwise generate based on user's reading level
-            prompt_to_use = custom_prompt
+            # Use custom prompt if provided, otherwise generate standardized prompt like test page
             print(f"🔧 Custom prompt provided: {bool(custom_prompt)}")
             print(f"🔧 User reading level: {current_user.reading_level}")
-            if not prompt_to_use:
-                # Generate prompt based on user's reading level using shared prompts
-                reading_level_prompts = get_reading_level_prompts()
-                # Use user's reading level or default to 'balanced' if not set
-                user_level = current_user.reading_level if current_user.reading_level else 'balanced'
-                prompt_to_use = reading_level_prompts.get(user_level, reading_level_prompts['balanced'])
 
-                # Add instruction to return fewer points if content only has fewer valid main points
-                prompt_to_use += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count. Always include the SUMMARY line regardless.'
+            if custom_prompt:
+                prompt_to_use = custom_prompt
+            else:
+                # Generate prompt template using EXACT same logic as prompt test page
+                user_level = current_user.reading_level if current_user.reading_level else 'balanced'
+                prompt_to_use = generate_standardized_prompt_template_only(user_level)
+                print(f"🔧 Generated standardized prompt template for level: {user_level}")
 
             print(f"🔧 Final prompt being used: {prompt_to_use[:200]}...")
             print(f"🔧 Using JSON-structured prompt: {bool(prompt_to_use and 'JSON object' in prompt_to_use)}")
@@ -2755,6 +2753,33 @@ Use **bold** markdown for emphasis. Include exactly 3 points with 2-3 supporting
 
 Use **bold** markdown for emphasis. Include exactly 5 points with 2-3 supporting quotes each.'''
     }
+
+def generate_standardized_prompt(reading_level, content):
+    """Generate the exact same prompt that the test page uses - COMPLETE prompt with content"""
+    prompts = get_reading_level_prompts()
+
+    # Use 'balanced' as default if reading level not set or not found
+    base_prompt = prompts.get(reading_level, prompts.get('balanced', prompts['balanced']))
+
+    # Add the same note about fewer points that test page uses
+    base_prompt += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count. Always include the SUMMARY line regardless.'
+
+    # Add content exactly like test page does
+    base_prompt += f'\n\nPlease summarize the following article content:\n\n{content}'
+
+    return base_prompt
+
+def generate_standardized_prompt_template_only(reading_level):
+    """Generate just the prompt template without content - for use with call_openai_summarize"""
+    prompts = get_reading_level_prompts()
+
+    # Use 'balanced' as default if reading level not set or not found
+    base_prompt = prompts.get(reading_level, prompts.get('balanced', prompts['balanced']))
+
+    # Add the same note about fewer points that test page uses
+    base_prompt += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count. Always include the SUMMARY line regardless.'
+
+    return base_prompt
 
 def call_openai_summarize(content, api_key, custom_prompt=None):
     """Call OpenAI API for summarization"""
