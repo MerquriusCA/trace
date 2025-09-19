@@ -268,44 +268,24 @@ document.addEventListener('DOMContentLoaded', function() {
             messageDiv.textContent = '';
             messageDiv.classList.add('hidden');
           } else {
-            // Display the summary for articles
-            console.log('Raw summary from backend:', response.summary);
+            // Display the raw response for debugging
+            console.log('Raw response from backend:', response);
 
-            let formattedHTML = '';
-
-            // Check if we have structured data from the backend
-            if (response.summary_data) {
-              console.log('📋 Using structured summary data:', response.summary_data);
-              console.log('📋 Raw JSON structure received:', JSON.stringify(response.summary_data, null, 2));
-
-              // Also display the raw JSON in the UI for debugging
-              const jsonDisplay = document.createElement('div');
-              jsonDisplay.style.background = '#f5f5f5';
-              jsonDisplay.style.padding = '10px';
-              jsonDisplay.style.margin = '10px 0';
-              jsonDisplay.style.borderRadius = '4px';
-              jsonDisplay.style.fontSize = '12px';
-              jsonDisplay.style.fontFamily = 'monospace';
-              jsonDisplay.style.whiteSpace = 'pre-wrap';
-              jsonDisplay.textContent = 'Raw JSON received:\n' + JSON.stringify(response.summary_data, null, 2);
-
-              formattedHTML = formatStructuredSummary(response.summary_data);
-              formattedHTML += jsonDisplay.outerHTML;
-            } else {
-              console.log('📋 Using text-based summary formatting');
-              formattedHTML = formatSummaryWithQuotes(response.summary);
-            }
-
-            console.log('Formatted summary for display:', formattedHTML);
+            // Create a simple display of the raw response
+            const rawResponseHTML = `
+              <div style="font-family: monospace; background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                <h5 style="margin-top: 0;">Raw Response from Summarize Endpoint:</h5>
+                <pre style="white-space: pre-wrap; word-wrap: break-word;">${JSON.stringify(response, null, 2)}</pre>
+              </div>
+            `;
 
             analysisResult.innerHTML = `
-              <h4>Page Summary:</h4>
-              <div class="summary-content">${formattedHTML}</div>
+              <h4>Raw Summarize Response:</h4>
+              ${rawResponseHTML}
             `;
             analysisResult.classList.remove('hidden');
-            // Border color is now handled by CSS classes
-            
-            messageDiv.textContent = 'Summary complete!';
+
+            messageDiv.textContent = 'Raw response displayed!';
             setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
             messageDiv.classList.remove('hidden');
           }
