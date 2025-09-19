@@ -383,6 +383,68 @@
             window.location.href = '/admin/login';
         }
 
+        // Function to format summary with all quotes visible (for test page)
+        function formatSummaryForTestPage(summaryText) {
+            let lines = summaryText.split('\n');
+            let formattedHTML = '';
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+
+                // Handle SUMMARY line
+                if (line.startsWith('SUMMARY:')) {
+                    formattedHTML += `<div style="font-style: italic; color: #666; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #e0e0e0;">
+                        ${line.replace('SUMMARY:', '').trim()}
+                    </div>`;
+                }
+                // Handle bullet points
+                else if (line.startsWith('•')) {
+                    let bulletContent = line.substring(1).trim();
+                    // Convert markdown bold to HTML
+                    bulletContent = bulletContent.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #333; background: rgba(59, 130, 246, 0.1); padding: 0 2px; border-radius: 2px;">$1</strong>');
+
+                    formattedHTML += `<div style="margin: 12px 0;">`;
+                    formattedHTML += `<div style="display: flex; align-items: flex-start; gap: 8px;">`;
+                    formattedHTML += `<span style="color: #3b82f6;">•</span> ${bulletContent}`;
+                    formattedHTML += `</div>`;
+
+                    // Check if next line contains QUOTES
+                    if (i + 1 < lines.length && lines[i + 1].trim().startsWith('QUOTES:')) {
+                        // Add the quotes section (visible by default in test page)
+                        let quotesLine = lines[i + 1].trim().replace('QUOTES:', '').trim();
+                        // Parse quotes - they're comma-separated and in quotes
+                        let quotes = quotesLine.match(/"([^"]*)"/g) || [];
+
+                        formattedHTML += `<div style="margin-top: 8px; margin-left: 24px; padding: 12px; background: #f9fafb; border-radius: 6px; border-left: 3px solid #3b82f6;">`;
+                        formattedHTML += `<div style="font-size: 11px; text-transform: uppercase; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.5px;">Supporting Evidence:</div>`;
+
+                        quotes.forEach(quote => {
+                            // Remove surrounding quotes
+                            let cleanQuote = quote.slice(1, -1);
+                            formattedHTML += `<blockquote style="margin: 8px 0; padding: 8px 12px; background: white; border-radius: 4px; border-left: 2px solid rgba(59, 130, 246, 0.3); font-size: 13px; line-height: 1.5; color: #333; font-style: italic;">
+                                ${cleanQuote}
+                            </blockquote>`;
+                        });
+
+                        formattedHTML += `</div>`; // Close quotes section
+                        i++; // Skip the QUOTES line since we've processed it
+                    }
+
+                    formattedHTML += `</div>`; // Close bullet item
+                }
+                // Handle empty lines
+                else if (line === '') {
+                    formattedHTML += '<br>';
+                }
+                // Handle other lines
+                else if (line.trim() !== '') {
+                    formattedHTML += `<div>${line}</div>`;
+                }
+            }
+
+            return formattedHTML;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Handle article selection and URL input visibility
             const articleRadios = document.querySelectorAll('input[name="article"]');
@@ -681,7 +743,9 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
                 const responseTime = Date.now() - startTime;
 
                 if (data.success) {
-                    document.getElementById('summaryContent').innerHTML = data.summary.replace(/\n/g, '<br>');
+                    // Format the summary with quotes visible
+                    let formattedHTML = formatSummaryForTestPage(data.summary);
+                    document.getElementById('summaryContent').innerHTML = formattedHTML;
                     document.getElementById('tokenCount').textContent = `${data.token_count || 'N/A'} tokens`;
                     document.getElementById('responseTime').textContent = `${responseTime}ms`;
                     document.getElementById('resultSection').classList.remove('hidden');
@@ -720,41 +784,52 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
         function generatePrompt(settings, article) {
             // Generate prompt based on reading level - matching production prompts exactly
             const readingLevelPrompts = {
-                simple: `Provide a summary in this exact format:
+                simple: `Provide a summary with supporting quotes in this exact format:
 
 SUMMARY: [One simple sentence that captures what this article is about]
 
 • [Single most important point in simple, clear language - use **bold** for key phrases]
+  QUOTES: "[Direct quote from the article that supports this point]"
 
-Format: Start with SUMMARY: line, then blank line, then exactly 1 bullet point. Use **bold** markdown for emphasis.`,
-                balanced: `Provide a summary in this exact format:
+Format: Start with SUMMARY line, then bullet point with QUOTES line indented underneath. Use **bold** for emphasis. Include 1 direct quote.`,
+                balanced: `Provide a summary with supporting quotes in this exact format:
 
 SUMMARY: [One clear sentence that captures the main idea of this article]
 
 • [First main point in clear, accessible language - use **bold** for key phrases]
+  QUOTES: "[First direct quote]", "[Second supporting quote if relevant]"
 • [Second main point in clear, accessible language - use **bold** for key phrases]
+  QUOTES: "[First direct quote]", "[Second supporting quote if relevant]"
 
-Format: Start with SUMMARY: line, then blank line, then exactly 2 bullet points. Use **bold** markdown for emphasis.`,
-                detailed: `Provide a summary in this exact format:
+Format: Start with SUMMARY line, then bullet points with QUOTES lines indented underneath. Use **bold** for emphasis. Include 1-2 direct quotes per point.`,
+                detailed: `Provide a summary with supporting quotes in this exact format:
 
 SUMMARY: [One comprehensive sentence that captures the essence and significance of this article]
 
 • [First key point with comprehensive detail - use **bold** for important concepts]
+  QUOTES: "[First supporting quote]", "[Second supporting quote]", "[Third quote if highly relevant]"
 • [Second key point with comprehensive detail - use **bold** for important concepts]
+  QUOTES: "[First supporting quote]", "[Second supporting quote]", "[Third quote if highly relevant]"
 • [Third key point with comprehensive detail - use **bold** for important concepts]
+  QUOTES: "[First supporting quote]", "[Second supporting quote]", "[Third quote if highly relevant]"
 
-Format: Start with SUMMARY: line, then blank line, then exactly 3 bullet points. Use **bold** markdown for emphasis.`,
-                technical: `Provide a summary in this exact format:
+Format: Start with SUMMARY line, then bullet points with QUOTES lines indented underneath. Use **bold** for emphasis. Include 2-3 direct quotes per point.`,
+                technical: `Provide a summary with supporting quotes in this exact format:
 
 SUMMARY: [One precise technical sentence that captures the core concept and implications]
 
 • [First technical point with precise detail - use **bold** for technical terms and key findings]
+  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
 • [Second technical point with precise detail - use **bold** for technical terms and key findings]
+  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
 • [Third technical point with precise detail - use **bold** for technical terms and key findings]
+  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
 • [Fourth technical point with precise detail - use **bold** for technical terms and key findings]
+  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
 • [Fifth technical point with precise detail - use **bold** for technical terms and key findings]
+  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
 
-Format: Start with SUMMARY: line, then blank line, then exactly 5 bullet points. Use **bold** markdown for emphasis.`
+Format: Start with SUMMARY line, then bullet points with QUOTES lines indented underneath. Use **bold** for emphasis. Include 2-3 direct quotes/data points per bullet.`
             };
 
             let basePrompt = readingLevelPrompts[settings.reading_level] || readingLevelPrompts['balanced'];

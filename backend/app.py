@@ -1654,7 +1654,7 @@ def admin_test_prompt(current_user):
                 'messages': [
                     {
                         'role': 'system',
-                        'content': 'You are a helpful assistant that creates structured summaries with a summary sentence followed by bullet points. You MUST follow the exact formatting instructions provided, including starting with "SUMMARY:", using the • symbol for bullet points, and using **bold** markdown for emphasis on key phrases.'
+                        'content': 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST follow the exact formatting instructions provided, including starting with "SUMMARY:", using the • symbol for bullet points, adding "QUOTES:" lines with direct quotes from the article, and using **bold** markdown for emphasis on key phrases. Always extract actual direct quotes from the article text provided.'
                     },
                     {
                         'role': 'user',
@@ -2082,41 +2082,52 @@ def summarize_with_auth(current_user):
             if not prompt_to_use and current_user.reading_level:
                 # Generate prompt based on user's reading level - return summary sentence + bullet points
                 reading_level_prompts = {
-                    'simple': '''Provide a summary in this exact format:
+                    'simple': '''Provide a summary with supporting quotes in this exact format:
 
 SUMMARY: [One simple sentence that captures what this article is about]
 
 • [Single most important point in simple, clear language - use **bold** for key phrases]
+  QUOTES: "[Direct quote from the article that supports this point]"
 
-Format: Start with SUMMARY: line, then blank line, then exactly 1 bullet point. Use **bold** markdown for emphasis.''',
-                    'balanced': '''Provide a summary in this exact format:
+Format: Start with SUMMARY line, then bullet point with QUOTES line indented underneath. Use **bold** for emphasis. Include 1 direct quote.''',
+                    'balanced': '''Provide a summary with supporting quotes in this exact format:
 
 SUMMARY: [One clear sentence that captures the main idea of this article]
 
 • [First main point in clear, accessible language - use **bold** for key phrases]
+  QUOTES: "[First direct quote]", "[Second supporting quote if relevant]"
 • [Second main point in clear, accessible language - use **bold** for key phrases]
+  QUOTES: "[First direct quote]", "[Second supporting quote if relevant]"
 
-Format: Start with SUMMARY: line, then blank line, then exactly 2 bullet points. Use **bold** markdown for emphasis.''',
-                    'detailed': '''Provide a summary in this exact format:
+Format: Start with SUMMARY line, then bullet points with QUOTES lines indented underneath. Use **bold** for emphasis. Include 1-2 direct quotes per point.''',
+                    'detailed': '''Provide a summary with supporting quotes in this exact format:
 
 SUMMARY: [One comprehensive sentence that captures the essence and significance of this article]
 
 • [First key point with comprehensive detail - use **bold** for important concepts]
+  QUOTES: "[First supporting quote]", "[Second supporting quote]", "[Third quote if highly relevant]"
 • [Second key point with comprehensive detail - use **bold** for important concepts]
+  QUOTES: "[First supporting quote]", "[Second supporting quote]", "[Third quote if highly relevant]"
 • [Third key point with comprehensive detail - use **bold** for important concepts]
+  QUOTES: "[First supporting quote]", "[Second supporting quote]", "[Third quote if highly relevant]"
 
-Format: Start with SUMMARY: line, then blank line, then exactly 3 bullet points. Use **bold** markdown for emphasis.''',
-                    'technical': '''Provide a summary in this exact format:
+Format: Start with SUMMARY line, then bullet points with QUOTES lines indented underneath. Use **bold** for emphasis. Include 2-3 direct quotes per point.''',
+                    'technical': '''Provide a summary with supporting quotes in this exact format:
 
 SUMMARY: [One precise technical sentence that captures the core concept and implications]
 
 • [First technical point with precise detail - use **bold** for technical terms and key findings]
+  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
 • [Second technical point with precise detail - use **bold** for technical terms and key findings]
+  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
 • [Third technical point with precise detail - use **bold** for technical terms and key findings]
+  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
 • [Fourth technical point with precise detail - use **bold** for technical terms and key findings]
+  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
 • [Fifth technical point with precise detail - use **bold** for technical terms and key findings]
+  QUOTES: "[First technical quote]", "[Second supporting data/quote]", "[Third evidence if relevant]"
 
-Format: Start with SUMMARY: line, then blank line, then exactly 5 bullet points. Use **bold** markdown for emphasis.'''
+Format: Start with SUMMARY line, then bullet points with QUOTES lines indented underneath. Use **bold** for emphasis. Include 2-3 direct quotes/data points per bullet.'''
                 }
                 prompt_to_use = reading_level_prompts.get(current_user.reading_level, reading_level_prompts['balanced'])
 
@@ -2578,7 +2589,7 @@ def call_openai_summarize(content, api_key, custom_prompt=None):
         
         # Use custom prompt if provided, otherwise use default
         if custom_prompt:
-            system_content = 'You are a helpful assistant that creates structured summaries with a summary sentence followed by bullet points. You MUST follow the exact formatting instructions provided, including starting with "SUMMARY:", using the • symbol for bullet points, and using **bold** markdown for emphasis on key phrases.'
+            system_content = 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST follow the exact formatting instructions provided, including starting with "SUMMARY:", using the • symbol for bullet points, adding "QUOTES:" lines with direct quotes from the article, and using **bold** markdown for emphasis on key phrases. Always extract actual direct quotes from the article text provided.'
             user_content = f'{custom_prompt}\n\nWeb page content:\n\n{content}'
             max_tokens = 400  # Allow more tokens for summary sentence + bullet points
         else:

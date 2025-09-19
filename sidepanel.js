@@ -270,17 +270,14 @@ document.addEventListener('DOMContentLoaded', function() {
           } else {
             // Display the summary for articles
             console.log('Raw summary from backend:', response.summary);
-            // Convert markdown and format properly
-            let formattedSummary = response.summary
-              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Convert **bold** to <strong>
-              .replace(/^SUMMARY:\s*(.*)$/m, '<div class="summary-sentence">$1</div>') // Extract and format SUMMARY line
-              .replace(/\n/g, '<br>') // Convert newlines to breaks
-              .replace(/•/g, '<span class="bullet-point">•</span>') // Style bullet points
-              .replace(/\r/g, ''); // Remove carriage returns
-            console.log('Formatted summary for display:', formattedSummary);
+
+            // Use the helper function to format the summary with expandable quotes
+            let formattedHTML = formatSummaryWithQuotes(response.summary);
+            console.log('Formatted summary for display:', formattedHTML);
+
             analysisResult.innerHTML = `
               <h4>Page Summary:</h4>
-              <div class="summary-content">${formattedSummary}</div>
+              <div class="summary-content">${formattedHTML}</div>
             `;
             analysisResult.classList.remove('hidden');
             // Border color is now handled by CSS classes
@@ -337,13 +334,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                       // Display the summary for articles
                       console.log('Raw retry summary from backend:', retryResponse.summary);
-                      // Convert markdown and format properly
-                      let formattedRetrySummary = retryResponse.summary
-                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Convert **bold** to <strong>
-                        .replace(/^SUMMARY:\s*(.*)$/m, '<div class="summary-sentence">$1</div>') // Extract and format SUMMARY line
-                        .replace(/\n/g, '<br>') // Convert newlines to breaks
-                        .replace(/•/g, '<span class="bullet-point">•</span>') // Style bullet points
-                        .replace(/\r/g, ''); // Remove carriage returns
+                      // Use the helper function to format the summary with expandable quotes
+                      let formattedRetrySummary = formatSummaryWithQuotes(retryResponse.summary);
                       console.log('Formatted retry summary for display:', formattedRetrySummary);
                       analysisResult.innerHTML = `
                         <h4>Page Summary:</h4>

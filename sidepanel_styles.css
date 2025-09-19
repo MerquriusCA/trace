@@ -1026,3 +1026,78 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, textarea::pla
   padding: 0 2px;
   border-radius: 2px;
 }
+
+/* Expandable Quotes Styles */
+.bullet-item {
+  margin: 12px 0;
+}
+
+.bullet-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.quote-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0 4px;
+  margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+.quote-toggle:hover {
+  transform: scale(1.2);
+}
+
+.quotes-section {
+  margin-top: 8px;
+  margin-left: 24px;
+  padding: 12px;
+  background: hsl(var(--muted));
+  border-radius: 6px;
+  border-left: 3px solid hsl(var(--primary));
+  animation: slideDown 0.3s ease;
+}
+
+.quotes-section.hidden {
+  display: none;
+}
+
+.quotes-header {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: hsl(var(--foreground) / 0.6);
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.article-quote {
+  margin: 8px 0;
+  padding: 8px 12px;
+  background: hsl(var(--background));
+  border-radius: 4px;
+  border-left: 2px solid hsl(var(--primary) / 0.3);
+  font-size: 13px;
+  line-height: 1.5;
+  color: hsl(var(--foreground) / 0.9);
+  font-style: italic;
+}
+
+.article-quote:last-child {
+  margin-bottom: 0;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
