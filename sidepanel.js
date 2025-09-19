@@ -242,16 +242,13 @@ document.addEventListener('DOMContentLoaded', function() {
       
       summarizeButton.disabled = true;
       
-      // Get user's preferred summary style
-      const customPrompt = await getSummaryPrompt();
-      
       messageDiv.textContent = 'Summarizing page content with GPT-3.5...';
       setMessageColor(messageDiv, messageDiv.textContent, '#2196f3');
-      
+
       chrome.runtime.sendMessage({
         action: 'summarizePage',
-        tabId: tabs[0].id,
-        customPrompt: customPrompt
+        tabId: tabs[0].id
+        // Removed customPrompt - let backend generate unified prompt
       }, function(response) {
         summarizeButton.disabled = false;
         
