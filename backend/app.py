@@ -2082,86 +2082,70 @@ def summarize_with_auth(current_user):
             if not prompt_to_use and current_user.reading_level:
                 # Generate prompt based on user's reading level - return summary sentence + bullet points
                 reading_level_prompts = {
-                    'simple': '''Return a JSON object with this exact structure:
+                    'simple': '''Return a JSON object with this structure (adapt field names as needed):
 
 {
   "summary": "One simple sentence that captures what this article is about",
-  "points": [
-    {
-      "text": "Single most important point in simple, clear language - use **bold** for key phrases",
-      "quotes": ["Direct quote from the article that supports this point"]
-    }
-  ]
+  "key_takeaways": ["Single most important point in simple, clear language - use **bold** for key phrases"],
+  "quotes": {
+    "quote1": "Direct quote from the article that supports the main point"
+  }
 }
 
-Use **bold** markdown for emphasis. Include exactly 1 bullet point with 1 supporting quote.''',
-                    'balanced': '''Return a JSON object with this exact structure:
+Use **bold** markdown for emphasis. Include exactly 1 key takeaway with 1 supporting quote.''',
+                    'balanced': '''Return a JSON object with this structure (adapt field names as needed):
 
 {
   "summary": "One clear sentence that captures the main idea of this article",
-  "points": [
-    {
-      "text": "First main point in clear, accessible language - use **bold** for key phrases",
-      "quotes": ["First direct quote", "Second supporting quote if relevant"]
-    },
-    {
-      "text": "Second main point in clear, accessible language - use **bold** for key phrases",
-      "quotes": ["First direct quote", "Second supporting quote if relevant"]
-    }
-  ]
+  "key_takeaways": [
+    "First main point in clear, accessible language - use **bold** for key phrases",
+    "Second main point in clear, accessible language - use **bold** for key phrases"
+  ],
+  "quotes": {
+    "quote1": "First direct quote supporting a key point",
+    "quote2": "Second supporting quote if relevant"
+  }
 }
 
-Use **bold** markdown for emphasis. Include exactly 2 bullet points with 1-2 supporting quotes each.''',
-                    'detailed': '''Return a JSON object with this exact structure:
+Use **bold** markdown for emphasis. Include exactly 2 key takeaways with 1-2 supporting quotes.''',
+                    'detailed': '''Return a JSON object with this structure (adapt field names as needed):
 
 {
   "summary": "One comprehensive sentence that captures the essence and significance of this article",
-  "points": [
-    {
-      "text": "First key point with comprehensive detail - use **bold** for important concepts",
-      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
-    },
-    {
-      "text": "Second key point with comprehensive detail - use **bold** for important concepts",
-      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
-    },
-    {
-      "text": "Third key point with comprehensive detail - use **bold** for important concepts",
-      "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
-    }
-  ]
+  "key_takeaways": [
+    "First key point with comprehensive detail - use **bold** for important concepts",
+    "Second key point with comprehensive detail - use **bold** for important concepts",
+    "Third key point with comprehensive detail - use **bold** for important concepts"
+  ],
+  "quotes": {
+    "quote1": "First supporting quote",
+    "quote2": "Second supporting quote",
+    "quote3": "Third quote if highly relevant"
+  }
 }
 
-Use **bold** markdown for emphasis. Include exactly 3 bullet points with 2-3 supporting quotes each.''',
-                    'technical': '''Return a JSON object with this exact structure:
+Use **bold** markdown for emphasis. Include exactly 3 key takeaways with 2-3 supporting quotes.''',
+                    'technical': '''Return a JSON object with this structure (adapt field names as needed):
 
 {
   "summary": "One precise technical sentence that captures the core concept and implications",
-  "points": [
-    {
-      "text": "First technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    },
-    {
-      "text": "Second technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    },
-    {
-      "text": "Third technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    },
-    {
-      "text": "Fourth technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    },
-    {
-      "text": "Fifth technical point with precise detail - use **bold** for technical terms and key findings",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
-    }
-  ]
+  "key_takeaways": [
+    "First technical point with precise detail - use **bold** for technical terms and key findings",
+    "Second technical point with precise detail - use **bold** for technical terms and key findings",
+    "Third technical point with precise detail - use **bold** for technical terms and key findings",
+    "Fourth technical point with precise detail - use **bold** for technical terms and key findings",
+    "Fifth technical point with precise detail - use **bold** for technical terms and key findings"
+  ],
+  "quotes": {
+    "quote1": "First technical quote",
+    "quote2": "Second supporting data/quote",
+    "quote3": "Third evidence if relevant",
+    "quote4": "Fourth supporting quote",
+    "quote5": "Fifth supporting quote"
+  }
 }
 
-Use **bold** markdown for emphasis. Include exactly 5 bullet points with 2-3 supporting quotes each.'''
+Use **bold** markdown for emphasis. Include exactly 5 key takeaways with 3-5 supporting quotes.'''
                 }
                 prompt_to_use = reading_level_prompts.get(current_user.reading_level, reading_level_prompts['balanced'])
 
@@ -2178,19 +2162,67 @@ Use **bold** markdown for emphasis. Include exactly 5 bullet points with 2-3 sup
                         import json
                         # Try to parse as JSON only for article summaries
                         summary_data = json.loads(result['summary'])
+                        print(f"📋 Parsed JSON structure: {list(summary_data.keys())}")
 
-                        # Convert JSON to the expected text format for the frontend
-                        formatted_summary = f"SUMMARY: {summary_data['summary']}\n\n"
+                        # Handle different JSON formats the AI might return
+                        summary_text = ""
+                        points_list = []
+                        all_quotes = []
 
-                        for i, point in enumerate(summary_data['points'], 1):
-                            formatted_summary += f"• {point['text']}\n"
-                            if point.get('quotes'):
-                                quotes_str = ', '.join([f'"{quote}"' for quote in point['quotes']])
+                        # Extract summary text
+                        if 'summary' in summary_data:
+                            summary_text = summary_data['summary']
+                        elif 'main_points' in summary_data and 'summary' in summary_data['main_points']:
+                            summary_text = summary_data['main_points']['summary']
+
+                        # Extract points/key takeaways
+                        if 'points' in summary_data:
+                            points_list = summary_data['points']
+                        elif 'main_points' in summary_data and 'key_takeaways' in summary_data['main_points']:
+                            key_takeaways = summary_data['main_points']['key_takeaways']
+                            # Convert simple strings to point objects
+                            points_list = [{'text': point, 'quotes': []} for point in key_takeaways]
+                        elif 'key_takeaways' in summary_data:
+                            key_takeaways = summary_data['key_takeaways']
+                            points_list = [{'text': point, 'quotes': []} for point in key_takeaways]
+
+                        # Extract quotes
+                        if 'quotes' in summary_data:
+                            quotes_obj = summary_data['quotes']
+                            if isinstance(quotes_obj, dict):
+                                # Convert quotes object to list
+                                all_quotes = list(quotes_obj.values())
+                            elif isinstance(quotes_obj, list):
+                                all_quotes = quotes_obj
+
+                        # Distribute quotes among points if we have both
+                        if all_quotes and points_list:
+                            quotes_per_point = len(all_quotes) // len(points_list)
+                            remaining_quotes = len(all_quotes) % len(points_list)
+
+                            quote_index = 0
+                            for i, point in enumerate(points_list):
+                                point_quotes = quotes_per_point + (1 if i < remaining_quotes else 0)
+                                if quote_index < len(all_quotes):
+                                    point['quotes'] = all_quotes[quote_index:quote_index + point_quotes]
+                                    quote_index += point_quotes
+
+                        # Convert to expected text format for the frontend
+                        formatted_summary = f"SUMMARY: {summary_text}\n\n"
+
+                        for i, point in enumerate(points_list, 1):
+                            point_text = point['text'] if isinstance(point, dict) else str(point)
+                            formatted_summary += f"• {point_text}\n"
+
+                            point_quotes = point.get('quotes', []) if isinstance(point, dict) else []
+                            if point_quotes:
+                                quotes_str = ', '.join([f'"{quote}"' for quote in point_quotes])
                                 formatted_summary += f"  QUOTES: {quotes_str}\n"
                             formatted_summary += "\n"
 
                         result['summary'] = formatted_summary.strip()
                         print(f"✅ Successfully parsed JSON summary and converted to text format")
+                        print(f"📝 Final formatted summary preview: {formatted_summary[:200]}...")
 
                     except (json.JSONDecodeError, KeyError) as e:
                         # If JSON parsing fails, keep the original summary
