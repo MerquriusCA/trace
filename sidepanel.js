@@ -274,6 +274,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.summary_data) {
               const summaryData = response.summary_data;
               console.log('📋 Using structured summary_data:', summaryData);
+              console.log('📋 Number of POINTS:', summaryData.POINTS ? summaryData.POINTS.length : 0);
+              if (summaryData.POINTS) {
+                summaryData.POINTS.forEach((point, idx) => {
+                  console.log(`📋 Point ${idx + 1} quotes:`, point.quotes);
+                });
+              }
 
               // Display the summary with bold formatting
               if (summaryData.SUMMARY) {
@@ -316,13 +322,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
             } else {
               // Fallback: display text summary when structured data is not available
-              console.log('📋 No summary_data available, using text fallback');
-              formattedHTML = `
-                <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107;">
-                  <h5>📝 Text Summary</h5>
-                  <div style="white-space: pre-wrap; line-height: 1.6;">${response.summary}</div>
-                </div>
-              `;
+              console.log('❌ No summary_data available, using text fallback');
+              console.log('❌ Response keys:', Object.keys(response));
+              console.log('❌ Response.summary_data value:', response.summary_data);
+
+              // Try to use formatSummaryWithQuotes from helpers if available
+              if (window.formatSummaryWithQuotes && response.summary) {
+                console.log('📋 Attempting to format text summary with quotes');
+                formattedHTML = window.formatSummaryWithQuotes(response.summary);
+              } else {
+                formattedHTML = `
+                  <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                    <h5>📝 Text Summary</h5>
+                    <div style="white-space: pre-wrap; line-height: 1.6;">${response.summary}</div>
+                  </div>
+                `;
+              }
             }
 
             analysisResult.innerHTML = `
