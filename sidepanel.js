@@ -275,9 +275,10 @@ document.addEventListener('DOMContentLoaded', function() {
               const summaryData = response.summary_data;
               console.log('📋 Using structured summary_data:', summaryData);
 
-              // Display the summary
+              // Display the summary with bold formatting
               if (summaryData.SUMMARY) {
-                formattedHTML += `<div class="summary-sentence">${summaryData.SUMMARY}</div>`;
+                const formattedSummary = summaryData.SUMMARY.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                formattedHTML += `<div class="summary-sentence">${formattedSummary}</div>`;
               }
 
               // Display the key points with quotes
@@ -291,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                   // Add quotes toggle button if quotes exist
                   if (point.quotes && point.quotes.length > 0) {
-                    formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletId}" onclick="toggleQuotes(${bulletId})" title="Show supporting quotes">📖</button>`;
+                    formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletId}" onclick="window.toggleQuotes(${bulletId})" title="Show supporting quotes">📖</button>`;
                     formattedHTML += `</div>`; // Close bullet-main
 
                     // Add quotes section (hidden by default)
@@ -299,7 +300,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     formattedHTML += `<div class="quotes-header">Supporting Evidence:</div>`;
 
                     point.quotes.forEach(quote => {
-                      formattedHTML += `<blockquote class="article-quote">${quote}</blockquote>`;
+                      // Format each quote with bold markdown support
+                      const formattedQuote = quote.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                      formattedHTML += `<blockquote class="article-quote">${formattedQuote}</blockquote>`;
                     });
 
                     formattedHTML += `</div>`; // Close quotes-section
