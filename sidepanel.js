@@ -239,9 +239,13 @@ document.addEventListener('DOMContentLoaded', function() {
       config.log('Tab ID:', tabs[0].id, 'Tab URL:', tabs[0].url);
       
       // No URL restriction check - backend service will handle all URLs
-      
+
       summarizeButton.disabled = true;
-      
+
+      // Clear any existing summary content before starting new summarization
+      analysisResult.innerHTML = '';
+      analysisResult.classList.add('hidden');
+
       messageDiv.textContent = 'Summarizing page content with GPT-3.5...';
       setMessageColor(messageDiv, messageDiv.textContent, '#2196f3');
 
