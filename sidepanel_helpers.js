@@ -93,18 +93,18 @@ function formatSummaryWithQuotes(summaryText) {
           console.log(`📖 Parsed ${quotes.length} quotes for bullet ${bulletCounter}:`, quotes);
 
           formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletCounter}">`;
-          formattedHTML += `<div class="quotes-header">Supporting Quotes:</div>`;
+          formattedHTML += `<div class="quotes-header">Page Quotes:</div>`;
 
           if (quotes.length === 0 && quotesContent) {
             // If no quotes found in proper format, show the raw content
             console.log(`⚠️ No quotes parsed, showing raw content: "${quotesContent}"`);
-            formattedHTML += `<blockquote class="article-quote">${quotesContent}</blockquote>`;
+            formattedHTML += `<blockquote class="article-quote">"${quotesContent}"</blockquote>`;
           } else {
             quotes.forEach((quote, idx) => {
               // Remove surrounding quotes
               let cleanQuote = quote.slice(1, -1);
               console.log(`📝 Quote ${idx + 1}: "${cleanQuote}"`);
-              formattedHTML += `<blockquote class="article-quote">${cleanQuote}</blockquote>`;
+              formattedHTML += `<blockquote class="article-quote">"${cleanQuote}"</blockquote>`;
             });
           }
 
@@ -186,10 +186,10 @@ function formatStructuredSummary(summaryData) {
         formattedHTML += `</div>`; // Close bullet-main
 
         formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletCounter}">`;
-        formattedHTML += `<div class="quotes-header">Supporting Quotes:</div>`;
+        formattedHTML += `<div class="quotes-header">Page Quotes:</div>`;
 
         quotes.forEach(quote => {
-          formattedHTML += `<blockquote class="article-quote">${quote}</blockquote>`;
+          formattedHTML += `<blockquote class="article-quote">"${quote}"</blockquote>`;
         });
 
         formattedHTML += `</div>`; // Close quotes-section

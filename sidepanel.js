@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
               // Add Key Points header in purple
               if (summaryData.POINTS && Array.isArray(summaryData.POINTS) && summaryData.POINTS.length > 0) {
-                formattedHTML += `<h4 style="color: #7c3aed; margin-top: 20px; margin-bottom: 15px; font-size: 18px;">🔑 Key Points</h4>`;
+                formattedHTML += `<h4 style="color: #7c3aed; margin-top: 20px; margin-bottom: 15px; font-size: 18px; font-weight: 500;">Key Points</h4>`;
               }
 
               // Display the key points with quotes
@@ -319,12 +319,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Add quotes section (hidden by default)
                     formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletId}">`;
-                    formattedHTML += `<div class="quotes-header">Supporting Evidence:</div>`;
+                    formattedHTML += `<div class="quotes-header">Page Quotes:</div>`;
 
                     point.quotes.forEach(quote => {
                       // Format each quote with bold markdown support
                       const formattedQuote = quote.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                      formattedHTML += `<blockquote class="article-quote">${formattedQuote}</blockquote>`;
+                      formattedHTML += `<blockquote class="article-quote">"${formattedQuote}"</blockquote>`;
                     });
 
                     formattedHTML += `</div>`; // Close quotes-section
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             analysisResult.innerHTML = `
-              <h4>📄 Page Summary</h4>
+              <h4 style="color: #7c3aed; margin-bottom: 15px; font-size: 18px; font-weight: 500;">Page Summary</h4>
               <div class="summary-content">${formattedHTML}</div>
             `;
             analysisResult.classList.remove('hidden');
@@ -440,7 +440,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                       console.log('Formatted retry summary for display:', formattedRetrySummary);
                       analysisResult.innerHTML = `
-                        <h4>Page Summary:</h4>
+                        <h4 style="color: #7c3aed; margin-bottom: 15px; font-size: 18px; font-weight: 500;">Page Summary</h4>
                         <div class="summary-content">${formattedRetrySummary}</div>
                       `;
                       analysisResult.classList.remove('hidden');

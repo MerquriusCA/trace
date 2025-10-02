@@ -444,7 +444,7 @@ input:checked + .slider:before {
 .page-title-header {
   font-size: 12px;
   font-weight: 500;
-  color: hsl(var(--muted-foreground));
+  color: #7c3aed;
   margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
