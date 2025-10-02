@@ -447,8 +447,8 @@
                 });
             }
 
-            // Show raw JSON structure for debugging
-            formattedHTML += `<details style="margin-top: 24px; padding: 12px; background: #f5f5f5; border-radius: 4px;">
+            // Show raw JSON structure for debugging (defaults to open)
+            formattedHTML += `<details open style="margin-top: 24px; padding: 12px; background: #f5f5f5; border-radius: 4px;">
                 <summary style="cursor: pointer; font-weight: bold; color: #666;">🔍 Raw JSON Structure (for debugging)</summary>
                 <pre style="margin: 8px 0; padding: 12px; background: white; border-radius: 4px; overflow-x: auto; font-size: 11px; line-height: 1.3; color: #333; border: 1px solid #e0e0e0;">${JSON.stringify(jsonData, null, 2)}</pre>
             </details>`;
