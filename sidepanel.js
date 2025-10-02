@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                   // Add quotes toggle button if quotes exist
                   if (point.quotes && point.quotes.length > 0) {
-                    formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletId}" onclick="window.toggleQuotes(${bulletId})" title="Show supporting quotes">📖</button>`;
+                    formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletId}" title="Show supporting quotes">📖</button>`;
                     formattedHTML += `</div>`; // Close bullet-main
 
                     // Add quotes section (hidden by default)
@@ -346,6 +346,19 @@ document.addEventListener('DOMContentLoaded', function() {
               <div class="summary-content">${formattedHTML}</div>
             `;
             analysisResult.classList.remove('hidden');
+
+            // Add event listeners for quote toggle buttons (using delegation to avoid CSP issues)
+            const summaryContent = analysisResult.querySelector('.summary-content');
+            if (summaryContent) {
+              summaryContent.addEventListener('click', function(e) {
+                if (e.target.classList.contains('quote-toggle')) {
+                  const bulletId = e.target.getAttribute('data-bullet');
+                  if (bulletId && window.toggleQuotes) {
+                    window.toggleQuotes(bulletId);
+                  }
+                }
+              });
+            }
 
             messageDiv.textContent = 'Summary complete!';
             setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
