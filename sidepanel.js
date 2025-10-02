@@ -281,10 +281,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
               }
 
-              // Display the summary with bold formatting
+              // Display the summary with bold formatting and larger text
               if (summaryData.SUMMARY) {
                 const formattedSummary = summaryData.SUMMARY.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                formattedHTML += `<div class="summary-sentence">${formattedSummary}</div>`;
+                formattedHTML += `<div class="summary-sentence" style="font-size: 16px; font-weight: 500; line-height: 1.5; margin-bottom: 20px; color: #333;">${formattedSummary}</div>`;
+              }
+
+              // Add Key Points header in purple
+              if (summaryData.POINTS && Array.isArray(summaryData.POINTS) && summaryData.POINTS.length > 0) {
+                formattedHTML += `<h4 style="color: #7c3aed; margin-top: 20px; margin-bottom: 15px; font-size: 18px;">🔑 Key Points</h4>`;
               }
 
               // Display the key points with quotes
