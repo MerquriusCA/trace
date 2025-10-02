@@ -539,9 +539,12 @@ function handleSummarizePage(request, sendResponse) {
 
         const data = await response.json();
         config.log('✅ Successful response received');
+        config.log('📊 Response includes summary_data:', !!data.summary_data);
         sendResponse({
           success: true,
-          summary: data.summary
+          summary: data.summary,
+          summary_data: data.summary_data,  // Include structured data!
+          is_article: data.is_article
         });
       } catch (error) {
         config.error('Summarization error:', error);
