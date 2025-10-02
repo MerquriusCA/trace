@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
               // Add Key Points header in purple
               if (summaryData.POINTS && Array.isArray(summaryData.POINTS) && summaryData.POINTS.length > 0) {
-                formattedHTML += `<h4 style="color: #7c3aed; margin-top: 20px; margin-bottom: 15px; font-size: 18px; font-weight: 500;">Key Points</h4>`;
+                formattedHTML += `<h4 style="color: #7c3aed; margin-top: 20px; margin-bottom: 15px; font-size: 18px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">KEY POINTS</h4>`;
               }
 
               // Display the key points with quotes
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             analysisResult.innerHTML = `
-              <h4 style="color: #7c3aed; margin-bottom: 15px; font-size: 18px; font-weight: 500;">Page Summary</h4>
+              <h4 style="color: #7c3aed; margin-bottom: 15px; font-size: 18px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">PAGE SUMMARY</h4>
               <div class="summary-content">${formattedHTML}</div>
             `;
             analysisResult.classList.remove('hidden');
@@ -440,7 +440,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                       console.log('Formatted retry summary for display:', formattedRetrySummary);
                       analysisResult.innerHTML = `
-                        <h4 style="color: #7c3aed; margin-bottom: 15px; font-size: 18px; font-weight: 500;">Page Summary</h4>
+                        <h4 style="color: #7c3aed; margin-bottom: 15px; font-size: 18px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">PAGE SUMMARY</h4>
                         <div class="summary-content">${formattedRetrySummary}</div>
                       `;
                       analysisResult.classList.remove('hidden');

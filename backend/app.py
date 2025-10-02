@@ -2802,81 +2802,89 @@ def get_reading_level_prompts():
         'simple': '''Return a JSON object with this exact structure:
 
 {
-  "SUMMARY": "One simple sentence that captures what this article is about",
+  "SUMMARY": "One simple sentence that captures the overall purpose or topic of this article",
   "POINTS": [
     {
-      "point": "Single most important point in simple, clear language",
+      "point": "Single most important specific finding, insight, or takeaway from the article (must be distinct from the SUMMARY)",
       "quotes": ["Direct quote from the article that supports this point"]
     }
   ]
 }
 
+IMPORTANT: The SUMMARY should be a high-level overview of the article's topic or purpose. The POINT should be a specific insight, finding, or key takeaway that goes deeper into the details. They must NOT repeat each other or say the same thing in different words.
+
 Include exactly 1 point with 1 supporting quote.''',
         'balanced': '''Return a JSON object with this exact structure:
 
 {
-  "SUMMARY": "One clear sentence that captures the main idea of this article",
+  "SUMMARY": "One clear sentence that captures the overall purpose or main theme of this article",
   "POINTS": [
     {
-      "point": "First main point in clear, accessible language",
+      "point": "First specific finding, insight, or argument from the article (must be distinct from the SUMMARY)",
       "quotes": ["First direct quote", "Second supporting quote if relevant"]
     },
     {
-      "point": "Second main point in clear, accessible language",
+      "point": "Second specific finding, insight, or argument from the article (must be distinct from the SUMMARY and first point)",
       "quotes": ["First direct quote", "Second supporting quote if relevant"]
     }
   ]
 }
+
+IMPORTANT: The SUMMARY should be a high-level overview of the article's topic or purpose. The POINTS should be specific insights, findings, or arguments that go deeper into the details. The SUMMARY and POINTS must NOT repeat each other or say the same thing in different words. Each point must be unique and non-overlapping.
 
 Include exactly 2 points with 1-2 supporting quotes each.''',
         'detailed': '''Return a JSON object with this exact structure:
 
 {
-  "SUMMARY": "One comprehensive sentence that captures the essence and significance of this article",
+  "SUMMARY": "One comprehensive sentence that captures the overall purpose, theme, or significance of this article",
   "POINTS": [
     {
-      "point": "First key point with comprehensive detail",
+      "point": "First specific key finding, insight, or argument with comprehensive detail (must be distinct from the SUMMARY)",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     },
     {
-      "point": "Second key point with comprehensive detail",
+      "point": "Second specific key finding, insight, or argument with comprehensive detail (must be distinct from SUMMARY and other points)",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     },
     {
-      "point": "Third key point with comprehensive detail",
+      "point": "Third specific key finding, insight, or argument with comprehensive detail (must be distinct from SUMMARY and other points)",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     }
   ]
 }
+
+IMPORTANT: The SUMMARY should be a high-level overview of the article's topic, purpose, or significance. The POINTS should be specific insights, findings, or arguments that dive into the details. The SUMMARY and POINTS must NOT repeat each other or say the same thing in different words. Each point must be unique and non-overlapping.
 
 Include exactly 3 points with 2-3 supporting quotes each.''',
         'technical': '''Return a JSON object with this exact structure:
 
 {
-  "SUMMARY": "One precise technical sentence that captures the core concept and implications",
+  "SUMMARY": "One precise sentence that captures the overall technical concept, purpose, or domain of this article",
   "POINTS": [
     {
-      "point": "First technical point with precise detail",
+      "point": "First specific technical finding, methodology, or conclusion with precise detail (must be distinct from the SUMMARY)",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Second technical point with precise detail",
+      "point": "Second specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points)",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Third technical point with precise detail",
+      "point": "Third specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points)",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Fourth technical point with precise detail",
+      "point": "Fourth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points)",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Fifth technical point with precise detail",
+      "point": "Fifth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points)",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     }
   ]
 }
+
+IMPORTANT: The SUMMARY should be a high-level overview of the technical concept, domain, or purpose. The POINTS should be specific technical findings, methodologies, or conclusions that go into the technical details. The SUMMARY and POINTS must NOT repeat each other or say the same thing in different words. Each point must be unique and non-overlapping.
 
 Include exactly 5 points with 2-3 supporting quotes each.'''
     }
