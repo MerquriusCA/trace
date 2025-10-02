@@ -321,23 +321,24 @@ document.addEventListener('DOMContentLoaded', function() {
               }
 
             } else {
-              // Fallback: display text summary when structured data is not available
-              console.log('❌ No summary_data available, using text fallback');
-              console.log('❌ Response keys:', Object.keys(response));
-              console.log('❌ Response.summary_data value:', response.summary_data);
+              // No structured data available - show error
+              console.error('❌ No summary_data available - structured data required');
+              console.error('❌ Response keys:', Object.keys(response));
+              console.error('❌ Response.summary_data value:', response.summary_data);
 
-              // Try to use formatSummaryWithQuotes from helpers if available
-              if (window.formatSummaryWithQuotes && response.summary) {
-                console.log('📋 Attempting to format text summary with quotes');
-                formattedHTML = window.formatSummaryWithQuotes(response.summary);
-              } else {
-                formattedHTML = `
-                  <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107;">
-                    <h5>📝 Text Summary</h5>
-                    <div style="white-space: pre-wrap; line-height: 1.6;">${response.summary}</div>
-                  </div>
-                `;
-              }
+              formattedHTML = `
+                <div style="background: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #f44336;">
+                  <h5>⚠️ Error: Missing Structured Data</h5>
+                  <p style="margin: 10px 0;">The summary response is missing structured data (summary_data field).</p>
+                  <p style="margin: 10px 0; font-size: 12px; color: #666;">This usually means:</p>
+                  <ul style="margin: 10px 0; font-size: 12px; color: #666;">
+                    <li>The backend didn't parse the JSON correctly</li>
+                    <li>The response wasn't properly formatted</li>
+                    <li>There was an issue with the OpenAI API response</li>
+                  </ul>
+                  <p style="margin: 10px 0; font-size: 12px;">Please try summarizing again or check the console for details.</p>
+                </div>
+              `;
             }
 
             analysisResult.innerHTML = `
