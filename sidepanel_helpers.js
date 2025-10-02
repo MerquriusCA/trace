@@ -93,7 +93,7 @@ function formatSummaryWithQuotes(summaryText) {
           console.log(`📖 Parsed ${quotes.length} quotes for bullet ${bulletCounter}:`, quotes);
 
           formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletCounter}">`;
-          formattedHTML += `<div class="quotes-header">Supporting Evidence:</div>`;
+          formattedHTML += `<div class="quotes-header">Supporting Quotes:</div>`;
 
           if (quotes.length === 0 && quotesContent) {
             // If no quotes found in proper format, show the raw content
@@ -186,7 +186,7 @@ function formatStructuredSummary(summaryData) {
         formattedHTML += `</div>`; // Close bullet-main
 
         formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletCounter}">`;
-        formattedHTML += `<div class="quotes-header">Supporting Evidence:</div>`;
+        formattedHTML += `<div class="quotes-header">Supporting Quotes:</div>`;
 
         quotes.forEach(quote => {
           formattedHTML += `<blockquote class="article-quote">${quote}</blockquote>`;

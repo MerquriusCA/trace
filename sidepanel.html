@@ -46,23 +46,29 @@
           <div class="welcome-content">
             <img src="icon16.png" alt="Trace" style="width: 16px; height: 16px; margin-right: 8px;">
             <span id="welcomeMessage" class="welcome-text">Welcome!</span>
+            <div id="subscriptionStatusIndicator" class="subscription-indicator"></div>
           </div>
         </div>
-        
-        <!-- Subscription Status Card -->
-        <div class="card">
-          <div id="subscriptionStatus" class="subscription-status"></div>
-          <div id="subscriptionActions"></div>
+
+        <!-- Subscription Actions (only shown when needed) -->
+        <div id="subscriptionActions" class="hidden"></div>
+
+        <!-- Page Title (only shown when authenticated) -->
+        <div id="pageTitleSection" class="hidden">
+          <div class="page-title-card">
+            <div class="page-title-header">📄 Current Page</div>
+            <div id="pageTitle" class="page-title">Loading...</div>
+          </div>
         </div>
       </div>
     </div>
-    
+
     <!-- Page Info (only shown when authenticated) -->
     <div id="pageInfo" class="page-info hidden"></div>
-    
+
     <!-- Action Buttons (only shown when authenticated) -->
     <div id="actionButtonsSection" class="hidden">
-      <button id="summarizeButton" class="btn-success hidden">Summarize Page</button>
+      <button id="summarizeButton" class="btn-success hidden">🔍 Trace This Page</button>
     </div>
     
     <!-- Analysis Result -->

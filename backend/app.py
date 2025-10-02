@@ -1658,7 +1658,7 @@ def admin_test_prompt(current_user):
                 'messages': [
                     {
                         'role': 'system',
-                        'content': 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST return a valid JSON object with the exact structure requested. Extract actual direct quotes from the article text provided. Use **bold** markdown for emphasis on key phrases within the text fields.'
+                        'content': 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST return a valid JSON object with the exact structure requested. Extract actual direct quotes from the article text provided.'
                     },
                     {
                         'role': 'user',
@@ -2182,7 +2182,7 @@ def summarize_with_auth(current_user):
                     'messages': [
                         {
                             'role': 'system',
-                            'content': 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST return a valid JSON object with the exact structure requested. Extract actual direct quotes from the article text provided. Use **bold** markdown for emphasis on key phrases within the text fields.'
+                            'content': 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST return a valid JSON object with the exact structure requested. Extract actual direct quotes from the article text provided.'
                         },
                         {
                             'role': 'user',
@@ -2805,80 +2805,80 @@ def get_reading_level_prompts():
   "SUMMARY": "One simple sentence that captures what this article is about",
   "POINTS": [
     {
-      "point": "Single most important point in simple, clear language - use **bold** for key phrases",
+      "point": "Single most important point in simple, clear language",
       "quotes": ["Direct quote from the article that supports this point"]
     }
   ]
 }
 
-Use **bold** markdown for emphasis. Include exactly 1 point with 1 supporting quote.''',
+Include exactly 1 point with 1 supporting quote.''',
         'balanced': '''Return a JSON object with this exact structure:
 
 {
   "SUMMARY": "One clear sentence that captures the main idea of this article",
   "POINTS": [
     {
-      "point": "First main point in clear, accessible language - use **bold** for key phrases",
+      "point": "First main point in clear, accessible language",
       "quotes": ["First direct quote", "Second supporting quote if relevant"]
     },
     {
-      "point": "Second main point in clear, accessible language - use **bold** for key phrases",
+      "point": "Second main point in clear, accessible language",
       "quotes": ["First direct quote", "Second supporting quote if relevant"]
     }
   ]
 }
 
-Use **bold** markdown for emphasis. Include exactly 2 points with 1-2 supporting quotes each.''',
+Include exactly 2 points with 1-2 supporting quotes each.''',
         'detailed': '''Return a JSON object with this exact structure:
 
 {
   "SUMMARY": "One comprehensive sentence that captures the essence and significance of this article",
   "POINTS": [
     {
-      "point": "First key point with comprehensive detail - use **bold** for important concepts",
+      "point": "First key point with comprehensive detail",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     },
     {
-      "point": "Second key point with comprehensive detail - use **bold** for important concepts",
+      "point": "Second key point with comprehensive detail",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     },
     {
-      "point": "Third key point with comprehensive detail - use **bold** for important concepts",
+      "point": "Third key point with comprehensive detail",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     }
   ]
 }
 
-Use **bold** markdown for emphasis. Include exactly 3 points with 2-3 supporting quotes each.''',
+Include exactly 3 points with 2-3 supporting quotes each.''',
         'technical': '''Return a JSON object with this exact structure:
 
 {
   "SUMMARY": "One precise technical sentence that captures the core concept and implications",
   "POINTS": [
     {
-      "point": "First technical point with precise detail - use **bold** for technical terms and key findings",
+      "point": "First technical point with precise detail",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Second technical point with precise detail - use **bold** for technical terms and key findings",
+      "point": "Second technical point with precise detail",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Third technical point with precise detail - use **bold** for technical terms and key findings",
+      "point": "Third technical point with precise detail",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Fourth technical point with precise detail - use **bold** for technical terms and key findings",
+      "point": "Fourth technical point with precise detail",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Fifth technical point with precise detail - use **bold** for technical terms and key findings",
+      "point": "Fifth technical point with precise detail",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     }
   ]
 }
 
-Use **bold** markdown for emphasis. Include exactly 5 points with 2-3 supporting quotes each.'''
+Include exactly 5 points with 2-3 supporting quotes each.'''
     }
 
 def generate_standardized_prompt(reading_level, content):
@@ -2927,7 +2927,7 @@ def call_openai_summarize(content, api_key, custom_prompt=None):
         
         # Use custom prompt if provided, otherwise use default
         if custom_prompt:
-            system_content = 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST return a valid JSON object if the prompt requests JSON format, or follow the exact formatting instructions provided. Extract actual direct quotes from the article text provided. Use **bold** markdown for emphasis on key phrases.'
+            system_content = 'You are a helpful assistant that creates structured summaries with supporting quotes. You MUST return a valid JSON object if the prompt requests JSON format, or follow the exact formatting instructions provided. Extract actual direct quotes from the article text provided.'
             user_content = f'{custom_prompt}\n\nWeb page content:\n\n{content}'
             max_tokens = 800  # Allow more tokens for summary sentence + bullet points + quotes
         else:

@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const toggleSwitch = document.getElementById('toggleSwitch');
   const statusText = document.getElementById('statusText');
   const pageInfo = document.getElementById('pageInfo');
+  const pageTitleSection = document.getElementById('pageTitleSection');
+  const pageTitle = document.getElementById('pageTitle');
   const analysisResult = document.getElementById('analysisResult');
   
   // Authentication elements
@@ -26,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const userAvatar = document.getElementById('userAvatar');
   const userName = document.getElementById('userName');
   const userEmail = document.getElementById('userEmail');
-  const subscriptionStatus = document.getElementById('subscriptionStatus');
+  const subscriptionStatusIndicator = document.getElementById('subscriptionStatusIndicator');
   const subscriptionActions = document.getElementById('subscriptionActions');
   
   // Tab navigation elements
@@ -100,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       } else {
         pageInfo.classList.add('hidden');
+        pageTitleSection.classList.add('hidden');
         summarizeButton.classList.add('hidden');
         analysisResult.classList.add('hidden');
       }
@@ -126,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Check if URL has changed
         if (currentPageUrl && currentPageUrl !== tabs[0].url) {
           // Clear analysis results when navigating to a new page
+          analysisResult.innerHTML = '';
           analysisResult.classList.add('hidden');
         }
         
@@ -144,17 +148,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function displayPageTitle(title) {
-    // Only show page info if user is authenticated
+    // Only show page title if user is authenticated
     if (!currentUser) {
-      pageInfo.classList.add('hidden');
+      pageTitleSection.classList.add('hidden');
       return;
     }
-    
-    pageInfo.innerHTML = `
-      <h3 class="font-semibold text-gray-900 mb-1">Current Page:</h3>
-      <p class="text-sm text-gray-600">${title || 'Unable to get page title'}</p>
-    `;
-    pageInfo.classList.remove('hidden');
+
+    pageTitle.textContent = title || 'Unable to get page title';
+    pageTitleSection.classList.remove('hidden');
   }
 
   // Track tab listeners to avoid duplicates
@@ -182,6 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Check if URL has changed
                 if (changeInfo.url && currentPageUrl && currentPageUrl !== changeInfo.url) {
                   // Clear analysis results when URL changes
+                  analysisResult.innerHTML = '';
                   analysisResult.classList.add('hidden');
                 }
                 displayCurrentPageInfo();
@@ -246,8 +248,13 @@ document.addEventListener('DOMContentLoaded', function() {
       analysisResult.innerHTML = '';
       analysisResult.classList.add('hidden');
 
-      messageDiv.textContent = 'Summarizing page content with GPT-3.5...';
-      setMessageColor(messageDiv, messageDiv.textContent, '#2196f3');
+      messageDiv.innerHTML = `
+        <div class="trace-spinner">
+          <img src="icon16.png" alt="Trace" class="trace-spinner-icon">
+          <span>Analyzing page...</span>
+        </div>
+      `;
+      messageDiv.classList.remove('hidden');
 
       chrome.runtime.sendMessage({
         action: 'summarizePage',
@@ -266,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             analysisResult.classList.remove('hidden');
             // Clear any existing status message for non-articles
-            messageDiv.textContent = '';
+            messageDiv.innerHTML = '';
             messageDiv.classList.add('hidden');
           } else {
             // Display the structured summary
@@ -416,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
                       `;
                       analysisResult.classList.remove('hidden');
                       // Clear any existing status message for non-articles
-                      messageDiv.textContent = '';
+                      messageDiv.innerHTML = '';
                       messageDiv.classList.add('hidden');
                     } else {
                       // Display the summary for articles
@@ -446,14 +453,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Clear status message after delay for successful summaries
                     if (retryResponse.is_article !== false) {
                       setTimeout(() => {
-                        messageDiv.textContent = '';
+                        messageDiv.innerHTML = '';
+                        messageDiv.classList.add('hidden');
                       }, 3000);
                     }
                   } else {
                     messageDiv.textContent = 'Error: ' + (retryResponse?.error || 'Summary failed after retry');
                     setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
                     setTimeout(() => {
-                      messageDiv.textContent = '';
+                      messageDiv.innerHTML = '';
+                      messageDiv.classList.add('hidden');
                     }, 3000);
                   }
                 });
@@ -475,11 +484,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Only clear status message for successful summaries and errors, not for non-articles
         if (response.success && response.is_article !== false) {
           setTimeout(() => {
-            messageDiv.textContent = '';
+            messageDiv.innerHTML = '';
+            messageDiv.classList.add('hidden');
           }, 3000);
         } else if (!response.success) {
           setTimeout(() => {
-            messageDiv.textContent = '';
+            messageDiv.innerHTML = '';
+            messageDiv.classList.add('hidden');
           }, 3000);
         }
       });
@@ -863,6 +874,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (pageInfo) {
       pageInfo.classList.add('hidden');
     }
+
+    // Hide page title section when not authenticated
+    if (pageTitleSection) {
+      pageTitleSection.classList.add('hidden');
+    }
     
     // Hide action buttons when not authenticated
     const actionButtonsSection = document.getElementById('actionButtonsSection');
@@ -994,63 +1010,59 @@ document.addEventListener('DOMContentLoaded', function() {
   
   async function updateSubscriptionUI(subscription) {
     const status = subscription.status || 'inactive';
-    
-    // Clear existing content
-    subscriptionStatus.innerHTML = '';
+
+    // Clear existing subscription actions
     subscriptionActions.innerHTML = '';
-    
+    subscriptionActions.classList.add('hidden');
+
     // Check if user is whitelisted
     const isWhitelisted = currentUser && config.whitelist.isWhitelisted(currentUser.email);
-    
+
     // Fetch dynamic price
     const priceInfo = await fetchSubscriptionPrice();
-    
-    // Update subscription status display
+
+    // Update subscription indicator (small circle next to welcome text)
     if (status === 'active') {
-      subscriptionStatus.className = 'subscription-status active';
-      subscriptionStatus.innerHTML = `
-        ✅ <strong>Active Subscription</strong><br>
-        <small>Access to all AI features</small>
-      `;
-      
-      subscriptionActions.innerHTML = '';
+      subscriptionStatusIndicator.className = 'subscription-indicator active';
+      subscriptionStatusIndicator.title = 'Active Subscription';
     } else if (isWhitelisted) {
-      // Special display for whitelisted users
-      subscriptionStatus.className = 'subscription-status active';
-      subscriptionStatus.innerHTML = `
-        🎯 <strong>Beta Access</strong>
-      `;
-      
-      // Show purchase button for whitelisted users to convert to paid
+      // Show active indicator for whitelisted users (beta access)
+      subscriptionStatusIndicator.className = 'subscription-indicator active';
+      subscriptionStatusIndicator.title = 'Beta Access - Active';
+
+      // Show upgrade button for whitelisted users
       subscriptionActions.innerHTML = `
-        <button class="subscribe-button" id="upgradeButton">
-          Upgrade to Pro - ${priceInfo.display}
-        </button>
+        <div class="card" style="margin-top: 12px;">
+          <div style="text-align: center; padding: 8px;">
+            <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280;">🎯 Beta Access Active</p>
+            <button class="subscribe-button" id="upgradeButton">
+              Upgrade to Pro - ${priceInfo.display}
+            </button>
+          </div>
+        </div>
       `;
+      subscriptionActions.classList.remove('hidden');
     } else if (status === 'past_due') {
-      subscriptionStatus.className = 'subscription-status expired';
-      subscriptionStatus.innerHTML = `
-        ⚠️ <strong>Payment Required</strong><br>
-        <small>Subscription payment is past due</small>
-      `;
-      
+      subscriptionStatusIndicator.className = 'subscription-indicator inactive';
+      subscriptionStatusIndicator.title = 'Payment Required';
+
       subscriptionActions.innerHTML = `
-        <button class="subscribe-button" onclick="updatePayment()">
-          Update Payment Method
-        </button>
+        <div class="card" style="margin-top: 12px;">
+          <div style="text-align: center; padding: 8px;">
+            <p style="margin: 0 0 8px 0; font-size: 12px; color: #ef4444;">⚠️ Payment Required</p>
+            <button class="subscribe-button" onclick="updatePayment()">
+              Update Payment Method
+            </button>
+          </div>
+        </div>
       `;
+      subscriptionActions.classList.remove('hidden');
     } else {
-      // Regular users (non-whitelisted) - NO purchase button
-      subscriptionStatus.className = 'subscription-status inactive';
-      subscriptionStatus.innerHTML = `
-        🔒 <strong>Limited Access</strong><br>
-        <small>AI features are not available in this version</small>
-      `;
-      
-      // No purchase button for non-whitelisted users
-      subscriptionActions.innerHTML = '';
+      // Regular users (non-whitelisted) - red indicator, no actions
+      subscriptionStatusIndicator.className = 'subscription-indicator inactive';
+      subscriptionStatusIndicator.title = 'AI features unavailable';
     }
-    
+
     // Add click handler for upgrade button (only exists for whitelisted users)
     const upgradeBtn = document.getElementById('upgradeButton');
     if (upgradeBtn) {
