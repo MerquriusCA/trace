@@ -741,6 +741,39 @@ input:checked + .slider:before {
   color: hsl(var(--primary));
 }
 
+/* Profile Info */
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.profile-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: hsl(var(--muted));
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+}
+
+.profile-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--primary));
+  font-family: var(--font-heading);
+}
+
 /* Setting Items */
 .setting-item {
   padding: 8px 0;

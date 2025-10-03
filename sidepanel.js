@@ -295,12 +295,12 @@ document.addEventListener('DOMContentLoaded', function() {
               // Display the summary with bold formatting and larger text
               if (summaryData.SUMMARY) {
                 const formattedSummary = summaryData.SUMMARY.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                formattedHTML += `<div class="summary-sentence" style="font-size: 16px; font-weight: 500; line-height: 1.5; margin-bottom: 20px; color: #333;">${formattedSummary}</div>`;
+                formattedHTML += `<div class="summary-sentence" style="font-size: 14px; font-weight: 500; line-height: 1.4; margin-bottom: 16px; color: hsl(var(--foreground));">${formattedSummary}</div>`;
               }
 
               // Add Key Points header in purple
               if (summaryData.POINTS && Array.isArray(summaryData.POINTS) && summaryData.POINTS.length > 0) {
-                formattedHTML += `<h4 style="color: #7c3aed; margin-top: 20px; margin-bottom: 15px; font-size: 18px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">KEY POINTS</h4>`;
+                formattedHTML += `<h4 style="color: #7c3aed; margin-top: 20px; margin-bottom: 6px; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">KEY POINTS</h4>`;
               }
 
               // Display the key points with quotes
@@ -311,11 +311,11 @@ document.addEventListener('DOMContentLoaded', function() {
                   formattedHTML += `<div class="bullet-item">`;
                   formattedHTML += `<div class="bullet-main">`;
                   formattedHTML += `<span class="bullet-point">•</span> ${point.point.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}`;
+                  formattedHTML += `</div>`; // Close bullet-main
 
-                  // Add quotes toggle button if quotes exist
+                  // Add quotes toggle button if quotes exist (on its own row)
                   if (point.quotes && point.quotes.length > 0) {
-                    formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletId}" title="Show supporting quotes">📖</button>`;
-                    formattedHTML += `</div>`; // Close bullet-main
+                    formattedHTML += `<button class="quote-toggle" data-bullet="${bulletId}" title="Show supporting quotes"><span class="toggle-icon">📖</span> Show Quotes</button>`;
 
                     // Add quotes section (hidden by default)
                     formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletId}">`;
@@ -328,8 +328,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
 
                     formattedHTML += `</div>`; // Close quotes-section
-                  } else {
-                    formattedHTML += `</div>`; // Close bullet-main if no quotes
                   }
 
                   formattedHTML += `</div>`; // Close bullet-item
@@ -358,7 +356,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             analysisResult.innerHTML = `
-              <h4 style="color: #7c3aed; margin-bottom: 15px; font-size: 18px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">PAGE SUMMARY</h4>
+              <h4 style="color: #7c3aed; margin-bottom: 6px; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">PAGE SUMMARY</h4>
               <div class="summary-content">${formattedHTML}</div>
             `;
             analysisResult.classList.remove('hidden');
@@ -440,7 +438,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                       console.log('Formatted retry summary for display:', formattedRetrySummary);
                       analysisResult.innerHTML = `
-                        <h4 style="color: #7c3aed; margin-bottom: 15px; font-size: 18px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">PAGE SUMMARY</h4>
+                        <h4 style="color: #7c3aed; margin-bottom: 6px; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">PAGE SUMMARY</h4>
                         <div class="summary-content">${formattedRetrySummary}</div>
                       `;
                       analysisResult.classList.remove('hidden');
@@ -819,9 +817,51 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
+  function displayUserProfile(preferences) {
+    // Format and display user profile selections
+    const readerTypeLabels = {
+      'student': '🎓 Student',
+      'business': '💼 Business Professional',
+      'researcher': '🔬 Researcher/Academic',
+      'tech': '💻 Tech Professional',
+      'lifelong_learner': '📖 Lifelong Learner',
+      'creative': '🎨 Creative Professional'
+    };
+
+    const readingLevelLabels = {
+      'simple': '🟢 Quick & Simple',
+      'balanced': '🟡 Clear & Balanced',
+      'detailed': '🔵 Detailed & Thorough',
+      'technical': '🟣 Technical & Expert'
+    };
+
+    const summaryStyleLabels = {
+      'quick': 'Quick Summary',
+      'eli8': 'Explain Like I\'m 8',
+      'detailed': 'Detailed Summary'
+    };
+
+    // Update the display elements
+    const readerTypeEl = document.getElementById('currentReaderType');
+    const readingLevelEl = document.getElementById('currentReadingLevel');
+    const summaryStyleEl = document.getElementById('currentSummaryStyle');
+
+    if (readerTypeEl && preferences.readerType) {
+      readerTypeEl.textContent = readerTypeLabels[preferences.readerType] || preferences.readerType;
+    }
+
+    if (readingLevelEl && preferences.readingLevel) {
+      readingLevelEl.textContent = readingLevelLabels[preferences.readingLevel] || preferences.readingLevel;
+    }
+
+    if (summaryStyleEl && preferences.summaryStyle) {
+      summaryStyleEl.textContent = summaryStyleLabels[preferences.summaryStyle] || preferences.summaryStyle;
+    }
+  }
+
   function applyUserPreferences(preferences) {
     config.log('⚙️ Applying user preferences:', preferences);
-    
+
     // Apply summary style preferences to UI elements
     if (preferences.summaryStyle) {
       // Update radio buttons in settings to match saved preferences
@@ -830,10 +870,13 @@ document.addEventListener('DOMContentLoaded', function() {
         radio.checked = radio.value === preferences.summaryStyle;
       });
     }
-    
+
+    // Display current profile in settings
+    displayUserProfile(preferences);
+
     // Store preferences locally for quick access
-    chrome.storage.local.set({ 
-      currentUserPreferences: preferences 
+    chrome.storage.local.set({
+      currentUserPreferences: preferences
     });
     
     // Sync preferences with backend if authenticated
@@ -1414,9 +1457,16 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       settingsUserName.textContent = currentUser.name || 'Loading...';
       settingsUserEmail.textContent = currentUser.email || 'Loading...';
-      
+
       // Update subscription info in settings
       loadSubscriptionStatusForSettings();
+
+      // Load and display user profile from onboarding
+      chrome.storage.sync.get(['userPreferences'], function(result) {
+        if (result.userPreferences) {
+          displayUserProfile(result.userPreferences);
+        }
+      });
     }
   }
   
