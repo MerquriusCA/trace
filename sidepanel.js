@@ -787,17 +787,22 @@ document.addEventListener('DOMContentLoaded', function() {
   
   function checkOnboardingStatus() {
     // Check if onboarding has been completed
-    chrome.storage.sync.get(['onboardingCompleted', 'userPreferences'], function(result) {
+    chrome.storage.local.get(['onboardingCompleted', 'readerType', 'readingLevel', 'summaryStyle'], function(result) {
       config.log('Onboarding status:', result);
-      
+
       if (!result.onboardingCompleted) {
         config.log('🎯 Starting onboarding for new user');
         startOnboarding();
       } else {
         config.log('✅ Onboarding already completed');
         // Load user preferences if available
-        if (result.userPreferences) {
-          applyUserPreferences(result.userPreferences);
+        if (result.readerType || result.readingLevel || result.summaryStyle) {
+          const preferences = {
+            readerType: result.readerType,
+            readingLevel: result.readingLevel,
+            summaryStyle: result.summaryStyle
+          };
+          applyUserPreferences(preferences);
         }
       }
     });
@@ -1462,9 +1467,14 @@ document.addEventListener('DOMContentLoaded', function() {
       loadSubscriptionStatusForSettings();
 
       // Load and display user profile from onboarding
-      chrome.storage.sync.get(['userPreferences'], function(result) {
-        if (result.userPreferences) {
-          displayUserProfile(result.userPreferences);
+      chrome.storage.local.get(['readerType', 'readingLevel', 'summaryStyle'], function(result) {
+        if (result.readerType || result.readingLevel || result.summaryStyle) {
+          const preferences = {
+            readerType: result.readerType,
+            readingLevel: result.readingLevel,
+            summaryStyle: result.summaryStyle
+          };
+          displayUserProfile(preferences);
         }
       });
     }
