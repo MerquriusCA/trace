@@ -1115,20 +1115,39 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, textarea::pla
   display: flex;
   align-items: flex-start;
   gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .quote-toggle {
-  background: transparent;
-  border: none;
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
-  padding: 0 4px;
-  margin-left: auto;
-  transition: transform 0.2s ease;
+  font-size: 12px;
+  padding: 4px 8px;
+  margin-top: 8px;
+  margin-left: 24px;
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: hsl(var(--foreground));
+  font-weight: 500;
+  width: auto;
+  max-width: fit-content;
 }
 
 .quote-toggle:hover {
-  transform: scale(1.2);
+  background: hsl(var(--primary-muted));
+  border-color: hsl(var(--primary));
+  color: hsl(var(--primary));
+  transform: translateY(-1px);
+}
+
+.quote-toggle .toggle-icon {
+  font-size: 14px;
 }
 
 .quotes-section {

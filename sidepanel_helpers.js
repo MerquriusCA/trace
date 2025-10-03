@@ -64,6 +64,7 @@ function formatSummaryWithQuotes(summaryText) {
       formattedHTML += `<div class="bullet-item">`;
       formattedHTML += `<div class="bullet-main">`;
       formattedHTML += `<span class="bullet-point">•</span> ${bulletContent}`;
+      formattedHTML += `</div>`; // Close bullet-main
 
       // Look for QUOTES in the next few lines (handle various formatting)
       let quotesFound = false;
@@ -81,8 +82,7 @@ function formatSummaryWithQuotes(summaryText) {
           quotesLine = trimmedLine;
           console.log(`✅ QUOTES found for bullet ${bulletCounter}: "${quotesLine}"`);
 
-          formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletCounter}" onclick="toggleQuotes(${bulletCounter})" title="Show supporting quotes">📖</button>`;
-          formattedHTML += `</div>`; // Close bullet-main
+          formattedHTML += `<button class="quote-toggle" data-bullet="${bulletCounter}" onclick="toggleQuotes(${bulletCounter})" title="Show supporting quotes"><span class="toggle-icon">📖</span> Show Quotes</button>`;
 
           // Extract quotes content - handle both trimmed and untrimmed
           let quotesContent = quotesLine.replace(/^.*QUOTES:\s*/, '').trim();
@@ -120,10 +120,6 @@ function formatSummaryWithQuotes(summaryText) {
         }
       }
 
-      if (!quotesFound) {
-        formattedHTML += `</div>`; // Close bullet-main if no quotes
-      }
-
       formattedHTML += `</div>`; // Close bullet-item
     }
     // Handle empty lines
@@ -143,11 +139,11 @@ function toggleQuotes(bulletId) {
   if (quotesSection) {
     if (quotesSection.classList.contains('hidden')) {
       quotesSection.classList.remove('hidden');
-      toggleButton.textContent = '📕';
+      toggleButton.innerHTML = '<span class="toggle-icon">📕</span> Hide Quotes';
       toggleButton.title = 'Hide supporting quotes';
     } else {
       quotesSection.classList.add('hidden');
-      toggleButton.textContent = '📖';
+      toggleButton.innerHTML = '<span class="toggle-icon">📖</span> Show Quotes';
       toggleButton.title = 'Show supporting quotes';
     }
   }
@@ -176,14 +172,14 @@ function formatStructuredSummary(summaryData) {
       formattedHTML += `<div class="bullet-item">`;
       formattedHTML += `<div class="bullet-main">`;
       formattedHTML += `<span class="bullet-point">•</span> ${bulletText}`;
+      formattedHTML += `</div>`; // Close bullet-main
 
       // Check if this point has quotes
       let quotes = point.quotes || point.QUOTES || [];
       if (quotes && quotes.length > 0) {
         console.log(`📖 Point ${bulletCounter} has ${quotes.length} quotes:`, quotes);
 
-        formattedHTML += ` <button class="quote-toggle" data-bullet="${bulletCounter}" onclick="toggleQuotes(${bulletCounter})" title="Show supporting quotes">📖</button>`;
-        formattedHTML += `</div>`; // Close bullet-main
+        formattedHTML += `<button class="quote-toggle" data-bullet="${bulletCounter}" onclick="toggleQuotes(${bulletCounter})" title="Show supporting quotes"><span class="toggle-icon">📖</span> Show Quotes</button>`;
 
         formattedHTML += `<div class="quotes-section hidden" id="quotes-${bulletCounter}">`;
         formattedHTML += `<div class="quotes-header">Page Quotes:</div>`;
@@ -195,7 +191,6 @@ function formatStructuredSummary(summaryData) {
         formattedHTML += `</div>`; // Close quotes-section
       } else {
         console.log(`📝 Point ${bulletCounter} has no quotes`);
-        formattedHTML += `</div>`; // Close bullet-main if no quotes
       }
 
       formattedHTML += `</div>`; // Close bullet-item

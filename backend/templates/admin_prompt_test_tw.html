@@ -519,9 +519,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Load standardized prompts from backend first
-            loadStandardizedPrompts();
-
             // Handle article selection and URL input visibility
             const articleRadios = document.querySelectorAll('input[name="article"]');
             const urlInputContainer = document.getElementById('urlInputContainer');
@@ -875,109 +872,33 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
             });
         });
 
-        // Global variable to store prompts fetched from backend
-        let readingLevelPrompts = {};
-
-        // Fetch standardized prompts from backend
-        async function loadStandardizedPrompts() {
-            try {
-                const response = await fetch('/api/admin/reading-level-prompts', {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success) {
-                        readingLevelPrompts = data.prompts;
-                        console.log('✅ Loaded standardized prompts from backend:', Object.keys(readingLevelPrompts));
-                    } else {
-                        console.error('❌ Failed to load prompts:', data.error);
-                        useFallbackPrompts();
-                    }
-                } else {
-                    console.error('❌ HTTP error loading prompts:', response.status);
-                    useFallbackPrompts();
-                }
-            } catch (error) {
-                console.error('❌ Error loading prompts:', error);
-                useFallbackPrompts();
-            }
-        }
-
-        // Fallback prompts in case backend fetch fails
-        function useFallbackPrompts() {
-            readingLevelPrompts = {
-                balanced: `Return a JSON object with this exact structure:
-
-{
-  "SUMMARY": "One clear sentence that captures the main idea of this article",
-  "POINTS": [
-    {
-      "point": "First main point in clear, accessible language - use **bold** for key phrases",
-      "quotes": ["First direct quote", "Second supporting quote if relevant"]
-    },
-    {
-      "point": "Second main point in clear, accessible language - use **bold** for key phrases",
-      "quotes": ["First direct quote", "Second supporting quote if relevant"]
-    }
-  ]
-}
-
-Use **bold** markdown for emphasis. Include exactly 2 points with 1-2 supporting quotes each.`
-            };
-        }
-
         async function generatePrompt(settings, article) {
             // Use UNIFIED backend prompt generation - same as summarize endpoint
-            try {
-                console.log('🎯 Using unified backend prompt generation');
+            console.log('🎯 Using unified backend prompt generation');
 
-                const response = await fetch('/api/admin/generate-prompt', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        reading_level: settings.reading_level,
-                        content: article.content || `Article Title: ${article.title}\nArticle URL: ${article.url}`
-                    })
-                });
+            const response = await fetch('/api/admin/generate-prompt', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    reading_level: settings.reading_level,
+                    content: article.content || `Article Title: ${article.title}\nArticle URL: ${article.url}`
+                })
+            });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success) {
-                        console.log('✅ Generated unified prompt from backend');
-                        return data.prompt;
-                    } else {
-                        console.error('❌ Backend prompt generation failed:', data.error);
-                        return generateFallbackPrompt(settings, article);
-                    }
-                } else {
-                    console.error('❌ HTTP error generating prompt:', response.status);
-                    return generateFallbackPrompt(settings, article);
-                }
-            } catch (error) {
-                console.error('❌ Error generating prompt:', error);
-                return generateFallbackPrompt(settings, article);
-            }
-        }
-
-        function generateFallbackPrompt(settings, article) {
-            // Fallback if backend prompt generation fails
-            console.log('🔄 Using fallback prompt generation');
-            let basePrompt = readingLevelPrompts[settings.reading_level] || readingLevelPrompts['balanced'];
-            basePrompt += '\n\nNOTE: If the article genuinely has fewer distinct main points than requested, return only the valid points that exist. Do not artificially create points just to meet the count. Always include the SUMMARY line regardless.';
-
-            if (article.content) {
-                basePrompt += `\n\nPlease summarize the following article content:\n\n${article.content}`;
-            } else {
-                basePrompt += `\n\nArticle Title: ${article.title}\nArticle URL: ${article.url}\n\nPlease summarize the content from the above URL.`;
+            if (!response.ok) {
+                throw new Error(`HTTP error generating prompt: ${response.status}`);
             }
 
-            return basePrompt;
+            const data = await response.json();
+            if (!data.success) {
+                throw new Error(data.error || 'Backend prompt generation failed');
+            }
+
+            console.log('✅ Generated unified prompt from backend');
+            return data.prompt;
         }
     </script>
 </body>
