@@ -822,6 +822,50 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
+  function syncProfileToBackend() {
+    console.log('🔄 Syncing profile to backend...');
+
+    if (!isAuthenticated) {
+      showMessage(settingsMessage, 'Please sign in to sync preferences', 'error');
+      setTimeout(() => hideMessage(settingsMessage), 3000);
+      return;
+    }
+
+    // Get current preferences from local storage
+    chrome.storage.local.get(['readerType', 'readingLevel', 'summaryStyle'], function(result) {
+      if (!result.readerType && !result.readingLevel && !result.summaryStyle) {
+        showMessage(settingsMessage, 'No preferences found to sync', 'warning');
+        setTimeout(() => hideMessage(settingsMessage), 3000);
+        return;
+      }
+
+      const preferences = {
+        reader_type: result.readerType || 'lifelong_learner',
+        reading_level: result.readingLevel || 'balanced',
+        summary_style: result.summaryStyle || 'eli8',
+        auto_summarize_enabled: false,
+        notifications_enabled: true
+      };
+
+      console.log('📤 Syncing preferences:', preferences);
+
+      // Send to backend
+      chrome.runtime.sendMessage({
+        action: 'savePreferences',
+        preferences: preferences
+      }, function(response) {
+        if (response && response.success) {
+          console.log('✅ Preferences synced successfully:', response.preferences);
+          showMessage(settingsMessage, 'Profile synced successfully!', 'success');
+        } else {
+          console.error('❌ Failed to sync preferences:', response ? response.error : 'No response');
+          showMessage(settingsMessage, 'Failed to sync: ' + (response ? response.error : 'No response'), 'error');
+        }
+        setTimeout(() => hideMessage(settingsMessage), 3000);
+      });
+    });
+  }
+
   function displayUserProfile(preferences) {
     // Format and display user profile selections
     const readerTypeLabels = {
@@ -1422,6 +1466,14 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('🚀 Manual onboarding triggered from settings');
       startOnboarding();
     });
+
+    // Sync preferences button
+    const syncPreferencesButton = document.getElementById('syncPreferencesButton');
+    if (syncPreferencesButton) {
+      syncPreferencesButton.addEventListener('click', function() {
+        syncProfileToBackend();
+      });
+    }
   }
   
   function showMainView() {
