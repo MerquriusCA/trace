@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const subscriptionStatusSettings = document.getElementById('subscriptionStatusSettings');
   const subscriptionPlan = document.getElementById('subscriptionPlan');
   const cancelSubscriptionButton = document.getElementById('cancelSubscriptionButton');
-  const savePreferencesButton = document.getElementById('savePreferencesButton');
   const settingsMessage = document.getElementById('settingsMessage');
   const autoSummarizeEnabled = document.getElementById('autoSummarizeEnabled');
   
@@ -1035,10 +1034,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Update welcome message with first name
       const firstName = currentUser.name ? currentUser.name.split(' ')[0] : 'there';
       welcomeMessage.textContent = `Welcome, ${firstName}!`;
-      
-      // Load user preferences from backend when user signs in
-      loadUserPreferences();
-      
+
       // Show AI features if extension is enabled AND user has active subscription
       chrome.storage.local.get(['extensionEnabled'], function(result) {
         if (result.extensionEnabled !== false && currentUser.subscription_status === 'active') {
@@ -1434,10 +1430,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Hide settings tab initially (shown when user logs in)
     settingsTabButton.classList.add('hidden');
-    
-    // Load user preferences
-    loadUserPreferences();
-    
+
     // Tab button event listeners
     mainTabButton.addEventListener('click', function() {
       showMainView();
@@ -1454,10 +1447,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Settings event listeners
-    savePreferencesButton.addEventListener('click', function() {
-      saveUserPreferences();
-    });
-    
     cancelSubscriptionButton.addEventListener('click', function() {
       cancelSubscription();
     });
@@ -1595,113 +1584,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
-  // User Preferences Functions
-  function loadUserPreferences() {
-    if (isAuthenticated) {
-      // Load from backend if authenticated
-      chrome.runtime.sendMessage({action: 'loadPreferences'}, function(response) {
-        if (response && response.success) {
-          updatePreferencesUI(response.preferences);
-        } else {
-          console.log('Failed to load preferences from backend, using local storage fallback:', response?.error);
-          loadPreferencesFromStorage();
-        }
-      });
-    } else {
-      // Fallback to local storage if not authenticated
-      loadPreferencesFromStorage();
-    }
-  }
-  
-  function loadPreferencesFromStorage() {
-    chrome.storage.local.get([
-      'summaryStyle',
-      'autoSummarizeEnabled', 
-      'notificationsEnabled'
-    ], function(result) {
-      updatePreferencesUI({
-        summaryStyle: result.summaryStyle || 'eli8',
-        autoSummarizeEnabled: result.autoSummarizeEnabled || false,
-        notificationsEnabled: result.notificationsEnabled !== false
-      });
-    });
-  }
-  
-  function updatePreferencesUI(preferences) {
-    // Set summary style radio button
-    const radioButton = document.getElementById(preferences.summaryStyle + 'Summary');
-    if (radioButton) {
-      radioButton.checked = true;
-    }
-    
-    // Set checkboxes
-    autoSummarizeEnabled.checked = preferences.autoSummarizeEnabled || false;
-    notificationsEnabled.checked = preferences.notificationsEnabled !== false;
-  }
-  
-  function saveUserPreferences() {
-    // Get selected summary style
-    const summaryStyleRadios = document.querySelectorAll('input[name="summaryStyle"]');
-    let selectedSummaryStyle = 'eli8'; // default
-    
-    for (const radio of summaryStyleRadios) {
-      if (radio.checked) {
-        selectedSummaryStyle = radio.value;
-        break;
-      }
-    }
-    
-    const preferences = {
-      summary_style: selectedSummaryStyle,
-      auto_summarize_enabled: autoSummarizeEnabled.checked,
-      notifications_enabled: notificationsEnabled.checked
-    };
-    
-    if (isAuthenticated) {
-      // Save to backend if authenticated
-      console.log('🔄 Saving preferences to backend:', preferences);
-      console.log('🔑 User authenticated:', isAuthenticated);
-      
-      chrome.runtime.sendMessage({
-        action: 'savePreferences',
-        preferences: preferences
-      }, function(response) {
-        console.log('📥 Response from background script:', response);
-        
-        if (response && response.success) {
-          // Also save to local storage for faster access
-          chrome.storage.local.set({
-            summaryStyle: selectedSummaryStyle,
-            autoSummarizeEnabled: autoSummarizeEnabled.checked,
-            notificationsEnabled: notificationsEnabled.checked
-          });
-          
-          showMessage(settingsMessage, 'Preferences saved to your account!', 'success');
-          console.log('Preferences saved to backend:', preferences);
-        } else {
-          console.error('❌ Failed to save preferences to backend:', response);
-          showMessage(settingsMessage, 'Failed to save preferences: ' + (response?.error || 'Unknown error'), 'error');
-        }
-        setTimeout(() => hideMessage(settingsMessage), 3000);
-      });
-    } else {
-      // Save to local storage only if not authenticated
-      chrome.storage.local.set({
-        summaryStyle: selectedSummaryStyle,
-        autoSummarizeEnabled: autoSummarizeEnabled.checked,
-        notificationsEnabled: notificationsEnabled.checked
-      }, function() {
-        showMessage(settingsMessage, 'Preferences saved locally! Sign in to sync across devices.', 'info');
-        setTimeout(() => hideMessage(settingsMessage), 3000);
-        
-        console.log('Preferences saved locally:', {
-          summaryStyle: selectedSummaryStyle,
-          autoSummarizeEnabled: autoSummarizeEnabled.checked,
-          notificationsEnabled: notificationsEnabled.checked
-        });
-      });
-    }
-  }
+  // User Preferences Functions removed - now using onboarding preferences
   
   function getSummaryPrompt() {
     return new Promise((resolve) => {
