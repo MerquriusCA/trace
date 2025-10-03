@@ -824,17 +824,24 @@ document.addEventListener('DOMContentLoaded', function() {
   function syncProfileToBackend() {
     console.log('🔄 Syncing profile to backend...');
 
+    const syncButton = document.getElementById('syncPreferencesButton');
+    const originalText = syncButton.textContent;
+
     if (!isAuthenticated) {
-      showMessage(settingsMessage, 'Please sign in to sync preferences', 'error');
-      setTimeout(() => hideMessage(settingsMessage), 3000);
+      alert('Please sign in to sync preferences');
       return;
     }
+
+    // Disable button and show loading state
+    syncButton.disabled = true;
+    syncButton.textContent = '⏳ Syncing...';
 
     // Get current preferences from local storage
     chrome.storage.local.get(['readerType', 'readingLevel', 'summaryStyle'], function(result) {
       if (!result.readerType && !result.readingLevel && !result.summaryStyle) {
-        showMessage(settingsMessage, 'No preferences found to sync', 'warning');
-        setTimeout(() => hideMessage(settingsMessage), 3000);
+        syncButton.disabled = false;
+        syncButton.textContent = originalText;
+        alert('No preferences found to sync. Please complete onboarding first.');
         return;
       }
 
@@ -853,14 +860,39 @@ document.addEventListener('DOMContentLoaded', function() {
         action: 'savePreferences',
         preferences: preferences
       }, function(response) {
+        syncButton.disabled = false;
+
         if (response && response.success) {
           console.log('✅ Preferences synced successfully:', response.preferences);
-          showMessage(settingsMessage, 'Profile synced successfully!', 'success');
+          syncButton.textContent = '✅ Synced!';
+          syncButton.style.backgroundColor = '#10b981';
+          syncButton.style.borderColor = '#10b981';
+          syncButton.style.color = 'white';
+
+          // Reset button after 2 seconds
+          setTimeout(() => {
+            syncButton.textContent = originalText;
+            syncButton.style.backgroundColor = '';
+            syncButton.style.borderColor = '';
+            syncButton.style.color = '';
+          }, 2000);
         } else {
           console.error('❌ Failed to sync preferences:', response ? response.error : 'No response');
-          showMessage(settingsMessage, 'Failed to sync: ' + (response ? response.error : 'No response'), 'error');
+          syncButton.textContent = '❌ Failed';
+          syncButton.style.backgroundColor = '#ef4444';
+          syncButton.style.borderColor = '#ef4444';
+          syncButton.style.color = 'white';
+
+          alert('Failed to sync: ' + (response ? response.error : 'No response'));
+
+          // Reset button after 2 seconds
+          setTimeout(() => {
+            syncButton.textContent = originalText;
+            syncButton.style.backgroundColor = '';
+            syncButton.style.borderColor = '';
+            syncButton.style.color = '';
+          }, 2000);
         }
-        setTimeout(() => hideMessage(settingsMessage), 3000);
       });
     });
   }
