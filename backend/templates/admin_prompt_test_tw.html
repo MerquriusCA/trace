@@ -879,7 +879,7 @@ Carbon dating and ceramic analysis suggest this civilization flourished for over
             const response = await fetch('/api/admin/generate-prompt', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
