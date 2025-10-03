@@ -2805,13 +2805,18 @@ def get_reading_level_prompts():
   "SUMMARY": "One simple sentence that captures the overall purpose or topic of this article",
   "POINTS": [
     {
-      "point": "Single most important specific finding, insight, or takeaway from the article (must be distinct from the SUMMARY)",
+      "point": "Single most important specific finding, insight, or takeaway from the article (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says",
       "quotes": ["Direct quote from the article that supports this point"]
     }
   ]
 }
 
-IMPORTANT: The SUMMARY should be a high-level overview of the article's topic or purpose. The POINT should be a specific insight, finding, or key takeaway that goes deeper into the details. They must NOT repeat each other or say the same thing in different words.
+CRITICAL RULES:
+1. The SUMMARY should be a high-level overview of the article's topic or purpose
+2. Each "point" must be YOUR interpretation/summary in your own words - NOT a direct quote or paraphrase of a quote
+3. Each "point" must be substantially different from its supporting quotes - the point explains WHAT the finding means, the quotes provide the EVIDENCE
+4. Each "quote" must be a verbatim excerpt from the article text
+5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
 
 Include exactly 1 point with 1 supporting quote.''',
         'balanced': '''Return a JSON object with this exact structure:
@@ -2820,17 +2825,23 @@ Include exactly 1 point with 1 supporting quote.''',
   "SUMMARY": "One clear sentence that captures the overall purpose or main theme of this article",
   "POINTS": [
     {
-      "point": "First specific finding, insight, or argument from the article (must be distinct from the SUMMARY)",
+      "point": "First specific finding, insight, or argument from the article (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says",
       "quotes": ["First direct quote", "Second supporting quote if relevant"]
     },
     {
-      "point": "Second specific finding, insight, or argument from the article (must be distinct from the SUMMARY and first point)",
+      "point": "Second specific finding, insight, or argument from the article (must be distinct from the SUMMARY and first point) - write this in your own words as a clear interpretation or summary of what the article says",
       "quotes": ["First direct quote", "Second supporting quote if relevant"]
     }
   ]
 }
 
-IMPORTANT: The SUMMARY should be a high-level overview of the article's topic or purpose. The POINTS should be specific insights, findings, or arguments that go deeper into the details. The SUMMARY and POINTS must NOT repeat each other or say the same thing in different words. Each point must be unique and non-overlapping.
+CRITICAL RULES:
+1. The SUMMARY should be a high-level overview of the article's topic or purpose
+2. Each "point" must be YOUR interpretation/summary in your own words - NOT a direct quote or paraphrase of a quote
+3. Each "point" must be substantially different from its supporting quotes - the point explains WHAT the finding means, the quotes provide the EVIDENCE
+4. Each "quote" must be a verbatim excerpt from the article text
+5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
+6. Each point must be unique and non-overlapping with other points
 
 Include exactly 2 points with 1-2 supporting quotes each.''',
         'detailed': '''Return a JSON object with this exact structure:
@@ -2839,21 +2850,27 @@ Include exactly 2 points with 1-2 supporting quotes each.''',
   "SUMMARY": "One comprehensive sentence that captures the overall purpose, theme, or significance of this article",
   "POINTS": [
     {
-      "point": "First specific key finding, insight, or argument with comprehensive detail (must be distinct from the SUMMARY)",
+      "point": "First specific key finding, insight, or argument with comprehensive detail (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     },
     {
-      "point": "Second specific key finding, insight, or argument with comprehensive detail (must be distinct from SUMMARY and other points)",
+      "point": "Second specific key finding, insight, or argument with comprehensive detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     },
     {
-      "point": "Third specific key finding, insight, or argument with comprehensive detail (must be distinct from SUMMARY and other points)",
+      "point": "Third specific key finding, insight, or argument with comprehensive detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     }
   ]
 }
 
-IMPORTANT: The SUMMARY should be a high-level overview of the article's topic, purpose, or significance. The POINTS should be specific insights, findings, or arguments that dive into the details. The SUMMARY and POINTS must NOT repeat each other or say the same thing in different words. Each point must be unique and non-overlapping.
+CRITICAL RULES:
+1. The SUMMARY should be a high-level overview of the article's topic, purpose, or significance
+2. Each "point" must be YOUR interpretation/summary in your own words - NOT a direct quote or paraphrase of a quote
+3. Each "point" must be substantially different from its supporting quotes - the point explains WHAT the finding means, the quotes provide the EVIDENCE
+4. Each "quote" must be a verbatim excerpt from the article text
+5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
+6. Each point must be unique and non-overlapping with other points
 
 Include exactly 3 points with 2-3 supporting quotes each.''',
         'technical': '''Return a JSON object with this exact structure:
@@ -2862,29 +2879,35 @@ Include exactly 3 points with 2-3 supporting quotes each.''',
   "SUMMARY": "One precise sentence that captures the overall technical concept, purpose, or domain of this article",
   "POINTS": [
     {
-      "point": "First specific technical finding, methodology, or conclusion with precise detail (must be distinct from the SUMMARY)",
+      "point": "First specific technical finding, methodology, or conclusion with precise detail (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Second specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points)",
+      "point": "Second specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Third specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points)",
+      "point": "Third specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Fourth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points)",
+      "point": "Fourth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Fifth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points)",
+      "point": "Fifth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     }
   ]
 }
 
-IMPORTANT: The SUMMARY should be a high-level overview of the technical concept, domain, or purpose. The POINTS should be specific technical findings, methodologies, or conclusions that go into the technical details. The SUMMARY and POINTS must NOT repeat each other or say the same thing in different words. Each point must be unique and non-overlapping.
+CRITICAL RULES:
+1. The SUMMARY should be a high-level overview of the technical concept, domain, or purpose
+2. Each "point" must be YOUR interpretation/summary in your own words - NOT a direct quote or paraphrase of a quote
+3. Each "point" must be substantially different from its supporting quotes - the point explains WHAT the finding means, the quotes provide the EVIDENCE
+4. Each "quote" must be a verbatim excerpt from the article text
+5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
+6. Each point must be unique and non-overlapping with other points
 
 Include exactly 5 points with 2-3 supporting quotes each.'''
     }
