@@ -1484,22 +1484,32 @@ document.addEventListener('DOMContentLoaded', function() {
       loadSubscriptionStatusForSettings();
 
       // Load and display user profile from backend
+      console.log('🔄 Loading preferences from backend...');
       chrome.runtime.sendMessage({action: 'loadPreferences'}, function(response) {
+        console.log('📥 loadPreferences response:', response);
+
         if (response && response.success && response.preferences) {
+          console.log('✅ Preferences loaded successfully:', response.preferences);
           const preferences = {
-            readerType: response.preferences.reader_type,
-            readingLevel: response.preferences.reading_level,
-            summaryStyle: response.preferences.summary_style
+            readerType: response.preferences.reader_type || 'lifelong_learner',
+            readingLevel: response.preferences.reading_level || 'balanced',
+            summaryStyle: response.preferences.summary_style || 'eli8'
           };
           displayUserProfile(preferences);
         } else {
-          console.log('Failed to load preferences from backend:', response?.error);
-          // Show default values
-          displayUserProfile({
+          console.log('⚠️ Failed to load preferences from backend:', response?.error);
+          // Show default values with note
+          const defaultPreferences = {
             readerType: 'lifelong_learner',
             readingLevel: 'balanced',
             summaryStyle: 'eli8'
-          });
+          };
+          displayUserProfile(defaultPreferences);
+
+          // Update the profile values to indicate they are defaults
+          document.getElementById('currentReaderType').textContent = '📖 Lifelong Learner (default)';
+          document.getElementById('currentReadingLevel').textContent = '🟡 Clear & Balanced (default)';
+          document.getElementById('currentSummaryStyle').textContent = 'Explain Like I\'m 8 (default)';
         }
       });
     }
