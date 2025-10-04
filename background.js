@@ -452,10 +452,10 @@ async function refreshSubscriptionStatus(sendResponse) {
 
 // Handler functions for different message types
 
-function handleSummarizePage(request, sendResponse) {
+async function handleSummarizePage(request, sendResponse, retryCount = 0) {
     config.log('Received summarizePage request with tabId:', request.tabId);
     chrome.storage.local.get(['backendUrl'], async (result) => {
-      
+
       // Get the current tab info
       let tab, url;
       try {
@@ -473,10 +473,10 @@ function handleSummarizePage(request, sendResponse) {
         sendResponse({success: false, error: 'Unable to get current tab URL'});
         return;
       }
-      
+
       // Always use backend service for all URLs
       const backendUrl = `${config.getBackendUrl()}${config.api.summarize}`;
-      
+
       try {
         config.log('🔗 API CALL: Backend Service');
         config.log('📍 Endpoint:', backendUrl);
@@ -486,11 +486,11 @@ function handleSummarizePage(request, sendResponse) {
         config.log('📦 Request body:', JSON.stringify({
           url: url
         }, null, 2));
-        
+
         const headers = {
           'Content-Type': 'application/json'
         };
-        
+
         // Add auth token if available
         if (authToken) {
           headers['Authorization'] = `Bearer ${authToken}`;
@@ -498,19 +498,19 @@ function handleSummarizePage(request, sendResponse) {
         } else {
           config.log('⚠️ No auth token available');
         }
-        
+
         config.log('📡 Making fetch request to:', backendUrl);
-        
+
         const requestBody = {
           url: url
         };
-        
+
         // Add custom prompt if provided
         if (request.customPrompt) {
           requestBody.customPrompt = request.customPrompt;
           config.log('📝 Custom prompt provided:', request.customPrompt.substring(0, 100) + '...');
         }
-        
+
         const response = await fetch(backendUrl, {
           method: 'POST',
           headers: headers,
@@ -522,6 +522,18 @@ function handleSummarizePage(request, sendResponse) {
 
         config.log('📥 Response status:', response.status);
         config.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+
+        // Handle 401 - token expired, refresh and retry once
+        if (response.status === 401 && retryCount === 0) {
+          config.log('🔄 Token expired during summarize, refreshing and retrying...');
+
+          // Refresh auth state
+          await initializeExtensionState();
+
+          // Retry the request with the new token
+          handleSummarizePage(request, sendResponse, 1);
+          return;
+        }
 
         // Check content type before parsing
         const contentType = response.headers.get('content-type');
@@ -675,12 +687,12 @@ function handleTestBackend(sendResponse) {
 }
 
 // User Preferences Functions
-async function saveUserPreferences(preferences, sendResponse) {
+async function saveUserPreferences(preferences, sendResponse, retryCount = 0) {
   config.log('🔄 saveUserPreferences called with:', preferences);
-  
+
   try {
     config.log('🔑 Auth token available:', !!authToken);
-    
+
     if (!authToken) {
       config.log('❌ No auth token - cannot save preferences');
       sendResponse({
@@ -708,10 +720,22 @@ async function saveUserPreferences(preferences, sendResponse) {
 
         config.log('📡 Response status:', response.status);
         config.log('📡 Response ok:', response.ok);
-        
+
+        // Handle 401 - token expired, refresh and retry once
+        if (response.status === 401 && retryCount === 0) {
+          config.log('🔄 Token expired, refreshing and retrying...');
+
+          // Refresh auth state
+          await initializeExtensionState();
+
+          // Retry the request with the new token
+          saveUserPreferences(preferences, sendResponse, 1);
+          return;
+        }
+
         const data = await response.json();
         config.log('📋 Response data:', data);
-        
+
         if (response.ok && data.success) {
           config.log('✅ Preferences saved successfully:', data.preferences);
           sendResponse({
