@@ -959,19 +959,21 @@ document.addEventListener('DOMContentLoaded', function() {
       currentUserPreferences: preferences
     });
     
-    // Sync preferences with backend if authenticated
-    if (isAuthenticated && preferences.summaryStyle) {
+    // Sync preferences with backend if authenticated (including all onboarding preferences)
+    if (isAuthenticated && (preferences.summaryStyle || preferences.readerType || preferences.readingLevel)) {
       config.log('🔄 Syncing onboarding preferences with backend...');
       chrome.runtime.sendMessage({
         action: 'savePreferences',
         preferences: {
-          summary_style: preferences.summaryStyle,  // Backend expects snake_case
+          summary_style: preferences.summaryStyle || 'eli8',  // Backend expects snake_case
+          reader_type: preferences.readerType || 'lifelong_learner',
+          reading_level: preferences.readingLevel || 'balanced',
           auto_summarize_enabled: false,
           notifications_enabled: true
         }
       }, function(response) {
         if (response && response.success) {
-          config.log('✅ Onboarding preferences synced with backend');
+          config.log('✅ Onboarding preferences synced with backend:', response.preferences);
         } else {
           config.log('⚠️ Could not sync preferences with backend:', response?.error);
         }
@@ -1028,23 +1030,46 @@ document.addEventListener('DOMContentLoaded', function() {
     loginSection.classList.add('hidden');
     userSection.classList.remove('hidden');
     userProfileBottom.classList.remove('hidden');
-    
+
     // Show utility buttons when authenticated
     const utilityButtonsSection = document.getElementById('utilityButtonsSection');
     if (utilityButtonsSection) {
       utilityButtonsSection.classList.remove('hidden');
     }
-    
-    
+
+
     // Show action buttons when authenticated
     const actionButtonsSection = document.getElementById('actionButtonsSection');
     if (actionButtonsSection) {
       actionButtonsSection.classList.remove('hidden');
     }
-    
+
     // Show settings tab when authenticated
     settingsTabButton.classList.remove('hidden');
-    
+
+    // Auto-sync local preferences to backend when user signs in
+    chrome.storage.local.get(['readerType', 'readingLevel', 'summaryStyle', 'onboardingCompleted'], function(result) {
+      if (result.onboardingCompleted && (result.readerType || result.readingLevel || result.summaryStyle)) {
+        config.log('🔄 Auto-syncing local preferences to backend on sign-in...');
+        chrome.runtime.sendMessage({
+          action: 'savePreferences',
+          preferences: {
+            summary_style: result.summaryStyle || 'eli8',
+            reader_type: result.readerType || 'lifelong_learner',
+            reading_level: result.readingLevel || 'balanced',
+            auto_summarize_enabled: false,
+            notifications_enabled: true
+          }
+        }, function(response) {
+          if (response && response.success) {
+            config.log('✅ Local preferences auto-synced to backend:', response.preferences);
+          } else {
+            config.log('⚠️ Failed to auto-sync preferences:', response?.error);
+          }
+        });
+      }
+    });
+
     if (currentUser) {
       config.log('📸 Setting user avatar from Google picture:', currentUser.picture);
       
