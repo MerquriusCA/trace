@@ -98,13 +98,17 @@ function formatSummaryWithQuotes(summaryText) {
           if (quotes.length === 0 && quotesContent) {
             // If no quotes found in proper format, show the raw content
             console.log(`⚠️ No quotes parsed, showing raw content: "${quotesContent}"`);
-            formattedHTML += `<blockquote class="article-quote">"${quotesContent}"</blockquote>`;
+            // Only add quotes if they don't already exist
+            const hasQuotes = quotesContent.startsWith('"') || quotesContent.startsWith('"');
+            formattedHTML += `<blockquote class="article-quote">${hasQuotes ? quotesContent : '"' + quotesContent + '"'}</blockquote>`;
           } else {
             quotes.forEach((quote, idx) => {
               // Remove surrounding quotes
               let cleanQuote = quote.slice(1, -1);
               console.log(`📝 Quote ${idx + 1}: "${cleanQuote}"`);
-              formattedHTML += `<blockquote class="article-quote">"${cleanQuote}"</blockquote>`;
+              // Only add quotes if they don't already exist
+              const hasQuotes = cleanQuote.startsWith('"') || cleanQuote.startsWith('"');
+              formattedHTML += `<blockquote class="article-quote">${hasQuotes ? cleanQuote : '"' + cleanQuote + '"'}</blockquote>`;
             });
           }
 
@@ -185,7 +189,9 @@ function formatStructuredSummary(summaryData) {
         formattedHTML += `<div class="quotes-header">Page Quotes:</div>`;
 
         quotes.forEach(quote => {
-          formattedHTML += `<blockquote class="article-quote">"${quote}"</blockquote>`;
+          // Only add quotes if they don't already exist
+          const hasQuotes = quote.startsWith('"') || quote.startsWith('"');
+          formattedHTML += `<blockquote class="article-quote">${hasQuotes ? quote : '"' + quote + '"'}</blockquote>`;
         });
 
         formattedHTML += `</div>`; // Close quotes-section
