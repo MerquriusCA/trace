@@ -786,7 +786,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   function checkOnboardingStatus() {
     // Check if onboarding has been completed
-    chrome.storage.local.get(['onboardingCompleted', 'readerType', 'readingLevel', 'summaryStyle'], function(result) {
+    chrome.storage.local.get(['onboardingCompleted'], function(result) {
       config.log('Onboarding status:', result);
 
       if (!result.onboardingCompleted) {
@@ -794,15 +794,6 @@ document.addEventListener('DOMContentLoaded', function() {
         startOnboarding();
       } else {
         config.log('✅ Onboarding already completed');
-        // Load user preferences if available
-        if (result.readerType || result.readingLevel || result.summaryStyle) {
-          const preferences = {
-            readerType: result.readerType,
-            readingLevel: result.readingLevel,
-            summaryStyle: result.summaryStyle
-          };
-          applyUserPreferences(preferences);
-        }
       }
     });
   }
@@ -822,78 +813,64 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   function syncProfileToBackend() {
-    console.log('🔄 Syncing profile to backend...');
+    console.log('🔄 Refreshing profile from backend...');
 
     const syncButton = document.getElementById('syncPreferencesButton');
     const originalText = syncButton.textContent;
 
     if (!isAuthenticated) {
-      alert('Please sign in to sync preferences');
+      alert('Please sign in to refresh preferences');
       return;
     }
 
     // Disable button and show loading state
     syncButton.disabled = true;
-    syncButton.textContent = '⏳ Syncing...';
+    syncButton.textContent = '⏳ Loading...';
 
-    // Get current preferences from local storage
-    chrome.storage.local.get(['readerType', 'readingLevel', 'summaryStyle'], function(result) {
-      if (!result.readerType && !result.readingLevel && !result.summaryStyle) {
-        syncButton.disabled = false;
-        syncButton.textContent = originalText;
-        alert('No preferences found to sync. Please complete onboarding first.');
-        return;
+    // Fetch preferences from backend
+    chrome.runtime.sendMessage({action: 'loadPreferences'}, function(response) {
+      syncButton.disabled = false;
+
+      if (response && response.success && response.preferences) {
+        console.log('✅ Preferences loaded from backend:', response.preferences);
+
+        // Update the display
+        const preferences = {
+          readerType: response.preferences.reader_type,
+          readingLevel: response.preferences.reading_level,
+          summaryStyle: response.preferences.summary_style
+        };
+        displayUserProfile(preferences);
+
+        syncButton.textContent = '✅ Refreshed!';
+        syncButton.style.backgroundColor = '#10b981';
+        syncButton.style.borderColor = '#10b981';
+        syncButton.style.color = 'white';
+
+        // Reset button after 2 seconds
+        setTimeout(() => {
+          syncButton.textContent = originalText;
+          syncButton.style.backgroundColor = '';
+          syncButton.style.borderColor = '';
+          syncButton.style.color = '';
+        }, 2000);
+      } else {
+        console.error('❌ Failed to load preferences:', response ? response.error : 'No response');
+        syncButton.textContent = '❌ Failed';
+        syncButton.style.backgroundColor = '#ef4444';
+        syncButton.style.borderColor = '#ef4444';
+        syncButton.style.color = 'white';
+
+        alert('Failed to load preferences: ' + (response ? response.error : 'No response'));
+
+        // Reset button after 2 seconds
+        setTimeout(() => {
+          syncButton.textContent = originalText;
+          syncButton.style.backgroundColor = '';
+          syncButton.style.borderColor = '';
+          syncButton.style.color = '';
+        }, 2000);
       }
-
-      const preferences = {
-        reader_type: result.readerType || 'lifelong_learner',
-        reading_level: result.readingLevel || 'balanced',
-        summary_style: result.summaryStyle || 'eli8',
-        auto_summarize_enabled: false,
-        notifications_enabled: true
-      };
-
-      console.log('📤 Syncing preferences:', preferences);
-
-      // Send to backend
-      chrome.runtime.sendMessage({
-        action: 'savePreferences',
-        preferences: preferences
-      }, function(response) {
-        syncButton.disabled = false;
-
-        if (response && response.success) {
-          console.log('✅ Preferences synced successfully:', response.preferences);
-          syncButton.textContent = '✅ Synced!';
-          syncButton.style.backgroundColor = '#10b981';
-          syncButton.style.borderColor = '#10b981';
-          syncButton.style.color = 'white';
-
-          // Reset button after 2 seconds
-          setTimeout(() => {
-            syncButton.textContent = originalText;
-            syncButton.style.backgroundColor = '';
-            syncButton.style.borderColor = '';
-            syncButton.style.color = '';
-          }, 2000);
-        } else {
-          console.error('❌ Failed to sync preferences:', response ? response.error : 'No response');
-          syncButton.textContent = '❌ Failed';
-          syncButton.style.backgroundColor = '#ef4444';
-          syncButton.style.borderColor = '#ef4444';
-          syncButton.style.color = 'white';
-
-          alert('Failed to sync: ' + (response ? response.error : 'No response'));
-
-          // Reset button after 2 seconds
-          setTimeout(() => {
-            syncButton.textContent = originalText;
-            syncButton.style.backgroundColor = '';
-            syncButton.style.borderColor = '';
-            syncButton.style.color = '';
-          }, 2000);
-        }
-      });
     });
   }
 
@@ -942,43 +919,8 @@ document.addEventListener('DOMContentLoaded', function() {
   function applyUserPreferences(preferences) {
     config.log('⚙️ Applying user preferences:', preferences);
 
-    // Apply summary style preferences to UI elements
-    if (preferences.summaryStyle) {
-      // Update radio buttons in settings to match saved preferences
-      const styleRadios = document.querySelectorAll('input[name="summaryStyle"]');
-      styleRadios.forEach(radio => {
-        radio.checked = radio.value === preferences.summaryStyle;
-      });
-    }
-
     // Display current profile in settings
     displayUserProfile(preferences);
-
-    // Store preferences locally for quick access
-    chrome.storage.local.set({
-      currentUserPreferences: preferences
-    });
-    
-    // Sync preferences with backend if authenticated (including all onboarding preferences)
-    if (isAuthenticated && (preferences.summaryStyle || preferences.readerType || preferences.readingLevel)) {
-      config.log('🔄 Syncing onboarding preferences with backend...');
-      chrome.runtime.sendMessage({
-        action: 'savePreferences',
-        preferences: {
-          summary_style: preferences.summaryStyle || 'eli8',  // Backend expects snake_case
-          reader_type: preferences.readerType || 'lifelong_learner',
-          reading_level: preferences.readingLevel || 'balanced',
-          auto_summarize_enabled: false,
-          notifications_enabled: true
-        }
-      }, function(response) {
-        if (response && response.success) {
-          config.log('✅ Onboarding preferences synced with backend:', response.preferences);
-        } else {
-          config.log('⚠️ Could not sync preferences with backend:', response?.error);
-        }
-      });
-    }
   }
   
   function showLoginSection() {
@@ -1046,29 +988,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Show settings tab when authenticated
     settingsTabButton.classList.remove('hidden');
-
-    // Auto-sync local preferences to backend when user signs in
-    chrome.storage.local.get(['readerType', 'readingLevel', 'summaryStyle', 'onboardingCompleted'], function(result) {
-      if (result.onboardingCompleted && (result.readerType || result.readingLevel || result.summaryStyle)) {
-        config.log('🔄 Auto-syncing local preferences to backend on sign-in...');
-        chrome.runtime.sendMessage({
-          action: 'savePreferences',
-          preferences: {
-            summary_style: result.summaryStyle || 'eli8',
-            reader_type: result.readerType || 'lifelong_learner',
-            reading_level: result.readingLevel || 'balanced',
-            auto_summarize_enabled: false,
-            notifications_enabled: true
-          }
-        }, function(response) {
-          if (response && response.success) {
-            config.log('✅ Local preferences auto-synced to backend:', response.preferences);
-          } else {
-            config.log('⚠️ Failed to auto-sync preferences:', response?.error);
-          }
-        });
-      }
-    });
 
     if (currentUser) {
       config.log('📸 Setting user avatar from Google picture:', currentUser.picture);
@@ -1564,15 +1483,23 @@ document.addEventListener('DOMContentLoaded', function() {
       // Update subscription info in settings
       loadSubscriptionStatusForSettings();
 
-      // Load and display user profile from onboarding
-      chrome.storage.local.get(['readerType', 'readingLevel', 'summaryStyle'], function(result) {
-        if (result.readerType || result.readingLevel || result.summaryStyle) {
+      // Load and display user profile from backend
+      chrome.runtime.sendMessage({action: 'loadPreferences'}, function(response) {
+        if (response && response.success && response.preferences) {
           const preferences = {
-            readerType: result.readerType,
-            readingLevel: result.readingLevel,
-            summaryStyle: result.summaryStyle
+            readerType: response.preferences.reader_type,
+            readingLevel: response.preferences.reading_level,
+            summaryStyle: response.preferences.summary_style
           };
           displayUserProfile(preferences);
+        } else {
+          console.log('Failed to load preferences from backend:', response?.error);
+          // Show default values
+          displayUserProfile({
+            readerType: 'lifelong_learner',
+            readingLevel: 'balanced',
+            summaryStyle: 'eli8'
+          });
         }
       });
     }

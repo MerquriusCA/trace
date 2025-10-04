@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectedStyle = document.querySelector('input[name="summaryStyle"]:checked')?.value || 'eli8';
     const selectedReaderType = document.querySelector('input[name="readerType"]:checked')?.value || 'lifelong_learner';
     const selectedReadingLevel = document.querySelector('input[name="readingLevel"]:checked')?.value || 'balanced';
-    
+
     const preferences = {
       summary_style: selectedStyle,
       auto_summarize_enabled: false,
@@ -71,23 +71,18 @@ document.addEventListener('DOMContentLoaded', function() {
       reader_type: selectedReaderType,
       reading_level: selectedReadingLevel
     };
-    
-    console.log('💾 Saving onboarding preferences:', preferences);
-    
+
+    console.log('💾 Saving onboarding preferences to backend:', preferences);
+
     try {
-      // Save preferences to chrome storage first
+      // Mark onboarding as completed in local storage (but don't store preferences locally)
       chrome.storage.local.set({
-        summaryStyle: selectedStyle,
-        autoSummarizeEnabled: false,
-        notificationsEnabled: true,
-        readerType: selectedReaderType,
-        readingLevel: selectedReadingLevel,
         onboardingCompleted: true
       }, function() {
-        console.log('✅ Preferences saved to local storage');
+        console.log('✅ Onboarding marked as completed');
       });
-      
-      // Send preferences to backend via background script
+
+      // Send preferences to backend via background script (ONLY source of truth)
       chrome.runtime.sendMessage({
         action: 'savePreferences',
         preferences: preferences
@@ -98,10 +93,10 @@ document.addEventListener('DOMContentLoaded', function() {
           console.log('⚠️ Failed to save to backend:', response ? response.error : 'No response');
         }
       });
-      
+
       // Show completion step
       showStep(5);
-      
+
     } catch (error) {
       console.error('❌ Error saving preferences:', error);
       // Still show completion even if save fails
