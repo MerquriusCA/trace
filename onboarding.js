@@ -89,6 +89,12 @@ document.addEventListener('DOMContentLoaded', function() {
       }, function(response) {
         if (response && response.success) {
           console.log('✅ Preferences saved to backend:', response.preferences);
+
+          // Notify sidepanel to refresh the profile display
+          chrome.runtime.sendMessage({
+            action: 'preferencesUpdated',
+            preferences: response.preferences
+          });
         } else {
           console.log('⚠️ Failed to save to backend:', response ? response.error : 'No response');
         }

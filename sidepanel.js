@@ -1652,6 +1652,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
+  // Listen for preference updates from onboarding
+  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.action === 'preferencesUpdated') {
+      console.log('🔄 Received preferencesUpdated message:', request.preferences);
+
+      // Update the profile display if on settings tab
+      if (!settingsView.classList.contains('hidden')) {
+        const preferences = {
+          readerType: request.preferences.reader_type || 'lifelong_learner',
+          readingLevel: request.preferences.reading_level || 'balanced',
+          summaryStyle: request.preferences.summary_style || 'eli8'
+        };
+        displayUserProfile(preferences);
+        console.log('✅ Profile display updated with new preferences');
+      }
+    }
+  });
+
   // Export functions for global access
   window.getSummaryPrompt = getSummaryPrompt;
 });
