@@ -825,8 +825,8 @@ async function loadUserPreferences(sendResponse) {
 
 // Send Feedback Function
 async function sendFeedback(feedbackData, sendResponse) {
-  config.log("📧 Sending feedback to backend");
-  
+  config.log("📧 Sending feedback to backend", feedbackData);
+
   try {
     if (!authToken) {
       config.log("❌ No auth token - cannot send feedback");
@@ -836,12 +836,14 @@ async function sendFeedback(feedbackData, sendResponse) {
       });
       return;
     }
-    
+
     chrome.storage.local.get(["backendUrl"], async function(result) {
       const endpoint = `${config.getBackendUrl()}${config.api.feedback}`;
-      
+
       config.log("📮 Sending feedback to:", endpoint);
-      
+      config.log("📦 Feedback data:", feedbackData);
+      config.log("🔑 Auth token present:", !!authToken);
+
       try {
         const response = await fetch(endpoint, {
           method: "POST",
@@ -851,9 +853,13 @@ async function sendFeedback(feedbackData, sendResponse) {
           },
           body: JSON.stringify(feedbackData)
         });
-        
+
+        config.log("📥 Response status:", response.status);
+        config.log("📥 Response ok:", response.ok);
+
         const data = await response.json();
-        
+        config.log("📋 Response data:", data);
+
         if (response.ok && data.success) {
           config.log("✅ Feedback sent successfully");
           sendResponse({
@@ -871,7 +877,7 @@ async function sendFeedback(feedbackData, sendResponse) {
         config.error("❌ Network error sending feedback:", error);
         sendResponse({
           success: false,
-          error: "Network error while sending feedback"
+          error: "Network error: " + error.message
         });
       }
     });
@@ -879,7 +885,7 @@ async function sendFeedback(feedbackData, sendResponse) {
     config.error("❌ Error in sendFeedback:", error);
     sendResponse({
       success: false,
-      error: "Failed to send feedback"
+      error: "Failed to send feedback: " + error.message
     });
   }
 }

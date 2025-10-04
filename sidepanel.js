@@ -685,34 +685,45 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     try {
+      console.log('📤 Sending feedback to backend:', feedbackData);
+
       // Send to backend
       chrome.runtime.sendMessage({
         action: 'sendFeedback',
         feedback: feedbackData
       }, function(response) {
+        console.log('📥 Feedback response:', response);
+
+        if (chrome.runtime.lastError) {
+          console.error('❌ Chrome runtime error:', chrome.runtime.lastError);
+        }
+
         if (response && response.success) {
           // Success
+          console.log('✅ Feedback sent successfully');
           feedbackModal.classList.add('hidden');
           feedbackMessage.value = '';
           charCount.textContent = '0';
-          
+
           messageDiv.textContent = '✅ Feedback sent successfully!';
           setMessageColor(messageDiv, messageDiv.textContent, '#4CAF50');
         } else {
           // Error
-          messageDiv.textContent = '❌ Failed to send feedback. Please try again.';
+          const errorMsg = response ? response.error : 'No response from backend';
+          console.error('❌ Failed to send feedback:', errorMsg);
+          messageDiv.textContent = '❌ Failed to send feedback: ' + errorMsg;
           setMessageColor(messageDiv, messageDiv.textContent, '#f44336');
         }
-        
+
         // Re-enable button
         submitFeedback.disabled = false;
         submitText.classList.remove('hidden');
         submitLoader.classList.add('hidden');
-        
+
         setTimeout(() => { messageDiv.textContent = ''; }, 5000);
       });
     } catch (error) {
-      console.error('Error sending feedback:', error);
+      console.error('❌ Error sending feedback:', error);
       
       // Re-enable button
       submitFeedback.disabled = false;
