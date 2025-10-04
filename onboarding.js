@@ -83,10 +83,17 @@ document.addEventListener('DOMContentLoaded', function() {
       });
 
       // Send preferences to backend via background script (ONLY source of truth)
+      console.log('📤 Sending savePreferences message to background script...');
       chrome.runtime.sendMessage({
         action: 'savePreferences',
         preferences: preferences
       }, function(response) {
+        console.log('📥 savePreferences response:', response);
+
+        if (chrome.runtime.lastError) {
+          console.error('❌ Chrome runtime error:', chrome.runtime.lastError);
+        }
+
         if (response && response.success) {
           console.log('✅ Preferences saved to backend:', response.preferences);
 
@@ -96,7 +103,15 @@ document.addEventListener('DOMContentLoaded', function() {
             preferences: response.preferences
           });
         } else {
-          console.log('⚠️ Failed to save to backend:', response ? response.error : 'No response');
+          const errorMsg = response ? response.error : 'No response from background script';
+          console.error('⚠️ Failed to save to backend:', errorMsg);
+
+          // Check if it's an authentication error
+          if (errorMsg && errorMsg.includes('Authentication required')) {
+            alert('⚠️ Authentication Error\n\nPlease sign in first before completing onboarding.\n\nYour preferences will be saved locally but not synced to your account.');
+          } else {
+            alert('Failed to save preferences: ' + errorMsg);
+          }
         }
       });
 
