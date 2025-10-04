@@ -794,21 +794,10 @@ async function loadUserPreferences(sendResponse) {
         
         if (response.ok && data.success) {
           config.log('✅ Preferences loaded successfully:', data.preferences);
-          
-          // Also save to local storage for faster access
-          chrome.storage.local.set({
-            summaryStyle: data.preferences.summary_style,
-            autoSummarizeEnabled: data.preferences.auto_summarize_enabled,
-            notificationsEnabled: data.preferences.notifications_enabled
-          });
-          
+
           sendResponse({
             success: true,
-            preferences: {
-              summaryStyle: data.preferences.summary_style,
-              autoSummarizeEnabled: data.preferences.auto_summarize_enabled,
-              notificationsEnabled: data.preferences.notifications_enabled
-            }
+            preferences: data.preferences  // Return ALL preferences from backend
           });
         } else {
           config.error('❌ Failed to load preferences:', data.error);
