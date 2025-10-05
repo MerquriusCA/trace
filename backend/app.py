@@ -2977,8 +2977,7 @@ def get_reading_level_prompts():
   "SUMMARY": "One simple sentence that captures the overall purpose or topic of this article",
   "POINTS": [
     {
-      "point": "Single most important specific finding, insight, or takeaway from the article (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says",
-      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
+      "point": "Single most important specific finding, insight, or takeaway from the article (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that represent the core concept.",
       "quotes": ["Direct quote from the article that supports this point"]
     }
   ]
@@ -2990,7 +2989,7 @@ CRITICAL RULES:
 3. Each "point" must be substantially different from its supporting quotes - the point explains WHAT the finding means, the quotes provide the EVIDENCE
 4. Each "quote" must be a verbatim excerpt from the article text
 5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
-6. The "bold" field must contain a key phrase (1-3 words) that appears EXACTLY in the point text - this will be emphasized in the UI
+6. Use **markdown bold syntax** (double asterisks like **this**) to emphasize 1-3 key words in each point that capture the core concept
 
 Include exactly 1 point with 1 supporting quote.''',
         'balanced': '''Return a JSON object with this exact structure:
@@ -2999,13 +2998,11 @@ Include exactly 1 point with 1 supporting quote.''',
   "SUMMARY": "One clear sentence that captures the overall purpose or main theme of this article",
   "POINTS": [
     {
-      "point": "First specific finding, insight, or argument from the article (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says",
-      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
+      "point": "First specific finding, insight, or argument from the article (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that represent the core concept.",
       "quotes": ["First direct quote", "Second supporting quote if relevant"]
     },
     {
-      "point": "Second specific finding, insight, or argument from the article (must be distinct from the SUMMARY and first point) - write this in your own words as a clear interpretation or summary of what the article says",
-      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
+      "point": "Second specific finding, insight, or argument from the article (must be distinct from the SUMMARY and first point) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that represent the core concept.",
       "quotes": ["First direct quote", "Second supporting quote if relevant"]
     }
   ]
@@ -3018,7 +3015,7 @@ CRITICAL RULES:
 4. Each "quote" must be a verbatim excerpt from the article text
 5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
 6. Each point must be unique and non-overlapping with other points
-7. The "bold" field must contain a key phrase (1-3 words) that appears EXACTLY in the point text - this will be emphasized in the UI
+7. Use **markdown bold syntax** (double asterisks like **this**) to emphasize 1-3 key words in each point that capture the core concept
 
 Include exactly 2 points with 1-2 supporting quotes each.''',
         'detailed': '''Return a JSON object with this exact structure:
@@ -3027,18 +3024,15 @@ Include exactly 2 points with 1-2 supporting quotes each.''',
   "SUMMARY": "One comprehensive sentence that captures the overall purpose, theme, or significance of this article",
   "POINTS": [
     {
-      "point": "First specific key finding, insight, or argument with comprehensive detail (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says",
-      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
+      "point": "First specific key finding, insight, or argument with comprehensive detail (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that represent the core concept.",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     },
     {
-      "point": "Second specific key finding, insight, or argument with comprehensive detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
-      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
+      "point": "Second specific key finding, insight, or argument with comprehensive detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that represent the core concept.",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     },
     {
-      "point": "Third specific key finding, insight, or argument with comprehensive detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
-      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
+      "point": "Third specific key finding, insight, or argument with comprehensive detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that represent the core concept.",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     }
   ]
@@ -3051,7 +3045,7 @@ CRITICAL RULES:
 4. Each "quote" must be a verbatim excerpt from the article text
 5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
 6. Each point must be unique and non-overlapping with other points
-7. The "bold" field must contain a key phrase (1-3 words) that appears EXACTLY in the point text - this will be emphasized in the UI
+7. Use **markdown bold syntax** (double asterisks like **this**) to emphasize 1-3 key words in each point that capture the core concept
 
 Include exactly 3 points with 2-3 supporting quotes each.''',
         'technical': '''Return a JSON object with this exact structure:
@@ -3060,28 +3054,23 @@ Include exactly 3 points with 2-3 supporting quotes each.''',
   "SUMMARY": "One precise sentence that captures the overall technical concept, purpose, or domain of this article",
   "POINTS": [
     {
-      "point": "First specific technical finding, methodology, or conclusion with precise detail (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says",
-      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
+      "point": "First specific technical finding, methodology, or conclusion with precise detail (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that represent the core technical concept.",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Second specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
-      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
+      "point": "Second specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that represent the core technical concept.",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Third specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
-      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
+      "point": "Third specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that represent the core technical concept.",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Fourth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
-      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
+      "point": "Fourth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that represent the core technical concept.",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
-      "point": "Fifth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
-      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
+      "point": "Fifth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that represent the core technical concept.",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     }
   ]
@@ -3094,7 +3083,7 @@ CRITICAL RULES:
 4. Each "quote" must be a verbatim excerpt from the article text
 5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
 6. Each point must be unique and non-overlapping with other points
-7. The "bold" field must contain a key phrase (1-3 words) that appears EXACTLY in the point text - this will be emphasized in the UI
+7. Use **markdown bold syntax** (double asterisks like **this**) to emphasize 1-3 key words in each point that capture the core technical concept
 
 Include exactly 5 points with 2-3 supporting quotes each.'''
     }
