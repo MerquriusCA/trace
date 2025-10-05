@@ -2989,7 +2989,7 @@ CRITICAL RULES:
 3. Each "point" must be substantially different from its supporting quotes - the point explains WHAT the finding means, the quotes provide the EVIDENCE
 4. Each "quote" must be a verbatim excerpt from the article text
 5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
-6. Use **markdown bold syntax** (double asterisks like **this**) to emphasize 1-3 key words in each point that capture the core concept
+6. Use **markdown bold syntax** (double asterisks like **this**) to emphasize 1-3 key words in each point that best captures that sentence
 
 Include exactly 1 point with 1 supporting quote.''',
         'balanced': '''Return a JSON object with this exact structure:
@@ -3015,7 +3015,7 @@ CRITICAL RULES:
 4. Each "quote" must be a verbatim excerpt from the article text
 5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
 6. Each point must be unique and non-overlapping with other points
-7. Use **markdown bold syntax** (double asterisks like **this**) to emphasize 1-3 key words in each point that capture the core concept
+7. Use **markdown bold syntax** (double asterisks like **this**) to emphasize 1-3 key words in each point that best captures that sentence
 
 Include exactly 2 points with 1-2 supporting quotes each.''',
         'detailed': '''Return a JSON object with this exact structure:
@@ -3045,7 +3045,7 @@ CRITICAL RULES:
 4. Each "quote" must be a verbatim excerpt from the article text
 5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
 6. Each point must be unique and non-overlapping with other points
-7. Use **markdown bold syntax** (double asterisks like **this**) to emphasize 1-3 key words in each point that capture the core concept
+7. Use **markdown bold syntax** (double asterisks like **this**) to emphasize 1-3 key words in each point that best captures that sentence
 
 Include exactly 3 points with 2-3 supporting quotes each.''',
         'technical': '''Return a JSON object with this exact structure:
@@ -3083,7 +3083,7 @@ CRITICAL RULES:
 4. Each "quote" must be a verbatim excerpt from the article text
 5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
 6. Each point must be unique and non-overlapping with other points
-7. Use **markdown bold syntax** (double asterisks like **this**) to emphasize 1-3 key words in each point that capture the core technical concept
+7. Use **markdown bold syntax** (double asterisks like **this**) to emphasize 1-3 key words in each point that best captures that sentence
 
 Include exactly 5 points with 2-3 supporting quotes each.'''
     }
