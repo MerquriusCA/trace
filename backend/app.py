@@ -856,14 +856,65 @@ def save_preferences(current_user):
             'error': f'Failed to save preferences: {str(e)}'
         }), 500
 
+def send_email_via_sendgrid_api(to_email, subject, html_body, from_email='david@merqurius.com'):
+    """Send email using SendGrid HTTP API instead of SMTP"""
+    import json
+
+    api_key = os.getenv('SMTP_PASS', '')  # SendGrid API key is stored in SMTP_PASS
+
+    if not api_key:
+        print("⚠️ SendGrid API key not configured")
+        return False
+
+    try:
+        # SendGrid API endpoint
+        url = 'https://api.sendgrid.com/v3/mail/send'
+
+        # Prepare request data
+        data = {
+            'personalizations': [{
+                'to': [{'email': to_email}]
+            }],
+            'from': {'email': from_email},
+            'subject': subject,
+            'content': [{
+                'type': 'text/html',
+                'value': html_body
+            }]
+        }
+
+        # Make HTTP request
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(data).encode('utf-8'),
+            headers={
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json'
+            },
+            method='POST'
+        )
+
+        print(f"📤 Sending email via SendGrid API to {to_email}...")
+
+        with urllib.request.urlopen(req, timeout=10) as response:
+            if response.status == 202:
+                print(f"✅ Email sent successfully via SendGrid API")
+                return True
+            else:
+                print(f"⚠️ SendGrid API returned status: {response.status}")
+                return False
+
+    except Exception as e:
+        print(f"❌ SendGrid API error: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
 @app.route('/api/feedback', methods=['POST'])
 @require_auth
 def submit_feedback(current_user):
     """Submit user feedback with email notification"""
     import html
-    import smtplib
-    from email.mime.text import MIMEText
-    from email.mime.multipart import MIMEMultipart
     
     print(f"\n📧 FEEDBACK SUBMISSION")
     print(f"👤 User: {current_user.email}")
@@ -940,78 +991,27 @@ def submit_feedback(current_user):
         </html>
         """
         
-        # Send email if SMTP is configured - wrapped in defensive try-catch
+        # Send email via SendGrid HTTP API (bypasses Railway SMTP issues)
         email_sent = False
         try:
-            print(f"🔧 SMTP Configuration Check:")
-            print(f"   Host: {smtp_host}")
-            print(f"   Port: {smtp_port}")
-            print(f"   User: {smtp_user}")
-            print(f"   Pass: {'*' * len(smtp_pass) if smtp_pass else 'None'}")
+            print(f"🔧 Email Configuration:")
             print(f"   From: {smtp_from}")
-            print(f"   Admin Email: {admin_email}")
+            print(f"   To: {admin_email}")
+            print(f"   API Key: {'Configured' if smtp_pass else 'Not configured'}")
 
-            if smtp_user and smtp_pass:
-                try:
-                    print(f"📧 Preparing email message...")
-                    msg = MIMEMultipart('alternative')
-                    msg['Subject'] = email_subject
-                    msg['From'] = smtp_from
-                    msg['To'] = admin_email
-
-                    html_part = MIMEText(email_body, 'html')
-                    msg.attach(html_part)
-                    print(f"✅ Email message prepared")
-
-                    # Use SSL for port 465, TLS for port 587
-                    if smtp_port == 465:
-                        print(f"🔒 Using SMTP_SSL on port {smtp_port}")
-                        with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=30) as server:
-                            print(f"✅ Connected to {smtp_host}:{smtp_port} via SSL")
-                            server.set_debuglevel(1)  # Enable SMTP debug logging
-                            print(f"🔑 Attempting login with user: {smtp_user}")
-                            server.login(smtp_user, smtp_pass)
-                            print(f"✅ Login successful")
-                            print(f"📤 Sending message...")
-                            server.send_message(msg)
-                            print(f"✅ Message sent via SSL")
-                            email_sent = True
-                    else:
-                        print(f"🔒 Using SMTP with STARTTLS on port {smtp_port}")
-                        with smtplib.SMTP(smtp_host, smtp_port, timeout=30) as server:
-                            print(f"✅ Connected to {smtp_host}:{smtp_port}")
-                            server.set_debuglevel(1)  # Enable SMTP debug logging
-                            print(f"🔒 Starting TLS...")
-                            server.starttls()
-                            print(f"✅ TLS started")
-                            print(f"🔑 Attempting login with user: {smtp_user}")
-                            server.login(smtp_user, smtp_pass)
-                            print(f"✅ Login successful")
-                            print(f"📤 Sending message...")
-                            server.send_message(msg)
-                            print(f"✅ Message sent via TLS")
-                            email_sent = True
-
-                    if email_sent:
-                        print(f"✅ Feedback email sent to {admin_email}")
-                except smtplib.SMTPException as smtp_error:
-                    print(f"⚠️ SMTP Error: {smtp_error}")
-                    print(f"⚠️ Error type: {type(smtp_error).__name__}")
-                    import traceback
-                    print(f"⚠️ Full traceback: {traceback.format_exc()}")
-                    # Continue even if email fails - feedback will still be saved
-                except Exception as e:
-                    print(f"⚠️ General email error: {e}")
-                    print(f"⚠️ Error type: {type(e).__name__}")
-                    import traceback
-                    print(f"⚠️ Full traceback: {traceback.format_exc()}")
-                    # Continue even if email fails
+            if smtp_pass:  # smtp_pass contains the SendGrid API key
+                email_sent = send_email_via_sendgrid_api(
+                    to_email=admin_email,
+                    subject=email_subject,
+                    html_body=email_body,
+                    from_email=smtp_from
+                )
             else:
-                print(f"⚠️ SMTP not configured - email not sent")
+                print(f"⚠️ SendGrid API key not configured - email not sent")
                 print(f"📧 Would have sent to: {admin_email}")
                 print(f"📝 Feedback: {message}")
         except Exception as outer_error:
-            print(f"⚠️ Critical email setup error (continuing anyway): {outer_error}")
+            print(f"⚠️ Email send error (continuing anyway): {outer_error}")
             import traceback
             print(f"⚠️ Full traceback: {traceback.format_exc()}")
         
@@ -1472,58 +1472,40 @@ def send_test_email():
         </html>
         """
 
-        html_part = MIMEText(html_content, 'html')
-        msg.attach(html_part)
-        log_capture.write("✅ Email message created\n\n")
+        log_capture.write("✅ Email content prepared\n\n")
 
-        # Send email
-        log_capture.write(f"🔌 Connecting to {smtp_host}:{smtp_port}...\n")
+        # Send email via SendGrid HTTP API (bypasses Railway SMTP network issues)
+        log_capture.write(f"📤 Sending via SendGrid HTTP API to {admin_email}...\n")
 
-        if smtp_port == 465:
-            log_capture.write("🔒 Using SMTP_SSL\n")
-            with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=30) as server:
-                log_capture.write("✅ Connected via SSL\n")
-                log_capture.write("🔑 Authenticating...\n")
-                server.login(smtp_user, smtp_pass)
-                log_capture.write("✅ Authentication successful\n")
-                log_capture.write("📤 Sending message...\n")
-                server.send_message(msg)
-                log_capture.write("✅ Message sent!\n")
+        success = send_email_via_sendgrid_api(
+            to_email=admin_email,
+            subject=msg['Subject'],
+            html_body=html_content,
+            from_email=smtp_from
+        )
+
+        if success:
+            log_capture.write("✅ Email sent successfully via SendGrid API!\n")
+            log_capture.write(f"\n✅ Test email sent to {admin_email}\n")
+            return jsonify({
+                'success': True,
+                'message': 'Test email sent successfully via SendGrid HTTP API',
+                'recipient': admin_email,
+                'log': log_capture.getvalue()
+            })
         else:
-            log_capture.write("🔒 Using SMTP with STARTTLS\n")
-            with smtplib.SMTP(smtp_host, smtp_port, timeout=30) as server:
-                log_capture.write("✅ Connected\n")
-                log_capture.write("🔒 Starting TLS...\n")
-                server.starttls()
-                log_capture.write("✅ TLS started\n")
-                log_capture.write("🔑 Authenticating...\n")
-                server.login(smtp_user, smtp_pass)
-                log_capture.write("✅ Authentication successful\n")
-                log_capture.write("📤 Sending message...\n")
-                server.send_message(msg)
-                log_capture.write("✅ Message sent!\n")
-
-        log_capture.write(f"\n✅ Test email sent successfully to {admin_email}\n")
-
-        return jsonify({
-            'success': True,
-            'message': 'Test email sent successfully',
-            'recipient': admin_email,
-            'log': log_capture.getvalue()
-        })
-
-    except smtplib.SMTPException as e:
-        log_capture.write(f"\n❌ SMTP Error: {e}\n")
-        log_capture.write(f"Error type: {type(e).__name__}\n")
-        return jsonify({
-            'success': False,
-            'error': f'SMTP Error: {str(e)}',
-            'log': log_capture.getvalue()
-        }), 500
+            log_capture.write("❌ Failed to send via SendGrid API\n")
+            return jsonify({
+                'success': False,
+                'error': 'Failed to send email via SendGrid API',
+                'log': log_capture.getvalue()
+            }), 500
 
     except Exception as e:
         log_capture.write(f"\n❌ Error: {e}\n")
         log_capture.write(f"Error type: {type(e).__name__}\n")
+        import traceback
+        log_capture.write(f"Traceback: {traceback.format_exc()}\n")
         return jsonify({
             'success': False,
             'error': f'Error: {str(e)}',
