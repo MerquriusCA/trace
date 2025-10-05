@@ -137,6 +137,9 @@
                         <a href="/admin/prompt-test" id="adminPromptTestLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
                             Prompt Test
                         </a>
+                        <a href="/admin/email-test" id="adminEmailTestLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Email Test
+                        </a>
                         <a href="/admin/style-guide" id="adminStyleGuideLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
                             Style Guide
                         </a>
@@ -295,8 +298,9 @@
                 const adminFeedbackLink = document.getElementById('adminFeedbackLink');
                 const adminProductsLink = document.getElementById('adminProductsLink');
                 const adminPromptTestLink = document.getElementById('adminPromptTestLink');
+                const adminEmailTestLink = document.getElementById('adminEmailTestLink');
                 const adminStyleGuideLink = document.getElementById('adminStyleGuideLink');
-                
+
                 if (adminLink) {
                     adminLink.href = `/admin/dashboard?token=${token}`;
                 }
@@ -308,6 +312,9 @@
                 }
                 if (adminPromptTestLink) {
                     adminPromptTestLink.href = `/admin/prompt-test?token=${token}`;
+                }
+                if (adminEmailTestLink) {
+                    adminEmailTestLink.href = `/admin/email-test?token=${token}`;
                 }
                 if (adminStyleGuideLink) {
                     adminStyleGuideLink.href = `/admin/style-guide?token=${token}`;

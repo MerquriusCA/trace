@@ -214,6 +214,31 @@
     </main>
 
     <script>
+        // Get token from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        // Update navigation links with token
+        if (token) {
+            const adminLink = document.querySelector('a[href="/admin/dashboard"]');
+            const adminFeedbackLink = document.querySelector('a[href="/admin/feedback"]');
+            const adminProductsLink = document.querySelector('a[href="/admin/products"]');
+            const adminPromptTestLink = document.querySelector('a[href="/admin/prompt-test"]');
+            const adminEmailTestLink = document.querySelector('a[href="/admin/email-test"]');
+            const adminStyleGuideLink = document.querySelector('a[href="/admin/style-guide"]');
+            const adminLandingPageLink = document.querySelector('a[href="/admin/landing-page"]');
+            const adminLogoLink = document.querySelector('a[href="/admin/logo"]');
+
+            if (adminLink) adminLink.href = `/admin/dashboard?token=${token}`;
+            if (adminFeedbackLink) adminFeedbackLink.href = `/admin/feedback?token=${token}`;
+            if (adminProductsLink) adminProductsLink.href = `/admin/products?token=${token}`;
+            if (adminPromptTestLink) adminPromptTestLink.href = `/admin/prompt-test?token=${token}`;
+            if (adminEmailTestLink) adminEmailTestLink.href = `/admin/email-test?token=${token}`;
+            if (adminStyleGuideLink) adminStyleGuideLink.href = `/admin/style-guide?token=${token}`;
+            if (adminLandingPageLink) adminLandingPageLink.href = `/admin/landing-page?token=${token}`;
+            if (adminLogoLink) adminLogoLink.href = `/admin/logo?token=${token}`;
+        }
+
         document.getElementById('sendTestEmailBtn').addEventListener('click', async function() {
             const btn = this;
             const btnText = document.getElementById('btnText');
