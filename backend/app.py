@@ -1376,6 +1376,160 @@ def admin_prompt_test():
     """Serve the admin prompt testing page"""
     return render_template('admin_prompt_test_tw.html')
 
+@app.route('/admin/email-test')
+@require_admin_token
+def admin_email_test():
+    """Serve the admin email testing page"""
+    # Get SMTP configuration
+    smtp_host = os.getenv('SMTP_HOST', 'smtp.gmail.com')
+    smtp_port = os.getenv('SMTP_PORT', '587')
+    smtp_user = os.getenv('SMTP_USER', '')
+    smtp_pass = os.getenv('SMTP_PASS', '')
+    smtp_from = os.getenv('SMTP_FROM', 'david@merqurius.com')
+    admin_email = os.getenv('ADMIN_EMAIL', 'david@merqurius.com')
+
+    # Mask password for display
+    smtp_pass_masked = '*' * (len(smtp_pass) - 8) + smtp_pass[-8:] if len(smtp_pass) > 8 else '*' * len(smtp_pass)
+
+    return render_template('admin_email_test_tw.html',
+                         smtp_host=smtp_host,
+                         smtp_port=smtp_port,
+                         smtp_user=smtp_user,
+                         smtp_pass_masked=smtp_pass_masked,
+                         smtp_from=smtp_from,
+                         admin_email=admin_email,
+                         smtp_configured=bool(smtp_user and smtp_pass))
+
+@app.route('/admin/api/send-test-email', methods=['POST'])
+@require_admin_token
+def send_test_email():
+    """Send a test email to verify SMTP configuration"""
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+    import io
+    import sys
+
+    # Capture logs
+    log_capture = io.StringIO()
+
+    try:
+        # Get SMTP configuration
+        smtp_host = os.getenv('SMTP_HOST', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_user = os.getenv('SMTP_USER', '')
+        smtp_pass = os.getenv('SMTP_PASS', '')
+        smtp_from = os.getenv('SMTP_FROM', 'david@merqurius.com')
+        admin_email = os.getenv('ADMIN_EMAIL', 'david@merqurius.com')
+
+        log_capture.write(f"🔧 SMTP Configuration:\n")
+        log_capture.write(f"   Host: {smtp_host}\n")
+        log_capture.write(f"   Port: {smtp_port}\n")
+        log_capture.write(f"   User: {smtp_user}\n")
+        log_capture.write(f"   From: {smtp_from}\n")
+        log_capture.write(f"   To: {admin_email}\n\n")
+
+        if not smtp_user or not smtp_pass:
+            return jsonify({
+                'success': False,
+                'error': 'SMTP credentials not configured',
+                'log': log_capture.getvalue()
+            }), 400
+
+        # Create test email
+        log_capture.write("📧 Creating test email message...\n")
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = f"Test Email from Trace Admin - {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}"
+        msg['From'] = smtp_from
+        msg['To'] = admin_email
+
+        html_content = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; padding: 20px;">
+            <h2 style="color: #8B5CF6;">✅ SMTP Test Successful!</h2>
+
+            <p>This is a test email from the Trace Extension admin panel.</p>
+
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <h3 style="margin-top: 0;">Email Configuration:</h3>
+                <ul>
+                    <li><strong>SMTP Host:</strong> {smtp_host}</li>
+                    <li><strong>SMTP Port:</strong> {smtp_port}</li>
+                    <li><strong>From:</strong> {smtp_from}</li>
+                    <li><strong>Sent at:</strong> {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}</li>
+                </ul>
+            </div>
+
+            <p style="color: #16a34a; font-weight: bold;">
+                ✅ If you received this email, your SMTP configuration is working correctly!
+            </p>
+
+            <hr style="margin-top: 30px;">
+            <p style="color: #666; font-size: 12px;">
+                This test was sent from the Trace Extension admin panel.
+            </p>
+        </body>
+        </html>
+        """
+
+        html_part = MIMEText(html_content, 'html')
+        msg.attach(html_part)
+        log_capture.write("✅ Email message created\n\n")
+
+        # Send email
+        log_capture.write(f"🔌 Connecting to {smtp_host}:{smtp_port}...\n")
+
+        if smtp_port == 465:
+            log_capture.write("🔒 Using SMTP_SSL\n")
+            with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=30) as server:
+                log_capture.write("✅ Connected via SSL\n")
+                log_capture.write("🔑 Authenticating...\n")
+                server.login(smtp_user, smtp_pass)
+                log_capture.write("✅ Authentication successful\n")
+                log_capture.write("📤 Sending message...\n")
+                server.send_message(msg)
+                log_capture.write("✅ Message sent!\n")
+        else:
+            log_capture.write("🔒 Using SMTP with STARTTLS\n")
+            with smtplib.SMTP(smtp_host, smtp_port, timeout=30) as server:
+                log_capture.write("✅ Connected\n")
+                log_capture.write("🔒 Starting TLS...\n")
+                server.starttls()
+                log_capture.write("✅ TLS started\n")
+                log_capture.write("🔑 Authenticating...\n")
+                server.login(smtp_user, smtp_pass)
+                log_capture.write("✅ Authentication successful\n")
+                log_capture.write("📤 Sending message...\n")
+                server.send_message(msg)
+                log_capture.write("✅ Message sent!\n")
+
+        log_capture.write(f"\n✅ Test email sent successfully to {admin_email}\n")
+
+        return jsonify({
+            'success': True,
+            'message': 'Test email sent successfully',
+            'recipient': admin_email,
+            'log': log_capture.getvalue()
+        })
+
+    except smtplib.SMTPException as e:
+        log_capture.write(f"\n❌ SMTP Error: {e}\n")
+        log_capture.write(f"Error type: {type(e).__name__}\n")
+        return jsonify({
+            'success': False,
+            'error': f'SMTP Error: {str(e)}',
+            'log': log_capture.getvalue()
+        }), 500
+
+    except Exception as e:
+        log_capture.write(f"\n❌ Error: {e}\n")
+        log_capture.write(f"Error type: {type(e).__name__}\n")
+        return jsonify({
+            'success': False,
+            'error': f'Error: {str(e)}',
+            'log': log_capture.getvalue()
+        }), 500
+
 @app.route('/admin/style-guide')
 @require_admin_token
 def admin_style_guide():
