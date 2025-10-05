@@ -385,26 +385,42 @@
                 return;
             }
             
-            container.innerHTML = activities.map(activity => `
-                <li class="px-4 py-4 sm:px-6">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
-                                    <span class="text-primary-600 font-medium text-sm">API</span>
+            container.innerHTML = activities.map(activity => {
+                // Extract domain from URL for better display
+                let domain = 'Unknown';
+                try {
+                    if (activity.url) {
+                        const url = new URL(activity.url);
+                        domain = url.hostname;
+                    }
+                } catch (e) {
+                    domain = activity.url || 'Unknown';
+                }
+
+                const endpoint = activity.endpoint || 'API Request';
+                const tokensInfo = activity.tokens_used ? ` (${activity.tokens_used} tokens)` : '';
+
+                return `
+                    <li class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
+                                        <span class="text-primary-600 font-medium text-sm">API</span>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-900">${endpoint}</p>
+                                    <p class="text-sm text-gray-500">${domain}${tokensInfo}</p>
                                 </div>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-900">${activity.action || 'API Request'}</p>
-                                <p class="text-sm text-gray-500">${activity.details || 'No details available'}</p>
+                            <div class="text-sm text-gray-500">
+                                ${activity.created_at ? new Date(activity.created_at).toLocaleString() : 'Unknown time'}
                             </div>
                         </div>
-                        <div class="text-sm text-gray-500">
-                            ${activity.timestamp ? new Date(activity.timestamp).toLocaleString() : 'Unknown time'}
-                        </div>
-                    </div>
-                </li>
-            `).join('');
+                    </li>
+                `;
+            }).join('');
         }
 
         // Global variables for cancel subscription
