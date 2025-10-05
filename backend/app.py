@@ -966,7 +966,7 @@ def submit_feedback(current_user):
                     # Use SSL for port 465, TLS for port 587
                     if smtp_port == 465:
                         print(f"🔒 Using SMTP_SSL on port {smtp_port}")
-                        with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=10) as server:
+                        with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=30) as server:
                             print(f"✅ Connected to {smtp_host}:{smtp_port} via SSL")
                             server.set_debuglevel(1)  # Enable SMTP debug logging
                             print(f"🔑 Attempting login with user: {smtp_user}")
@@ -978,7 +978,7 @@ def submit_feedback(current_user):
                             email_sent = True
                     else:
                         print(f"🔒 Using SMTP with STARTTLS on port {smtp_port}")
-                        with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
+                        with smtplib.SMTP(smtp_host, smtp_port, timeout=30) as server:
                             print(f"✅ Connected to {smtp_host}:{smtp_port}")
                             server.set_debuglevel(1)  # Enable SMTP debug logging
                             print(f"🔒 Starting TLS...")
