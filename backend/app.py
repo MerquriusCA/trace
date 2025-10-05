@@ -2976,6 +2976,7 @@ def get_reading_level_prompts():
   "POINTS": [
     {
       "point": "Single most important specific finding, insight, or takeaway from the article (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says",
+      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
       "quotes": ["Direct quote from the article that supports this point"]
     }
   ]
@@ -2987,6 +2988,7 @@ CRITICAL RULES:
 3. Each "point" must be substantially different from its supporting quotes - the point explains WHAT the finding means, the quotes provide the EVIDENCE
 4. Each "quote" must be a verbatim excerpt from the article text
 5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
+6. The "bold" field must contain a key phrase (1-3 words) that appears EXACTLY in the point text - this will be emphasized in the UI
 
 Include exactly 1 point with 1 supporting quote.''',
         'balanced': '''Return a JSON object with this exact structure:
@@ -2996,10 +2998,12 @@ Include exactly 1 point with 1 supporting quote.''',
   "POINTS": [
     {
       "point": "First specific finding, insight, or argument from the article (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says",
+      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
       "quotes": ["First direct quote", "Second supporting quote if relevant"]
     },
     {
       "point": "Second specific finding, insight, or argument from the article (must be distinct from the SUMMARY and first point) - write this in your own words as a clear interpretation or summary of what the article says",
+      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
       "quotes": ["First direct quote", "Second supporting quote if relevant"]
     }
   ]
@@ -3012,6 +3016,7 @@ CRITICAL RULES:
 4. Each "quote" must be a verbatim excerpt from the article text
 5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
 6. Each point must be unique and non-overlapping with other points
+7. The "bold" field must contain a key phrase (1-3 words) that appears EXACTLY in the point text - this will be emphasized in the UI
 
 Include exactly 2 points with 1-2 supporting quotes each.''',
         'detailed': '''Return a JSON object with this exact structure:
@@ -3021,14 +3026,17 @@ Include exactly 2 points with 1-2 supporting quotes each.''',
   "POINTS": [
     {
       "point": "First specific key finding, insight, or argument with comprehensive detail (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says",
+      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     },
     {
       "point": "Second specific key finding, insight, or argument with comprehensive detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
+      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     },
     {
       "point": "Third specific key finding, insight, or argument with comprehensive detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
+      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
       "quotes": ["First supporting quote", "Second supporting quote", "Third quote if highly relevant"]
     }
   ]
@@ -3041,6 +3049,7 @@ CRITICAL RULES:
 4. Each "quote" must be a verbatim excerpt from the article text
 5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
 6. Each point must be unique and non-overlapping with other points
+7. The "bold" field must contain a key phrase (1-3 words) that appears EXACTLY in the point text - this will be emphasized in the UI
 
 Include exactly 3 points with 2-3 supporting quotes each.''',
         'technical': '''Return a JSON object with this exact structure:
@@ -3050,22 +3059,27 @@ Include exactly 3 points with 2-3 supporting quotes each.''',
   "POINTS": [
     {
       "point": "First specific technical finding, methodology, or conclusion with precise detail (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says",
+      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
       "point": "Second specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
+      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
       "point": "Third specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
+      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
       "point": "Fourth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
+      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     },
     {
       "point": "Fifth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says",
+      "bold": "1-3 word key phrase from this point to emphasize (must be an exact substring)",
       "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
     }
   ]
@@ -3078,6 +3092,7 @@ CRITICAL RULES:
 4. Each "quote" must be a verbatim excerpt from the article text
 5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
 6. Each point must be unique and non-overlapping with other points
+7. The "bold" field must contain a key phrase (1-3 words) that appears EXACTLY in the point text - this will be emphasized in the UI
 
 Include exactly 5 points with 2-3 supporting quotes each.'''
     }

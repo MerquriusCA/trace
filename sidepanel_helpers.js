@@ -170,8 +170,19 @@ function formatStructuredSummary(summaryData) {
     summaryData.points.forEach(point => {
       bulletCounter++;
       let bulletText = point.text || point.point || String(point);
-      // Convert markdown bold to HTML
+
+      // First convert markdown bold to HTML
       bulletText = bulletText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+      // Then apply bold from the "bold" field if provided
+      if (point.bold && bulletText.includes(point.bold)) {
+        // Escape regex special characters in the bold phrase
+        const escapedBold = point.bold.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        // Create regex to match the exact phrase (case-sensitive)
+        const boldRegex = new RegExp(`(${escapedBold})`, 'g');
+        // Wrap the phrase in <strong> tags with emphasis class
+        bulletText = bulletText.replace(boldRegex, '<strong class="key-emphasis">$1</strong>');
+      }
 
       formattedHTML += `<div class="bullet-item">`;
       formattedHTML += `<div class="bullet-main">`;
