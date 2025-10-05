@@ -2445,14 +2445,15 @@ def summarize_with_auth(current_user):
 
                         # Extract points - handle the new POINTS structure
                         if 'POINTS' in summary_data and isinstance(summary_data['POINTS'], list):
-                            # Handle structure like: {"POINTS": [{"point": "...", "quotes": ["..."]}]}
+                            # Handle structure like: {"POINTS": [{"point": "...", "bold": "...", "quotes": ["..."]}]}
                             for point_obj in summary_data['POINTS']:
                                 if isinstance(point_obj, dict):
                                     point_text = point_obj.get('point', point_obj.get('text', str(point_obj)))
                                     point_quotes = point_obj.get('quotes', point_obj.get('QUOTES', []))
-                                    points_list.append({'text': point_text, 'quotes': point_quotes})
+                                    point_bold = point_obj.get('bold', '')  # Extract bold field
+                                    points_list.append({'text': point_text, 'quotes': point_quotes, 'bold': point_bold})
                                 else:
-                                    points_list.append({'text': str(point_obj), 'quotes': []})
+                                    points_list.append({'text': str(point_obj), 'quotes': [], 'bold': ''})
 
                         elif 'main_points' in summary_data and isinstance(summary_data['main_points'], list):
                             # Handle legacy structure like: {"main_points": [{"point": "...", "QUOTES": ["..."]}]}
@@ -2460,9 +2461,10 @@ def summarize_with_auth(current_user):
                                 if isinstance(point_obj, dict):
                                     point_text = point_obj.get('point', point_obj.get('text', str(point_obj)))
                                     point_quotes = point_obj.get('QUOTES', point_obj.get('quotes', []))
-                                    points_list.append({'text': point_text, 'quotes': point_quotes})
+                                    point_bold = point_obj.get('bold', '')  # Extract bold field
+                                    points_list.append({'text': point_text, 'quotes': point_quotes, 'bold': point_bold})
                                 else:
-                                    points_list.append({'text': str(point_obj), 'quotes': []})
+                                    points_list.append({'text': str(point_obj), 'quotes': [], 'bold': ''})
 
                         elif 'points' in summary_data:
                             points_list = summary_data['points']
