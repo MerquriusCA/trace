@@ -255,7 +255,7 @@
             emailLog.classList.add('hidden');
 
             try {
-                const response = await fetch('/admin/api/send-test-email', {
+                const response = await fetch(`/admin/api/send-test-email${token ? `?token=${token}` : ''}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
