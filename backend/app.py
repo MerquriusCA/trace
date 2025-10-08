@@ -455,7 +455,25 @@ def create_checkout_session(current_user):
     print(f"📝 CREATE CHECKOUT SESSION REQUEST")
     print(f"👤 User: {current_user.email}")
     print(f"💳 Stripe Customer ID: {current_user.stripe_customer_id or 'None'}")
-    
+
+    # Define allowed purchasers - only these emails can purchase subscriptions
+    allowed_purchasers = [
+        'david@merqurius.com',
+        # Add more emails here as needed
+        # 'customer@example.com',
+        # 'beta-user@example.com'
+    ]
+
+    # Check if user is allowed to purchase
+    if current_user.email.lower() not in [email.lower() for email in allowed_purchasers]:
+        print(f"❌ User not authorized to purchase: {current_user.email}")
+        return jsonify({
+            'error': 'Subscription not available',
+            'message': 'Subscriptions are currently available by invitation only. Please contact support for access.'
+        }), 403
+
+    print(f"✅ User authorized to purchase: {current_user.email}")
+
     try:
         if not stripe_initialized:
             print("❌ Stripe not initialized, attempting to reinitialize...")
@@ -464,11 +482,11 @@ def create_checkout_session(current_user):
             else:
                 print("❌ Failed to reinitialize Stripe")
                 return jsonify({'error': 'Stripe not available'}), 503
-            
+
         data = request.get_json()
         price_id = data.get('price_id')  # Stripe price ID
         print(f"💰 Price ID: {price_id}")
-        
+
         if not price_id:
             print("❌ No price ID provided")
             return jsonify({'error': 'Price ID required'}), 400
