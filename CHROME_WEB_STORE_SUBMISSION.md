@@ -65,18 +65,16 @@ We take your privacy seriously. Trace only processes page content you explicitly
 ### 3. Privacy & Compliance
 
 #### Privacy Policy (REQUIRED)
-- [ ] Create and host a privacy policy (required for extensions using OAuth or collecting data)
-- [ ] URL must be publicly accessible
-- [ ] Should cover:
+- [x] Create and host a privacy policy (required for extensions using OAuth or collecting data)
+- [x] URL must be publicly accessible
+- [x] Should cover:
   - What data you collect (email, page content, reading preferences)
   - How you use it (summarization, personalization)
   - How you store it (database, encryption)
   - Third-party services (OpenAI, Google OAuth, Stripe)
   - User rights (data deletion, opt-out)
 
-**Suggested Privacy Policy URL**:
-- Host at: `https://trace-production-79d5.up.railway.app/privacy`
-- Or use a dedicated page on your domain
+**Privacy Policy URL**: `https://trace-production-79d5.up.railway.app/privacy` ✅
 
 #### Permissions Justification
 Be prepared to explain each permission:
@@ -211,7 +209,7 @@ unzip -l trace-v1.0.0.zip
 
 - [x] Manifest updated for production
 - [ ] Create screenshots
-- [ ] Create privacy policy page
+- [x] Create privacy policy page
 - [ ] Create promotional images (optional)
 - [ ] Package extension
 - [ ] Submit to Chrome Web Store
