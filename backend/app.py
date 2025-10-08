@@ -459,6 +459,7 @@ def create_checkout_session(current_user):
     # Define allowed purchasers - only these emails can purchase subscriptions
     allowed_purchasers = [
         'david@merqurius.com',
+        'david@tenetaxiom.com',
         # Add more emails here as needed
         # 'customer@example.com',
         # 'beta-user@example.com'
@@ -468,8 +469,7 @@ def create_checkout_session(current_user):
     if current_user.email.lower() not in [email.lower() for email in allowed_purchasers]:
         print(f"❌ User not authorized to purchase: {current_user.email}")
         return jsonify({
-            'error': 'Subscription not available',
-            'message': 'Subscriptions are currently available by invitation only. Please contact support for access.'
+            'error': 'You are not allowed to purchase during beta testing'
         }), 403
 
     print(f"✅ User authorized to purchase: {current_user.email}")
