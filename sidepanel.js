@@ -1133,16 +1133,37 @@ document.addEventListener('DOMContentLoaded', function() {
       `;
       subscriptionActions.classList.remove('hidden');
     } else {
-      // Regular users (non-whitelisted) - red indicator, no actions
+      // Regular users (non-whitelisted) - show Get Started button
       subscriptionStatusIndicator.className = 'subscription-indicator inactive';
       subscriptionStatusIndicator.title = 'AI features unavailable';
+
+      subscriptionActions.innerHTML = `
+        <div class="card" style="margin-top: 12px;">
+          <div style="text-align: center; padding: 8px;">
+            <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280;">Subscribe to unlock AI features</p>
+            <button class="subscribe-button" id="getStartedButton">
+              Get Started with Trace - ${priceInfo.display}
+            </button>
+          </div>
+        </div>
+      `;
+      subscriptionActions.classList.remove('hidden');
     }
 
-    // Add click handler for upgrade button (only exists for whitelisted users)
+    // Add click handlers for subscription buttons
     const upgradeBtn = document.getElementById('upgradeButton');
+    const getStartedBtn = document.getElementById('getStartedButton');
+
     if (upgradeBtn) {
       upgradeBtn.addEventListener('click', function() {
         config.log('Upgrade button clicked');
+        startSubscription();
+      });
+    }
+
+    if (getStartedBtn) {
+      getStartedBtn.addEventListener('click', function() {
+        config.log('Get Started button clicked');
         startSubscription();
       });
     }
