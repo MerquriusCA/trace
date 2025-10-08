@@ -459,7 +459,6 @@ def create_checkout_session(current_user):
     # Define allowed purchasers - only these emails can purchase subscriptions
     allowed_purchasers = [
         'david@merqurius.com',
-        'david@tenetaxiom.com',
         # Add more emails here as needed
         # 'customer@example.com',
         # 'beta-user@example.com'
