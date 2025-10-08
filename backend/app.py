@@ -1577,6 +1577,11 @@ def subscription_cancelled():
     """Cancellation page after Stripe checkout"""
     return render_template('subscription-cancelled.html')
 
+@app.route('/privacy')
+def privacy_policy():
+    """Privacy policy page - required for Chrome Web Store"""
+    return render_template('privacy.html')
+
 @app.route('/api/usage/stats', methods=['GET'])
 @require_auth
 def usage_stats(current_user):
