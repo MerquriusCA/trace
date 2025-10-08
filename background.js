@@ -410,7 +410,9 @@ async function createCheckoutSession(priceId, sendResponse) {
       const data = await response.json();
       sendResponse(data);
     } else {
-      throw new Error('Failed to create checkout session');
+      // Parse error response from backend
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to create checkout session');
     }
   } catch (error) {
     config.error('Checkout session error:', error);
