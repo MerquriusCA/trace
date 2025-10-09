@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screenshot Helper - 1280x800</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #7c3aed;
+            margin-bottom: 20px;
+        }
+
+        .instructions {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .screenshot-frame {
+            width: 1280px;
+            height: 800px;
+            background: white;
+            border: 3px solid #7c3aed;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .frame-label {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #7c3aed;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+
+        .extension-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .controls {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #6d28d9;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            flex: 1;
+            font-family: monospace;
+        }
+
+        .tips {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+
+        .tips h3 {
+            margin-top: 0;
+            color: #92400e;
+        }
+
+        .tips ul {
+            margin: 10px 0 0 20px;
+            color: #78350f;
+        }
+
+        .screenshot-list {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .screenshot-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f9fafb;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .screenshot-item.active {
+            background: #ede9fe;
+            border-left: 3px solid #7c3aed;
+        }
+
+        .step-number {
+            background: #7c3aed;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 Trace Screenshot Helper</h1>
+
+        <div class="instructions">
+            <h2>How to Use This Tool</h2>
+            <ol>
+                <li>Open Chrome DevTools (<code>Cmd + Option + I</code> on Mac)</li>
+                <li>Click the device toolbar icon or press <code>Cmd + Shift + M</code></li>
+                <li>Set dimensions to <strong>1280x800</strong></li>
+                <li>Load your extension pages in the frame below</li>
+                <li>Use DevTools screenshot feature to capture</li>
+            </ol>
+        </div>
+
+        <div class="screenshot-frame">
+            <div class="frame-label">1280 × 800</div>
+            <iframe id="extensionFrame" class="extension-iframe" src="about:blank"></iframe>
+        </div>
+
+        <div class="controls">
+            <input type="text" id="urlInput" placeholder="Enter extension page URL (e.g., chrome-extension://your-id/sidepanel.html)" value="">
+            <button class="btn btn-primary" onclick="loadUrl()">Load</button>
+            <button class="btn btn-secondary" onclick="resetFrame()">Reset</button>
+        </div>
+
+        <div class="tips">
+            <h3>💡 Tips for Great Screenshots</h3>
+            <ul>
+                <li>Use Chrome DevTools Device Mode set to exactly 1280×800</li>
+                <li>Take screenshot with DevTools: Menu (⋮) → Capture screenshot</li>
+                <li>Load a real article for demo (TechCrunch, Medium, etc.)</li>
+                <li>Make sure all content is loaded before capturing</li>
+                <li>Avoid error messages or loading states</li>
+            </ul>
+        </div>
+
+        <div class="screenshot-list">
+            <h3>📋 Screenshot Checklist</h3>
+            <div class="screenshot-item" id="shot1">
+                <span><span class="step-number">1</span> Onboarding Flow (reader type or reading level)</span>
+                <span>📍 <code>chrome-extension://your-id/onboarding.html</code></span>
+            </div>
+            <div class="screenshot-item" id="shot2">
+                <span><span class="step-number">2</span> Welcome Screen (clean side panel)</span>
+                <span>📍 <code>sidepanel.html</code> (not logged in or fresh state)</span>
+            </div>
+            <div class="screenshot-item" id="shot3">
+                <span><span class="step-number">3</span> Summary in Action (key points visible)</span>
+                <span>📍 After clicking "Trace This Page" on article</span>
+            </div>
+            <div class="screenshot-item" id="shot4">
+                <span><span class="step-number">4</span> Quotes Expanded (reference feature)</span>
+                <span>📍 Click "Show Quotes" on a bullet point</span>
+            </div>
+            <div class="screenshot-item" id="shot5">
+                <span><span class="step-number">5</span> Settings (optional - customization)</span>
+                <span>📍 Settings tab in side panel</span>
+            </div>
+        </div>
+
+        <div class="tips" style="background: #dbeafe; border-left-color: #3b82f6;">
+            <h3>🎯 Quick Setup Guide</h3>
+            <ol>
+                <li>Install your extension in Chrome</li>
+                <li>Right-click extension icon → Inspect</li>
+                <li>Copy the extension URL from address bar (e.g., <code>chrome-extension://abc.../sidepanel.html</code>)</li>
+                <li>Paste URL in the input field above</li>
+                <li>Use DevTools Device Mode at 1280×800 to take screenshots</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function loadUrl() {
+            const url = document.getElementById('urlInput').value;
+            if (url) {
+                document.getElementById('extensionFrame').src = url;
+            } else {
+                alert('Please enter a URL');
+            }
+        }
+
+        function resetFrame() {
+            document.getElementById('extensionFrame').src = 'about:blank';
+            document.getElementById('urlInput').value = '';
+        }
+
+        // Allow Enter key to load
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loadUrl();
+            }
+        });
+    </script>
+</body>
+</html>
