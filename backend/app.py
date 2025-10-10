@@ -329,22 +329,9 @@ def require_auth(f):
 def require_active_subscription(f):
     @wraps(f)
     def decorated_function(current_user, *args, **kwargs):
-        # Check for active subscription (allow special user)
+        # Check for active subscription
         print(f"📝 Subscription check - User: {current_user.email}, Status: {current_user.subscription_status}")
-        
-        # Define whitelisted emails (should match frontend config)
-        whitelisted_emails = [
-            'david@merqurius.com',
-            # Add more emails here as needed
-            # 'investor@example.com',
-            # 'demo@example.com'
-        ]
-        
-        # Allow whitelisted users to bypass subscription requirement
-        if current_user.email.lower() in [email.lower() for email in whitelisted_emails]:
-            print(f"✅ Whitelisted user access granted: {current_user.email}")
-            return f(current_user, *args, **kwargs)
-        
+
         if current_user.subscription_status != 'active':
             return jsonify({
                 'error': 'Active subscription required',

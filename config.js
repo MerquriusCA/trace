@@ -34,27 +34,10 @@ const CONFIG = {
   
   // Stripe configuration
   stripe: {
-    priceId: 'price_1RrNm2Ktat2K2WuILiZCzn4M' // Test price ID
-    // Production: 'price_1RpIEaKtat2K2WuIYhlyXSrE'
+    priceId: 'price_1RpIEaKtat2K2WuIYhlyXSrE' // Production price ID
+    // Test: 'price_1RrNm2Ktat2K2WuILiZCzn4M'
   },
-  
-  // Whitelist configuration - users who can see purchase button without subscription
-  whitelist: {
-    // Emails that are allowed to see the purchase button
-    allowedEmails: [
-      'david@merqurius.com',
-      // Add more emails here as needed
-      // 'investor@example.com',
-      // 'demo@example.com'
-    ],
-    
-    // Check if email is whitelisted
-    isWhitelisted(email) {
-      if (!email) return false;
-      return this.allowedEmails.includes(email.toLowerCase());
-    }
-  },
-  
+
   // OAuth configuration
   oauth: {
     clientId: '953660294928-e9hfvo7c9rhvobsij5rli2lv5vqj221q.apps.googleusercontent.com',

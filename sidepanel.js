@@ -1090,9 +1090,6 @@ document.addEventListener('DOMContentLoaded', function() {
     subscriptionActions.innerHTML = '';
     subscriptionActions.classList.add('hidden');
 
-    // Check if user is whitelisted
-    const isWhitelisted = currentUser && config.whitelist.isWhitelisted(currentUser.email);
-
     // Fetch dynamic price
     const priceInfo = await fetchSubscriptionPrice();
 
@@ -1100,23 +1097,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (status === 'active') {
       subscriptionStatusIndicator.className = 'subscription-indicator active';
       subscriptionStatusIndicator.title = 'Active Subscription';
-    } else if (isWhitelisted) {
-      // Show active indicator for whitelisted users (beta access)
-      subscriptionStatusIndicator.className = 'subscription-indicator active';
-      subscriptionStatusIndicator.title = 'Beta Access - Active';
-
-      // Show upgrade button for whitelisted users
-      subscriptionActions.innerHTML = `
-        <div class="card" style="margin-top: 12px;">
-          <div style="text-align: center; padding: 8px;">
-            <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280;">🎯 Beta Access Active</p>
-            <button class="subscribe-button" id="upgradeButton">
-              Upgrade to Pro - ${priceInfo.display}
-            </button>
-          </div>
-        </div>
-      `;
-      subscriptionActions.classList.remove('hidden');
     } else if (status === 'past_due') {
       subscriptionStatusIndicator.className = 'subscription-indicator inactive';
       subscriptionStatusIndicator.title = 'Payment Required';
@@ -1133,7 +1113,7 @@ document.addEventListener('DOMContentLoaded', function() {
       `;
       subscriptionActions.classList.remove('hidden');
     } else {
-      // Regular users (non-whitelisted) - show Get Started button
+      // No active subscription - show Get Started button
       subscriptionStatusIndicator.className = 'subscription-indicator inactive';
       subscriptionStatusIndicator.title = 'AI features unavailable';
 
@@ -1150,16 +1130,8 @@ document.addEventListener('DOMContentLoaded', function() {
       subscriptionActions.classList.remove('hidden');
     }
 
-    // Add click handlers for subscription buttons
-    const upgradeBtn = document.getElementById('upgradeButton');
+    // Add click handler for subscription button
     const getStartedBtn = document.getElementById('getStartedButton');
-
-    if (upgradeBtn) {
-      upgradeBtn.addEventListener('click', function() {
-        config.log('Upgrade button clicked');
-        startSubscription();
-      });
-    }
 
     if (getStartedBtn) {
       getStartedBtn.addEventListener('click', function() {
@@ -1569,11 +1541,10 @@ document.addEventListener('DOMContentLoaded', function() {
   async function updateSubscriptionSettingsUI(subscription) {
     // Use the same logic as the main view for consistency
     const status = subscription.status || 'inactive';
-    const isWhitelisted = currentUser && config.whitelist.isWhitelisted(currentUser.email);
-    
+
     // Fetch dynamic price
     const priceInfo = await fetchSubscriptionPrice();
-    
+
     if (status === 'active') {
       subscriptionStatusSettings.textContent = '✅ Active';
       subscriptionStatusSettings.className = 'subscription-status subscription-active';
@@ -1599,7 +1570,7 @@ document.addEventListener('DOMContentLoaded', function() {
       resetSubscriptionButton.style.display = 'none';
       cancelSubscriptionButton.style.display = 'none';
     } else {
-      // Regular users (non-whitelisted) - No subscription
+      // No active subscription
       subscriptionStatusSettings.textContent = '⭕ No Active Subscription';
       subscriptionStatusSettings.className = 'subscription-status subscription-trial';
       subscriptionPlan.textContent = 'Subscribe to access AI-powered analysis features';
