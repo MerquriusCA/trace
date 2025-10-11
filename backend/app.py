@@ -1570,6 +1570,7 @@ def subscription_cancelled():
     return render_template('subscription-cancelled.html')
 
 @app.route('/privacy')
+@app.route('/privacy-policy-trace')
 def privacy_policy():
     """Privacy policy page - required for Chrome Web Store"""
     return render_template('privacy.html')
