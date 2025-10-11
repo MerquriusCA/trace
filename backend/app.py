@@ -446,9 +446,14 @@ def create_checkout_session(current_user):
     # Define allowed purchasers - only these emails can purchase subscriptions
     allowed_purchasers = [
         'david@merqurius.com',
-        # Add more emails here as needed
-        # 'customer@example.com',
-        # 'beta-user@example.com'
+        'cariann.chan@gmail.com',
+        'joseph.q.nguyen@gmail.com',
+        'mengting@gmail.com',
+        'phantomzero09@gmail.com',
+        'c.vi.nguyen@gmail.com',
+        'rickychen@gmail.com',
+        'patricianyen@gmail.com',
+        'david.hongrui.wu@gmail.com'
     ]
 
     # Check if user is allowed to purchase
@@ -1523,7 +1528,7 @@ def admin_style_guide():
     return render_template('admin_style_guide_tw.html')
 
 @app.route('/admin/landing-page')
-@app.route('/landing')
+@app.route('/trace')
 def admin_landing_page():
     """Serve the landing page preview (no auth required, not indexed by search engines)"""
     return render_template('admin_landing_page_tw.html')
