@@ -340,16 +340,10 @@ document.addEventListener('DOMContentLoaded', function() {
               console.error('❌ Response.summary_data value:', response.summary_data);
 
               formattedHTML = `
-                <div style="background: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #f44336;">
-                  <h5>⚠️ Error: Missing Structured Data</h5>
-                  <p style="margin: 10px 0;">The summary response is missing structured data (summary_data field).</p>
-                  <p style="margin: 10px 0; font-size: 12px; color: #666;">This usually means:</p>
-                  <ul style="margin: 10px 0; font-size: 12px; color: #666;">
-                    <li>The backend didn't parse the JSON correctly</li>
-                    <li>The response wasn't properly formatted</li>
-                    <li>There was an issue with the OpenAI API response</li>
-                  </ul>
-                  <p style="margin: 10px 0; font-size: 12px;">Please try summarizing again or check the console for details.</p>
+                <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                  <h5 style="color: #856404; margin: 0 0 10px 0;">⚠️ Unable to Read This Page</h5>
+                  <p style="margin: 0; color: #856404;">Trace is unable to read this page due to its implementation. This may be caused by the page's structure or content format.</p>
+                  <p style="margin: 10px 0 0 0; font-size: 12px; color: #856404;">We're working to improve compatibility during beta. Please try a different page.</p>
                 </div>
               `;
             }
