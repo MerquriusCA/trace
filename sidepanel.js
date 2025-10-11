@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                   formattedHTML += `<div class="bullet-item">`;
                   formattedHTML += `<div class="bullet-main">`;
-                  formattedHTML += `<span class="bullet-point">•</span> ${point.point.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}`;
+                  formattedHTML += `<span class="bullet-point">•</span><span class="bullet-text">${point.point.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</span>`;
                   formattedHTML += `</div>`; // Close bullet-main
 
                   // Add quotes toggle button if quotes exist (on its own row)
