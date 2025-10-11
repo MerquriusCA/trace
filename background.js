@@ -476,6 +476,18 @@ async function handleSummarizePage(request, sendResponse, retryCount = 0) {
         return;
       }
 
+      // Get HTML content from the page
+      let htmlContent = null;
+      try {
+        const contentResponse = await chrome.tabs.sendMessage(request.tabId, {action: 'getPageContent'});
+        if (contentResponse && contentResponse.html) {
+          htmlContent = contentResponse.html;
+          config.log('✅ Got HTML content from page:', htmlContent.length, 'chars');
+        }
+      } catch (error) {
+        config.log('⚠️ Could not get HTML from content script, will use URL fetch:', error.message);
+      }
+
       // Always use backend service for all URLs
       const backendUrl = `${config.getBackendUrl()}${config.api.summarize}`;
 
@@ -484,10 +496,8 @@ async function handleSummarizePage(request, sendResponse, retryCount = 0) {
         config.log('📍 Endpoint:', backendUrl);
         config.log('🎯 Action: summarizePage');
         config.log('🌐 Page URL:', url);
+        config.log('📄 HTML content available:', !!htmlContent);
         config.log('🔑 Auth token present:', !!authToken);
-        config.log('📦 Request body:', JSON.stringify({
-          url: url
-        }, null, 2));
 
         const headers = {
           'Content-Type': 'application/json'
@@ -506,6 +516,12 @@ async function handleSummarizePage(request, sendResponse, retryCount = 0) {
         const requestBody = {
           url: url
         };
+
+        // Add HTML content if available
+        if (htmlContent) {
+          requestBody.html = htmlContent;
+          config.log('📦 Including HTML content in request');
+        }
 
         // Add custom prompt if provided
         if (request.customPrompt) {

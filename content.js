@@ -43,9 +43,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       status: 'First sentence highlighted!',
       sentence: highlightedSentence
     });
-  } else if (request.action === 'getHTML') {
+  } else if (request.action === 'getHTML' || request.action === 'getPageContent') {
     // Return the HTML content of the page
-    console.log('Trace extension: getHTML request received');
+    console.log('Trace extension: getHTML/getPageContent request received');
     try {
       const html = document.documentElement.outerHTML;
       console.log('Trace extension: HTML extracted, length:', html.length);
