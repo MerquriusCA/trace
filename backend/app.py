@@ -2320,9 +2320,12 @@ def summarize_with_auth(current_user):
             page_content = clean_html_content(html_content)
         else:
             # Fetch page content from URL
+            print(f"🌐 Fetching page content from URL: {url}")
             page_content = fetch_page_content(url)
             if not page_content:
                 return jsonify({'success': False, 'error': 'Unable to fetch page content'}), 400
+            print(f"✅ Fetched content (length: {len(page_content)})")
+            print(f"📝 First 500 chars of fetched content: {page_content[:500]}...")
         
         # Call OpenAI API
         if action == 'analyze':
