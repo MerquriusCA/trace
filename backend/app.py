@@ -3069,39 +3069,40 @@ Include exactly 3 points with 2-3 supporting quotes each.''',
         'technical': '''Return a JSON object with this exact structure:
 
 {
-  "SUMMARY": "One precise sentence that captures the overall technical concept, purpose, or domain of this article",
+  "SUMMARY": "One precise sentence that captures the overall purpose, topic, or main finding of this article",
   "POINTS": [
     {
-      "point": "First specific technical finding, methodology, or conclusion with precise detail (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that best captures that point of the sentence to make it easier for the user to digest information.",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+      "point": "First specific finding, key detail, or main argument with precise detail (must be distinct from the SUMMARY) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that best captures that point of the sentence to make it easier for the user to digest information.",
+      "quotes": ["First supporting quote", "Second supporting quote", "Third evidence if relevant"]
     },
     {
-      "point": "Second specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that best captures that point of the sentence to make it easier for the user to digest information.",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+      "point": "Second specific finding, key detail, or main argument with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that best captures that point of the sentence to make it easier for the user to digest information.",
+      "quotes": ["First supporting quote", "Second supporting quote", "Third evidence if relevant"]
     },
     {
-      "point": "Third specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that best captures that point of the sentence to make it easier for the user to digest information.",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+      "point": "Third specific finding, key detail, or main argument with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that best captures that point of the sentence to make it easier for the user to digest information.",
+      "quotes": ["First supporting quote", "Second supporting quote", "Third evidence if relevant"]
     },
     {
-      "point": "Fourth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that best captures that point of the sentence to make it easier for the user to digest information.",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+      "point": "Fourth specific finding, key detail, or main argument with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that best captures that point of the sentence to make it easier for the user to digest information.",
+      "quotes": ["First supporting quote", "Second supporting quote", "Third evidence if relevant"]
     },
     {
-      "point": "Fifth specific technical finding, methodology, or conclusion with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that best captures that point of the sentence to make it easier for the user to digest information.",
-      "quotes": ["First technical quote", "Second supporting data/quote", "Third evidence if relevant"]
+      "point": "Fifth specific finding, key detail, or main argument with precise detail (must be distinct from SUMMARY and other points) - write this in your own words as a clear interpretation or summary of what the article says. **Use markdown bold** (double asterisks) around 1-3 key words that best captures that point of the sentence to make it easier for the user to digest information.",
+      "quotes": ["First supporting quote", "Second supporting quote", "Third evidence if relevant"]
     }
   ]
 }
 
 CRITICAL RULES:
-1. The SUMMARY should be a high-level overview of the technical concept, domain, or purpose
+1. The SUMMARY should be a high-level overview of the article's main topic, purpose, or key finding - match the article's actual subject matter
 2. Each "point" must be YOUR interpretation/summary in your own words - NOT a direct quote or paraphrase of a quote
 3. Each "point" must be substantially different from its supporting quotes - the point explains WHAT the finding means, the quotes provide the EVIDENCE
 4. Each "quote" must be a verbatim excerpt from the article text
 5. If a point sounds too similar to a quote, rewrite the point to be more interpretive and explanatory
 6. Each point must be unique and non-overlapping with other points
 7. Use **markdown bold syntax** (double asterisks like **this**) to emphasize 1-3 key words in each point that best captures that sentence
+8. IMPORTANT: Summarize whatever topic the article is actually about - do not force technical terminology if the article is about politics, law, sports, business, or other non-technical topics
 
 Include exactly 5 points with 2-3 supporting quotes each.'''
     }
