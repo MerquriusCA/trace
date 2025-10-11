@@ -1132,11 +1132,7 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, textarea::pla
 
 /* Bold emphasis in summaries */
 .summary-content strong {
-  color: hsl(var(--foreground));
   font-weight: 600;
-  background: hsl(var(--primary) / 0.1);
-  padding: 0 2px;
-  border-radius: 2px;
 }
 
 /* Expandable Quotes Styles */
