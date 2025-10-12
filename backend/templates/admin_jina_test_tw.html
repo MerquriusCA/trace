@@ -231,15 +231,29 @@
 
             showStatus('⏳ Calling Jina AI Reader...', 'blue');
 
+            // Debug: Check if token exists
+            const authToken = localStorage.getItem('adminToken');
+            console.log('Token exists:', !!authToken);
+            console.log('Token preview:', authToken ? authToken.substring(0, 20) + '...' : 'null');
+
             try {
                 const response = await fetch('/api/test-jina', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                        'Authorization': `Bearer ${authToken}`
                     },
                     body: JSON.stringify({ url: url })
                 });
+
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const textResponse = await response.text();
+                    console.error('Non-JSON response:', textResponse.substring(0, 500));
+                    showError('Server returned HTML instead of JSON - authentication may have failed', textResponse.substring(0, 200));
+                    return;
+                }
 
                 const data = await response.json();
 
