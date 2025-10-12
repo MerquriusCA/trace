@@ -1590,14 +1590,16 @@ def test_jina():
 
         print(f"🔗 Calling Jina AI: {jina_url}")
 
+        # Request markdown format - Jina returns plain text by default
         response = requests.get(jina_url, headers={
-            'Accept': 'application/json',
             'X-Return-Format': 'markdown'
         }, timeout=30)
 
         print(f"📥 Response status: {response.status_code}")
+        print(f"📥 Response Content-Type: {response.headers.get('Content-Type')}")
 
         if response.status_code == 200:
+            # Jina returns plain text/markdown directly
             content = response.text
             print(f"✅ Successfully fetched content")
             print(f"📝 Content length: {len(content)} characters")
