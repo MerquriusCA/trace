@@ -330,6 +330,10 @@
                 if (adminLogoLink) {
                     adminLogoLink.href = `/admin/logo?token=${token}`;
                 }
+                const adminJinaTestLink = document.getElementById('adminJinaTestLink');
+                if (adminJinaTestLink) {
+                    adminJinaTestLink.href = `/admin/jina-test?token=${token}`;
+                }
             }
             
             loadUsersData();
