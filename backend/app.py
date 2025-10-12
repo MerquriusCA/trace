@@ -1590,9 +1590,10 @@ def test_jina():
 
         print(f"🔗 Calling Jina AI: {jina_url}")
 
-        # Request markdown format - Jina returns plain text by default
+        # Jina AI returns plain text/markdown by default with minimal headers
         response = requests.get(jina_url, headers={
-            'X-Return-Format': 'markdown'
+            'User-Agent': 'Mozilla/5.0 (compatible; TraceBot/1.0)',
+            'Accept': 'text/plain, text/markdown, */*'
         }, timeout=30)
 
         print(f"📥 Response status: {response.status_code}")
