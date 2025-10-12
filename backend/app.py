@@ -1590,18 +1590,38 @@ def test_jina():
 
         print(f"🔗 Calling Jina AI: {jina_url}")
 
-        # Jina AI returns plain text/markdown by default with minimal headers
+        # Try without Accept header first (should return plain markdown)
         response = requests.get(jina_url, headers={
-            'User-Agent': 'Mozilla/5.0 (compatible; TraceBot/1.0)',
-            'Accept': 'text/plain, text/markdown, */*'
-        }, timeout=30)
+            'User-Agent': 'Mozilla/5.0 (compatible; TraceBot/1.0)'
+        }, timeout=30, allow_redirects=True)
 
         print(f"📥 Response status: {response.status_code}")
         print(f"📥 Response Content-Type: {response.headers.get('Content-Type')}")
+        print(f"📥 Final URL after redirects: {response.url}")
 
         if response.status_code == 200:
-            # Jina returns plain text/markdown directly
             content = response.text
+
+            # Check if we got HTML instead of markdown
+            if content.strip().startswith('<!DOCTYPE') or content.strip().startswith('<html'):
+                print(f"⚠️  Received HTML instead of markdown, trying JSON API method")
+
+                # Try JSON API format
+                response = requests.get(jina_url, headers={
+                    'User-Agent': 'Mozilla/5.0 (compatible; TraceBot/1.0)',
+                    'Accept': 'application/json'
+                }, timeout=30)
+
+                if response.status_code == 200:
+                    try:
+                        json_data = response.json()
+                        # Extract content from JSON response: {"data": {"content": "..."}}
+                        content = json_data.get('data', {}).get('content', '')
+                        print(f"✅ Got content from JSON API")
+                    except:
+                        print(f"❌ Failed to parse JSON response")
+                        content = response.text
+
             print(f"✅ Successfully fetched content")
             print(f"📝 Content length: {len(content)} characters")
             print(f"📝 First 500 chars: {content[:500]}")
