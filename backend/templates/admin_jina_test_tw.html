@@ -155,6 +155,11 @@
             window.location.href = '/admin/login';
         }
 
+        // Store token in localStorage for API calls
+        if (token) {
+            localStorage.setItem('adminToken', token);
+        }
+
         // Preserve token in navigation links
         document.addEventListener('DOMContentLoaded', function() {
             if (token) {
