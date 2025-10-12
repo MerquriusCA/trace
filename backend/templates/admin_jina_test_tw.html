@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jina AI Reader Test - Trace Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-5xl mx-auto p-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Jina AI Reader Test</h1>
+            <p class="text-gray-600">Test fetching article content from any URL using Jina AI Reader API</p>
+        </div>
+
+        <!-- Test Form -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="mb-4">
+                <label for="urlInput" class="block text-sm font-medium text-gray-700 mb-2">
+                    Article URL
+                </label>
+                <input
+                    type="url"
+                    id="urlInput"
+                    placeholder="https://www.cnn.com/2025/10/11/..."
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+            </div>
+
+            <button
+                onclick="testJina()"
+                id="testButton"
+                class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                Test Jina AI Fetch
+            </button>
+        </div>
+
+        <!-- Status Messages -->
+        <div id="statusMessage" class="hidden mb-6"></div>
+
+        <!-- Results -->
+        <div id="resultsSection" class="hidden">
+            <!-- Stats -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Results</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-sm text-gray-600 mb-1">Content Length</div>
+                        <div id="contentLength" class="text-2xl font-bold text-gray-900">-</div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-sm text-gray-600 mb-1">Status</div>
+                        <div id="fetchStatus" class="text-2xl font-bold text-green-600">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">Preview (First 1000 chars)</h3>
+                <div id="contentPreview" class="bg-gray-50 p-4 rounded-lg text-sm text-gray-700 font-mono whitespace-pre-wrap max-h-64 overflow-y-auto"></div>
+            </div>
+
+            <!-- Full Content -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-lg font-semibold text-gray-900">Full Content</h3>
+                    <button
+                        onclick="copyContent()"
+                        class="text-sm bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded transition-colors">
+                        📋 Copy to Clipboard
+                    </button>
+                </div>
+                <div id="fullContent" class="bg-gray-50 p-4 rounded-lg text-sm text-gray-700 font-mono whitespace-pre-wrap max-h-96 overflow-y-auto"></div>
+            </div>
+        </div>
+
+        <!-- Error Display -->
+        <div id="errorSection" class="hidden bg-red-50 border border-red-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-red-900 mb-2">❌ Error</h3>
+            <p id="errorMessage" class="text-red-700"></p>
+            <pre id="errorDetails" class="mt-4 bg-red-100 p-4 rounded text-xs text-red-800 overflow-x-auto"></pre>
+        </div>
+
+        <!-- Back Link -->
+        <div class="mt-8 text-center">
+            <a href="/admin/users" class="text-purple-600 hover:text-purple-700 font-medium">
+                ← Back to Admin Dashboard
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let fullContentData = '';
+
+        async function testJina() {
+            const urlInput = document.getElementById('urlInput');
+            const testButton = document.getElementById('testButton');
+            const statusMessage = document.getElementById('statusMessage');
+            const resultsSection = document.getElementById('resultsSection');
+            const errorSection = document.getElementById('errorSection');
+
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                showError('Please enter a URL');
+                return;
+            }
+
+            // Reset UI
+            resultsSection.classList.add('hidden');
+            errorSection.classList.add('hidden');
+            testButton.disabled = true;
+            testButton.textContent = 'Fetching...';
+
+            showStatus('⏳ Calling Jina AI Reader...', 'blue');
+
+            try {
+                const response = await fetch('/api/test-jina', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus('✅ Successfully fetched content from Jina AI', 'green');
+                    displayResults(data);
+                    fullContentData = data.content;
+                } else {
+                    showError(data.error, data.details);
+                }
+
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            } finally {
+                testButton.disabled = false;
+                testButton.textContent = 'Test Jina AI Fetch';
+            }
+        }
+
+        function displayResults(data) {
+            const resultsSection = document.getElementById('resultsSection');
+            const contentLength = document.getElementById('contentLength');
+            const fetchStatus = document.getElementById('fetchStatus');
+            const contentPreview = document.getElementById('contentPreview');
+            const fullContent = document.getElementById('fullContent');
+
+            contentLength.textContent = data.length.toLocaleString() + ' chars';
+            fetchStatus.textContent = 'Success';
+            contentPreview.textContent = data.preview;
+            fullContent.textContent = data.content;
+
+            resultsSection.classList.remove('hidden');
+        }
+
+        function showStatus(message, color) {
+            const statusMessage = document.getElementById('statusMessage');
+            const colorClasses = {
+                blue: 'bg-blue-50 border-blue-200 text-blue-800',
+                green: 'bg-green-50 border-green-200 text-green-800',
+                red: 'bg-red-50 border-red-200 text-red-800'
+            };
+
+            statusMessage.className = `border rounded-lg p-4 mb-6 ${colorClasses[color]}`;
+            statusMessage.textContent = message;
+            statusMessage.classList.remove('hidden');
+        }
+
+        function showError(message, details) {
+            const errorSection = document.getElementById('errorSection');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorDetails = document.getElementById('errorDetails');
+
+            errorMessage.textContent = message;
+
+            if (details) {
+                errorDetails.textContent = details;
+                errorDetails.classList.remove('hidden');
+            } else {
+                errorDetails.classList.add('hidden');
+            }
+
+            errorSection.classList.remove('hidden');
+        }
+
+        function copyContent() {
+            navigator.clipboard.writeText(fullContentData).then(() => {
+                alert('✅ Content copied to clipboard!');
+            }).catch(err => {
+                alert('❌ Failed to copy: ' + err.message);
+            });
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                testJina();
+            }
+        });
+
+        // Pre-fill with example URL
+        document.getElementById('urlInput').value = 'https://www.cnn.com/2025/10/11/weather/noreaster-storm-east-coast-flooding-winds-climate';
+    </script>
+</body>
+</html>

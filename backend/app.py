@@ -1559,6 +1559,71 @@ def admin_products():
     """Serve the admin products page"""
     return render_template('admin_products_tw.html')
 
+@app.route('/admin/jina-test')
+@require_admin_token
+def admin_jina_test():
+    """Test page for Jina AI Reader API"""
+    return render_template('admin_jina_test_tw.html')
+
+@app.route('/api/test-jina', methods=['POST'])
+@require_admin_token
+def test_jina():
+    """Test Jina AI Reader API with a URL"""
+    try:
+        data = request.get_json()
+        url = data.get('url')
+
+        if not url:
+            return jsonify({
+                'success': False,
+                'error': 'URL is required'
+            }), 400
+
+        print(f"\n{'='*50}")
+        print(f"🧪 TESTING JINA AI READER")
+        print(f"📍 URL: {url}")
+        print(f"{'='*50}")
+
+        # Call Jina AI Reader
+        import requests
+        jina_url = f"https://r.jina.ai/{url}"
+
+        print(f"🔗 Calling Jina AI: {jina_url}")
+
+        response = requests.get(jina_url, headers={
+            'Accept': 'application/json',
+            'X-Return-Format': 'markdown'
+        }, timeout=30)
+
+        print(f"📥 Response status: {response.status_code}")
+
+        if response.status_code == 200:
+            content = response.text
+            print(f"✅ Successfully fetched content")
+            print(f"📝 Content length: {len(content)} characters")
+            print(f"📝 First 500 chars: {content[:500]}")
+
+            return jsonify({
+                'success': True,
+                'content': content,
+                'length': len(content),
+                'preview': content[:1000]
+            })
+        else:
+            print(f"❌ Jina AI error: {response.status_code}")
+            return jsonify({
+                'success': False,
+                'error': f'Jina AI returned status {response.status_code}',
+                'details': response.text[:500]
+            }), 400
+
+    except Exception as e:
+        print(f"💥 Exception in test_jina: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @app.route('/subscription-success')
 def subscription_success():
     """Success page after Stripe checkout"""
