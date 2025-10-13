@@ -2543,6 +2543,11 @@ def summarize_with_auth(current_user):
                     except (json.JSONDecodeError, KeyError) as e:
                         # If JSON parsing fails, keep the original summary
                         print(f"📝 Could not parse JSON summary, using original: {e}")
+                        print(f"📝 Problem area around char {getattr(e, 'pos', 'unknown')}")
+                        if hasattr(e, 'pos') and e.pos:
+                            start = max(0, e.pos - 100)
+                            end = min(len(cleaned_summary), e.pos + 100)
+                            print(f"📝 Context: ...{cleaned_summary[start:end]}...")
                         pass
                 else:
                     print(f"📋 Non-article message detected, skipping JSON parsing")
