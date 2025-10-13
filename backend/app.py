@@ -2902,12 +2902,43 @@ def webhook_status():
 
 # Utility functions (reuse from existing server)
 def fetch_page_content(url):
-    """Fetch and clean page content from URL"""
-    import time
-
+    """Fetch and clean page content from URL using enhanced scraper"""
     try:
-        print(f"Fetching content from: {url}")
+        from services.content_scraper import scrape_url_content
+        
+        print(f"🌐 Enhanced scraping content from: {url}")
+        
+        # Use the new enhanced scraper
+        result = scrape_url_content(url, timeout=15, max_content_length=10000)
+        
+        if result['success']:
+            print(f"✅ Enhanced scraper success: {len(result['content'])} chars")
+            print(f"📝 Title: {result['title']}")
+            print(f"🔧 Method: {result['metadata'].get('extraction_method', 'unknown')}")
+            return result['content']
+        else:
+            print(f"❌ Enhanced scraper failed: {result['error']}")
+            # Fallback to original method
+            return _fallback_fetch_content(url)
+            
+    except ImportError:
+        print("⚠️ Enhanced scraper not available, using fallback method")
+        return _fallback_fetch_content(url)
+    except Exception as e:
+        print(f"💥 Enhanced scraper error: {e}")
+        return _fallback_fetch_content(url)
 
+
+def _fallback_fetch_content(url):
+    """Fallback content fetching using original method"""
+    import time
+    import urllib.request
+    import ssl
+    import re
+    
+    try:
+        print(f"🔄 Using fallback method for: {url}")
+        
         # Add small delay to be more respectful to servers
         time.sleep(0.5)
 
@@ -2947,6 +2978,7 @@ def fetch_page_content(url):
         if len(text) > 5000:
             text = text[:5000]
         
+        print(f"✅ Fallback method success: {len(text)} chars")
         return text
         
     except urllib.error.HTTPError as e:
@@ -2964,11 +2996,51 @@ def fetch_page_content(url):
         return None
 
 def clean_html_content(html):
-    """Clean HTML content for summarization"""
+    """Clean HTML content for summarization using enhanced scraper"""
     try:
-        print(f"Cleaning HTML content (length: {len(html)})")
+        print(f"🧹 Enhanced cleaning HTML content (length: {len(html)})")
+        
+        # Try to use enhanced scraper for HTML content
+        try:
+            from services.content_scraper import ContentScraper
+            from bs4 import BeautifulSoup
+            
+            # Parse HTML with BeautifulSoup
+            soup = BeautifulSoup(html, 'html.parser')
+            
+            # Use the same extraction logic as the scraper
+            scraper = ContentScraper()
+            content_result = scraper._extract_content(soup, "provided_html")
+            
+            if content_result and content_result['content']:
+                cleaned_text = scraper._clean_content(content_result['content'])
+                print(f"✅ Enhanced HTML cleaning success: {len(cleaned_text)} chars")
+                print(f"🔧 Method: {content_result['metadata'].get('extraction_method', 'unknown')}")
+                return cleaned_text
+            else:
+                print("⚠️ Enhanced cleaning failed, using fallback")
+                return _fallback_clean_html(html)
+                
+        except ImportError:
+            print("⚠️ Enhanced scraper not available, using fallback method")
+            return _fallback_clean_html(html)
+        except Exception as e:
+            print(f"💥 Enhanced cleaning error: {e}, using fallback")
+            return _fallback_clean_html(html)
 
-        # Clean HTML - same logic as fetch_page_content
+    except Exception as e:
+        print(f"Error cleaning HTML content: {e}")
+        return None
+
+
+def _fallback_clean_html(html):
+    """Fallback HTML cleaning using original method"""
+    import re
+    
+    try:
+        print(f"🔄 Using fallback HTML cleaning")
+        
+        # Clean HTML - same logic as original fetch_page_content
         html = re.sub(r'<script\b[^<]*(?:(?!</script>)<[^<]*)*</script>', '', html, flags=re.IGNORECASE)
         html = re.sub(r'<style\b[^<]*(?:(?!</style>)<[^<]*)*</style>', '', html, flags=re.IGNORECASE)
         html = re.sub(r'<[^>]+>', ' ', html)
@@ -2979,11 +3051,11 @@ def clean_html_content(html):
         if len(text) > 5000:
             text = text[:5000]
 
-        print(f"Cleaned HTML content (final length: {len(text)})")
+        print(f"✅ Fallback HTML cleaning success: {len(text)} chars")
         return text
 
     except Exception as e:
-        print(f"Error cleaning HTML content: {e}")
+        print(f"Error in fallback HTML cleaning: {e}")
         return None
 
 def get_reading_level_prompts():
