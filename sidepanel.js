@@ -1421,9 +1421,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Settings event listeners
-    cancelSubscriptionButton.addEventListener('click', function() {
-      cancelSubscription();
-    });
+    if (cancelSubscriptionButton) {
+      cancelSubscriptionButton.addEventListener('click', function() {
+        cancelSubscription();
+      });
+    }
     
     startOnboardingButton.addEventListener('click', function() {
       console.log('🚀 Manual onboarding triggered from settings');
@@ -1546,7 +1548,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Show subscription management buttons for active users
       resetSubscriptionButton.style.display = 'flex';
-      cancelSubscriptionButton.style.display = 'block';
+      if (cancelSubscriptionButton) cancelSubscriptionButton.style.display = 'block';
     } else if (status === 'past_due') {
       subscriptionStatusSettings.textContent = '⚠️ Past Due';
       subscriptionStatusSettings.className = 'subscription-status subscription-inactive';
@@ -1554,7 +1556,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Show subscription management buttons for past due users
       resetSubscriptionButton.style.display = 'flex';
-      cancelSubscriptionButton.style.display = 'block';
+      if (cancelSubscriptionButton) cancelSubscriptionButton.style.display = 'block';
     } else if (status === 'canceled') {
       subscriptionStatusSettings.textContent = '❌ Canceled';
       subscriptionStatusSettings.className = 'subscription-status subscription-inactive';
@@ -1562,7 +1564,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Hide subscription management buttons for canceled users
       resetSubscriptionButton.style.display = 'none';
-      cancelSubscriptionButton.style.display = 'none';
+      if (cancelSubscriptionButton) cancelSubscriptionButton.style.display = 'none';
     } else {
       // No active subscription
       subscriptionStatusSettings.textContent = '⭕ No Active Subscription';
@@ -1571,7 +1573,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Hide subscription management buttons for users without subscriptions
       resetSubscriptionButton.style.display = 'none';
-      cancelSubscriptionButton.style.display = 'none';
+      if (cancelSubscriptionButton) cancelSubscriptionButton.style.display = 'none';
     }
   }
   

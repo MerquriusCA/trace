@@ -509,11 +509,7 @@
                     📖 Try Trace on this Article
                 </a>
 
-                <div class="actions" style="margin-top: 32px;">
-                    <button id="closeTabBtn" class="btn btn-primary">Perfect! Close This Tab</button>
-                </div>
-
-                <p style="color: #718096; font-size: 14px; margin-top: 16px;">
+                <p style="color: #718096; font-size: 14px; margin-top: 32px;">
                     Thank you for subscribing! Happy browsing with Trace. 🎉
                 </p>
             </div>
@@ -602,24 +598,6 @@
         document.getElementById('finishOnboardingBtn').addEventListener('click', async () => {
             await savePreferences();
             showStep(4);
-        });
-
-        document.getElementById('closeTabBtn').addEventListener('click', () => {
-            // Try to close the tab
-            try {
-                window.close();
-
-                // If close doesn't work, show instruction
-                setTimeout(() => {
-                    if (!window.closed) {
-                        document.getElementById('closeTabBtn').textContent = 'Please close this tab manually';
-                        document.getElementById('closeTabBtn').style.background = '#718096';
-                    }
-                }, 1000);
-            } catch (e) {
-                document.getElementById('closeTabBtn').textContent = 'Please close this tab manually';
-                document.getElementById('closeTabBtn').style.background = '#718096';
-            }
         });
 
         // Initialize
