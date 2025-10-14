@@ -539,7 +539,8 @@ def create_checkout_session(current_user):
             'success_url': checkout_params['success_url'],
             'cancel_url': checkout_params['cancel_url'],
             'customer_email': current_user.email,
-            'metadata[user_id]': str(current_user.id)
+            'metadata[user_id]': str(current_user.id),
+            'automatic_tax[enabled]': 'true'
         }
         
         response = requests.post(
