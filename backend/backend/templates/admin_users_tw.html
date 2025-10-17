@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Trace Extension</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: 'hsl(260, 84%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(260, 84%, 70%)',
+                            muted: 'hsl(260, 30%, 95%)',
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#c084fc',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7e22ce',
+                            800: '#6b21a8',
+                            900: '#581c87',
+                        },
+                        secondary: {
+                            DEFAULT: 'hsl(217, 91%, 60%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(217, 91%, 65%)',
+                            muted: 'hsl(217, 30%, 95%)',
+                        },
+                        accent: {
+                            DEFAULT: 'hsl(14, 90%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(14, 90%, 70%)',
+                            muted: 'hsl(14, 30%, 95%)',
+                        },
+                        background: 'hsl(240, 10%, 98%)',
+                        foreground: 'hsl(240, 10%, 8%)',
+                        card: {
+                            DEFAULT: 'hsl(0, 0%, 100%)',
+                            foreground: 'hsl(240, 10%, 8%)',
+                        },
+                        muted: {
+                            DEFAULT: 'hsl(240, 5%, 96%)',
+                            foreground: 'hsl(240, 5%, 45%)',
+                        },
+                        destructive: {
+                            DEFAULT: 'hsl(0, 84%, 60%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                        },
+                        border: 'hsl(240, 6%, 90%)',
+                        input: 'hsl(240, 6%, 96%)',
+                        ring: 'hsl(260, 84%, 65%)',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        'heading': ['Space Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'gradient-primary': 'linear-gradient(135deg, hsl(260, 84%, 65%), hsl(217, 91%, 60%))',
+                        'gradient-hero': 'linear-gradient(135deg, hsl(260, 84%, 65%) 0%, hsl(217, 91%, 60%) 50%, hsl(14, 90%, 65%) 100%)',
+                        'gradient-subtle': 'linear-gradient(180deg, hsl(240, 10%, 98%), hsl(240, 5%, 96%))',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 40px hsl(260, 84%, 65%, 0.3)',
+                        'glow-lg': '0 0 60px hsl(260, 84%, 65%, 0.4)',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            'from': { opacity: '0' },
+                            'to': { opacity: '1' },
+                        },
+                        slideUp: {
+                            'from': { 
+                                opacity: '0',
+                                transform: 'translateY(20px)',
+                            },
+                            'to': { 
+                                opacity: '1',
+                                transform: 'translateY(0)',
+                            },
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .text-gradient {
+            background: linear-gradient(135deg, hsl(260, 84%, 65%), hsl(217, 91%, 60%));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hover-lift { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hover-lift:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="bg-background font-sans">
+    <!-- Navigation -->
+    <nav class="bg-card shadow-sm border-b border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <h1 class="text-xl font-heading font-bold text-foreground">Trace Admin</h1>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="/admin/dashboard" id="adminLink" class="border-primary text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Dashboard
+                        </a>
+                        <a href="/admin/feedback" id="adminFeedbackLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Feedback
+                        </a>
+                        <a href="/admin/products" id="adminProductsLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Products
+                        </a>
+                        <a href="/admin/prompt-test" id="adminPromptTestLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Prompt Test
+                        </a>
+                        <a href="/admin/email-test" id="adminEmailTestLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Email Test
+                        </a>
+                        <a href="/admin/style-guide" id="adminStyleGuideLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Style Guide
+                        </a>
+                        <a href="/admin/landing-page" id="adminLandingPageLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Landing Page
+                        </a>
+                        <a href="/admin/logo" id="adminLogoLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Logo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="px-4 sm:px-0">
+            <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <h1 class="text-3xl font-heading font-bold text-gradient mb-2">Admin Dashboard</h1>
+                    <p class="text-lg text-muted-foreground">Comprehensive user management and analytics</p>
+                </div>
+                <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+                    <button onclick="loadUsersData()" class="inline-flex items-center px-4 py-2 bg-gradient-primary text-white rounded-lg font-medium text-sm shadow-glow hover:shadow-glow-lg transition-all hover-lift">
+                        🔄 Refresh Data
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="mt-6">
+                <div class="relative max-w-md">
+                    <input type="text" id="searchInput" placeholder="Search by email or name..." onkeyup="filterTable()"
+                           class="block w-full pl-10 pr-4 py-3 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring text-sm transition-all">
+                    <span class="absolute left-3 top-3.5 text-muted-foreground">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 animate-slide-up">
+                <div class="bg-card border border-border rounded-lg p-6 hover-lift">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <dt class="text-sm font-medium text-muted-foreground truncate">Total Users</dt>
+                            <dd id="totalUsers" class="mt-2 text-3xl font-heading font-bold text-foreground">-</dd>
+                        </div>
+                        <div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-card border border-border rounded-lg p-6 hover-lift">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <dt class="text-sm font-medium text-muted-foreground truncate">Active Subscriptions</dt>
+                            <dd id="activeSubscriptions" class="mt-2 text-3xl font-heading font-bold text-secondary">-</dd>
+                        </div>
+                        <div class="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-card border border-border rounded-lg p-6 hover-lift">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <dt class="text-sm font-medium text-muted-foreground truncate">Total API Requests</dt>
+                            <dd id="totalRequests" class="mt-2 text-3xl font-heading font-bold text-primary">-</dd>
+                        </div>
+                        <div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-card border border-border rounded-lg p-6 hover-lift">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <dt class="text-sm font-medium text-muted-foreground truncate">Monthly Revenue</dt>
+                            <dd id="monthlyRevenue" class="mt-2 text-3xl font-heading font-bold text-accent">-</dd>
+                        </div>
+                        <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Users Table -->
+            <div class="mt-8 flex flex-col">
+                <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                        <div class="bg-card border border-border rounded-lg shadow-md">
+                            <!-- Loading State -->
+                            <div id="loadingMessage" class="bg-card px-6 py-12 text-center">
+                                <div class="inline-flex items-center">
+                                    <div class="animate-spin rounded-full h-6 w-6 border-2 border-muted border-t-primary mr-3"></div>
+                                    <span class="text-muted-foreground">Loading users data...</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Error State -->
+                            <div id="errorMessage" class="hidden bg-destructive/10 border border-destructive/20 rounded-lg p-4 m-4">
+                                <p class="text-sm text-destructive"></p>
+                            </div>
+                            
+                            <!-- Table -->
+                            <table id="usersTable" class="min-w-full divide-y divide-border hidden">
+                                <thead class="bg-muted">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-4 text-left text-sm font-heading font-semibold text-foreground">ID</th>
+                                        <th scope="col" class="px-4 py-4 text-left text-sm font-heading font-semibold text-foreground">User</th>
+                                        <th scope="col" class="px-4 py-4 text-left text-sm font-heading font-semibold text-foreground">Subscription</th>
+                                        <th scope="col" class="px-4 py-4 text-left text-sm font-heading font-semibold text-foreground">Usage</th>
+                                        <th scope="col" class="px-4 py-4 text-left text-sm font-heading font-semibold text-foreground">Cost</th>
+                                        <th scope="col" class="px-4 py-4 text-left text-sm font-heading font-semibold text-foreground">Joined</th>
+                                        <th scope="col" class="relative py-4 pl-3 pr-4 sm:pr-6">
+                                            <span class="sr-only">Actions</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody" class="divide-y divide-border bg-card">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        let allUsersData = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Preserve token in navigation links
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            if (token) {
+                const adminLink = document.getElementById('adminLink');
+                const adminFeedbackLink = document.getElementById('adminFeedbackLink');
+                const adminProductsLink = document.getElementById('adminProductsLink');
+                const adminPromptTestLink = document.getElementById('adminPromptTestLink');
+                const adminEmailTestLink = document.getElementById('adminEmailTestLink');
+                const adminStyleGuideLink = document.getElementById('adminStyleGuideLink');
+
+                if (adminLink) {
+                    adminLink.href = `/admin/dashboard?token=${token}`;
+                }
+                if (adminFeedbackLink) {
+                    adminFeedbackLink.href = `/admin/feedback?token=${token}`;
+                }
+                if (adminProductsLink) {
+                    adminProductsLink.href = `/admin/products?token=${token}`;
+                }
+                if (adminPromptTestLink) {
+                    adminPromptTestLink.href = `/admin/prompt-test?token=${token}`;
+                }
+                if (adminEmailTestLink) {
+                    adminEmailTestLink.href = `/admin/email-test?token=${token}`;
+                }
+                if (adminStyleGuideLink) {
+                    adminStyleGuideLink.href = `/admin/style-guide?token=${token}`;
+                }
+                const adminLandingPageLink = document.getElementById('adminLandingPageLink');
+                if (adminLandingPageLink) {
+                    adminLandingPageLink.href = `/admin/landing-page?token=${token}`;
+                }
+                const adminLogoLink = document.getElementById('adminLogoLink');
+                if (adminLogoLink) {
+                    adminLogoLink.href = `/admin/logo?token=${token}`;
+                }
+            }
+            
+            loadUsersData();
+        });
+        
+        async function loadUsersData() {
+            const loadingEl = document.getElementById('loadingMessage');
+            const errorEl = document.getElementById('errorMessage');
+            const tableEl = document.getElementById('usersTable');
+            
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            tableEl.classList.add('hidden');
+            
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const token = urlParams.get('token') || localStorage.getItem('authToken');
+                
+                if (!token) {
+                    showError('Authentication required. Please provide a token.');
+                    return;
+                }
+                
+                const response = await fetch('/api/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch users data');
+                }
+                
+                const data = await response.json();
+                allUsersData = data.users || [];
+                
+                updateOverviewStats(data.stats);
+                renderUsersTable(allUsersData);
+                
+                loadingEl.classList.add('hidden');
+                tableEl.classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showError('Failed to load users data. ' + error.message);
+            }
+        }
+        
+        function updateOverviewStats(stats) {
+            document.getElementById('totalUsers').textContent = stats.total_users || 0;
+            document.getElementById('activeSubscriptions').textContent = stats.active_subscriptions || 0;
+            document.getElementById('totalRequests').textContent = formatNumber(stats.total_requests || 0);
+            document.getElementById('monthlyRevenue').textContent = '$' + (stats.monthly_revenue || 0).toFixed(2);
+        }
+        
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (!users || users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-500">No users found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = users.map(user => {
+                const subscriptionBadge = getSubscriptionBadge(user.subscription_status);
+                const joinedDate = user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A';
+                const lastActive = user.last_active ? new Date(user.last_active).toLocaleDateString() : 'Never';
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const token = urlParams.get('token') || '';
+                
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">${user.id}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm">
+                            <div class="flex items-center">
+                                <div class="h-10 w-10 flex-shrink-0">
+                                    <div class="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
+                                        <span class="text-primary-700 font-medium">${(user.name || user.email || 'U')[0].toUpperCase()}</span>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="font-medium text-gray-900">${user.name || 'No name'}</div>
+                                    <div class="text-gray-500">${user.email || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm">
+                            ${subscriptionBadge}
+                            <div class="text-xs text-gray-500 mt-1">${user.subscription_plan || 'Free'}</div>
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm">
+                            <div class="text-gray-900">${user.total_requests || 0} total</div>
+                            <div class="text-gray-500">${user.monthly_requests || 0} this month</div>
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
+                            $${(user.total_cost || 0).toFixed(2)}
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            <div>${joinedDate}</div>
+                            <div class="text-xs">Last: ${lastActive}</div>
+                        </td>
+                        <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                            <a href="/admin/user/${user.id}/dashboard${token ? '?token=' + token : ''}" 
+                               class="text-primary-600 hover:text-primary-900">
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function getSubscriptionBadge(status) {
+            if (!status || status === 'inactive') {
+                return '<span class="inline-flex rounded-full bg-gray-100 px-2 text-xs font-semibold leading-5 text-gray-800">Inactive</span>';
+            } else if (status === 'active') {
+                return '<span class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">Active</span>';
+            } else if (status === 'trial' || status === 'free_trial') {
+                return '<span class="inline-flex rounded-full bg-blue-100 px-2 text-xs font-semibold leading-5 text-blue-800">Trial</span>';
+            } else if (status === 'cancelled') {
+                return '<span class="inline-flex rounded-full bg-red-100 px-2 text-xs font-semibold leading-5 text-red-800">Cancelled</span>';
+            }
+            return '<span class="inline-flex rounded-full bg-gray-100 px-2 text-xs font-semibold leading-5 text-gray-800">' + status + '</span>';
+        }
+        
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const filteredUsers = allUsersData.filter(user => {
+                const email = (user.email || '').toLowerCase();
+                const name = (user.name || '').toLowerCase();
+                return email.includes(filter) || name.includes(filter);
+            });
+            renderUsersTable(filteredUsers);
+        }
+        
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+        
+        function showError(message) {
+            const loadingEl = document.getElementById('loadingMessage');
+            const errorEl = document.getElementById('errorMessage');
+            const tableEl = document.getElementById('usersTable');
+            
+            loadingEl.classList.add('hidden');
+            errorEl.classList.remove('hidden');
+            errorEl.querySelector('p').textContent = message;
+            tableEl.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

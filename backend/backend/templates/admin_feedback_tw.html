@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Feedback - Trace Extension</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: 'hsl(260, 84%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(260, 84%, 70%)',
+                            muted: 'hsl(260, 30%, 95%)',
+                        },
+                        secondary: {
+                            DEFAULT: 'hsl(217, 91%, 60%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(217, 91%, 65%)',
+                            muted: 'hsl(217, 30%, 95%)',
+                        },
+                        accent: {
+                            DEFAULT: 'hsl(14, 90%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(14, 90%, 70%)',
+                            muted: 'hsl(14, 30%, 95%)',
+                        },
+                        background: 'hsl(240, 10%, 98%)',
+                        foreground: 'hsl(240, 10%, 8%)',
+                        card: {
+                            DEFAULT: 'hsl(0, 0%, 100%)',
+                            foreground: 'hsl(240, 10%, 8%)',
+                        },
+                        muted: {
+                            DEFAULT: 'hsl(240, 5%, 96%)',
+                            foreground: 'hsl(240, 5%, 45%)',
+                        },
+                        destructive: {
+                            DEFAULT: 'hsl(0, 84%, 60%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                        },
+                        border: 'hsl(240, 6%, 90%)',
+                        input: 'hsl(240, 6%, 96%)',
+                        ring: 'hsl(260, 84%, 65%)',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        'heading': ['Space Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'gradient-primary': 'linear-gradient(135deg, hsl(260, 84%, 65%), hsl(217, 91%, 60%))',
+                        'gradient-hero': 'linear-gradient(135deg, hsl(260, 84%, 65%) 0%, hsl(217, 91%, 60%) 50%, hsl(14, 90%, 65%) 100%)',
+                        'gradient-subtle': 'linear-gradient(180deg, hsl(240, 10%, 98%), hsl(240, 5%, 96%))',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 40px hsl(260, 84%, 65%, 0.3)',
+                        'glow-lg': '0 0 60px hsl(260, 84%, 65%, 0.4)',
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .text-gradient {
+            background: linear-gradient(135deg, hsl(260, 84%, 65%), hsl(217, 91%, 60%));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hover-lift { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hover-lift:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="bg-background min-h-screen font-sans">
+    <!-- Navigation -->
+    <nav class="bg-card shadow-sm border-b border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <h1 class="text-xl font-heading font-bold text-foreground">Trace Admin</h1>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="/admin/dashboard" id="adminLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Dashboard
+                        </a>
+                        <a href="/admin/feedback" id="adminFeedbackLink" class="border-primary text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Feedback
+                        </a>
+                        <a href="/admin/products" id="adminProductsLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Products
+                        </a>
+                        <a href="/admin/prompt-test" id="adminPromptTestLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Prompt Test
+                        </a>
+                        <a href="/admin/email-test" id="adminEmailTestLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Email Test
+                        </a>
+                        <a href="/admin/style-guide" id="adminStyleGuideLink" class="border-transparent text-muted-foreground hover:border-border hover:text-foreground inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all">
+                            Style Guide
+                        </a>
+                        <a href="/admin/landing-page" id="adminLandingPageLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Landing Page
+                        </a>
+                        <a href="/admin/logo" id="adminLogoLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Logo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <!-- Filter Controls -->
+            <div class="mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div class="mb-4 sm:mb-0">
+                        <h2 class="text-2xl font-heading font-bold text-gradient">User Feedback</h2>
+                        <p class="text-muted-foreground">View and manage user feedback submissions</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <select id="typeFilter" class="px-3 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-all">
+                            <option value="">All Types</option>
+                            <option value="bug">Bug Reports</option>
+                            <option value="feature">Feature Requests</option>
+                            <option value="general">General Feedback</option>
+                        </select>
+                        <button onclick="refreshFeedback()" class="px-4 py-2 bg-gradient-primary text-white rounded-lg font-medium hover:shadow-glow transition-all hover-lift">
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading" class="text-center py-8">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-muted border-t-primary"></div>
+                <p class="mt-2 text-muted-foreground">Loading feedback...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="error" class="hidden bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <div class="w-5 h-5 bg-destructive/20 rounded-full flex items-center justify-center">
+                            <span class="text-destructive text-sm">✗</span>
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <p id="errorMessage" class="text-sm text-destructive"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Table -->
+            <div id="feedbackTable" class="hidden bg-card border border-border rounded-lg overflow-hidden">
+                <ul id="feedbackList" class="divide-y divide-border">
+                    <!-- Feedback items will be populated here -->
+                </ul>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="hidden bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 mt-6 rounded-md shadow">
+                <div class="flex-1 flex justify-between sm:hidden">
+                    <button id="prevMobile" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Previous
+                    </button>
+                    <button id="nextMobile" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Next
+                    </button>
+                </div>
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Showing <span id="showingStart">1</span> to <span id="showingEnd">10</span> of <span id="totalCount">0</span> feedback submissions
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" id="paginationNav">
+                            <!-- Pagination buttons will be generated here -->
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+        let currentFilter = '';
+
+        // Get JWT token from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        if (!token) {
+            window.location.href = '/admin/login';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Preserve token in navigation links
+            if (token) {
+                const adminLink = document.getElementById('adminLink');
+                const adminFeedbackLink = document.getElementById('adminFeedbackLink');
+                const adminProductsLink = document.getElementById('adminProductsLink');
+                const adminPromptTestLink = document.getElementById('adminPromptTestLink');
+                const adminStyleGuideLink = document.getElementById('adminStyleGuideLink');
+                
+                if (adminLink) {
+                    adminLink.href = `/admin/dashboard?token=${token}`;
+                }
+                if (adminFeedbackLink) {
+                    adminFeedbackLink.href = `/admin/feedback?token=${token}`;
+                }
+                if (adminProductsLink) {
+                    adminProductsLink.href = `/admin/products?token=${token}`;
+                }
+                if (adminPromptTestLink) {
+                    adminPromptTestLink.href = `/admin/prompt-test?token=${token}`;
+                }
+                if (adminStyleGuideLink) {
+                    adminStyleGuideLink.href = `/admin/style-guide?token=${token}`;
+                }
+                const adminLandingPageLink = document.getElementById('adminLandingPageLink');
+                if (adminLandingPageLink) {
+                    adminLandingPageLink.href = `/admin/landing-page?token=${token}`;
+                }
+                const adminLogoLink = document.getElementById('adminLogoLink');
+                if (adminLogoLink) {
+                    adminLogoLink.href = `/admin/logo?token=${token}`;
+                }
+            }
+        });
+
+        async function loadFeedback(page = 1, type = '') {
+            try {
+                document.getElementById('loading').classList.remove('hidden');
+                document.getElementById('error').classList.add('hidden');
+                document.getElementById('feedbackTable').classList.add('hidden');
+                document.getElementById('pagination').classList.add('hidden');
+
+                const params = new URLSearchParams({ page: page });
+                if (type) params.append('type', type);
+
+                const response = await fetch(`/api/admin/feedback?${params}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayFeedback(data.feedback);
+                    updatePagination(data.pagination);
+                    currentPage = data.pagination.page;
+                    totalPages = data.pagination.pages;
+                } else {
+                    throw new Error(data.error || 'Failed to load feedback');
+                }
+
+            } catch (error) {
+                console.error('Error loading feedback:', error);
+                showError(error.message);
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+
+        function displayFeedback(feedback) {
+            const feedbackList = document.getElementById('feedbackList');
+            feedbackList.innerHTML = '';
+
+            if (feedback.length === 0) {
+                feedbackList.innerHTML = `
+                    <li class="px-6 py-8 text-center">
+                        <p class="text-gray-500">No feedback found</p>
+                    </li>
+                `;
+            } else {
+                feedback.forEach(item => {
+                    const typeColor = {
+                        'bug': 'bg-red-100 text-red-800',
+                        'feature': 'bg-blue-100 text-blue-800',
+                        'general': 'bg-gray-100 text-gray-800'
+                    }[item.feedback_type] || 'bg-gray-100 text-gray-800';
+
+                    const date = new Date(item.created_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    feedbackList.innerHTML += `
+                        <li class="px-6 py-4">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="px-2 py-1 text-xs font-medium rounded-full ${typeColor}">
+                                                ${item.feedback_type.charAt(0).toUpperCase() + item.feedback_type.slice(1)}
+                                            </span>
+                                            <p class="text-sm font-medium text-gray-900">${item.user_name || 'Unknown User'}</p>
+                                            <p class="text-sm text-gray-500">${item.user_email || ''}</p>
+                                        </div>
+                                        <p class="text-sm text-gray-500">${date}</p>
+                                    </div>
+                                    <div class="mt-2">
+                                        <p class="text-sm text-gray-700">${item.message}</p>
+                                    </div>
+                                    ${item.page_url ? `
+                                        <div class="mt-2">
+                                            <p class="text-xs text-gray-500">
+                                                Page: <a href="${item.page_url}" target="_blank" class="text-primary-600 hover:text-primary-700">${item.page_title || item.page_url}</a>
+                                            </p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </li>
+                    `;
+                });
+            }
+
+            document.getElementById('feedbackTable').classList.remove('hidden');
+        }
+
+        function updatePagination(pagination) {
+            if (pagination.pages <= 1) {
+                document.getElementById('pagination').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('showingStart').textContent = ((pagination.page - 1) * pagination.per_page + 1);
+            document.getElementById('showingEnd').textContent = Math.min(pagination.page * pagination.per_page, pagination.total);
+            document.getElementById('totalCount').textContent = pagination.total;
+
+            // Generate pagination buttons
+            const nav = document.getElementById('paginationNav');
+            nav.innerHTML = '';
+
+            // Previous button
+            if (pagination.has_prev) {
+                nav.innerHTML += `
+                    <button onclick="loadFeedback(${pagination.page - 1}, '${currentFilter}')" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        Previous
+                    </button>
+                `;
+            }
+
+            // Page numbers
+            for (let i = Math.max(1, pagination.page - 2); i <= Math.min(pagination.pages, pagination.page + 2); i++) {
+                const isActive = i === pagination.page;
+                nav.innerHTML += `
+                    <button onclick="loadFeedback(${i}, '${currentFilter}')" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium ${isActive ? 'bg-primary-50 border-primary-500 text-primary-600' : 'bg-white text-gray-700 hover:bg-gray-50'}">
+                        ${i}
+                    </button>
+                `;
+            }
+
+            // Next button
+            if (pagination.has_next) {
+                nav.innerHTML += `
+                    <button onclick="loadFeedback(${pagination.page + 1}, '${currentFilter}')" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        Next
+                    </button>
+                `;
+            }
+
+            document.getElementById('pagination').classList.remove('hidden');
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('error').classList.remove('hidden');
+        }
+
+        function refreshFeedback() {
+            const typeFilter = document.getElementById('typeFilter').value;
+            currentFilter = typeFilter;
+            loadFeedback(1, typeFilter);
+        }
+
+        // Event listeners
+        document.getElementById('typeFilter').addEventListener('change', refreshFeedback);
+
+        // Initial load
+        loadFeedback();
+    </script>
+</body>
+</html>

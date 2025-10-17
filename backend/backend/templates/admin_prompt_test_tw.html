@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Testing - Trace Admin</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: 'hsl(260, 84%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(260, 84%, 70%)',
+                            muted: 'hsl(260, 30%, 95%)',
+                        },
+                        secondary: {
+                            DEFAULT: 'hsl(217, 91%, 60%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(217, 91%, 65%)',
+                            muted: 'hsl(217, 30%, 95%)',
+                        },
+                        accent: {
+                            DEFAULT: 'hsl(14, 90%, 65%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                            hover: 'hsl(14, 90%, 70%)',
+                            muted: 'hsl(14, 30%, 95%)',
+                        },
+                        background: 'hsl(240, 10%, 98%)',
+                        foreground: 'hsl(240, 10%, 8%)',
+                        card: {
+                            DEFAULT: 'hsl(0, 0%, 100%)',
+                            foreground: 'hsl(240, 10%, 8%)',
+                        },
+                        muted: {
+                            DEFAULT: 'hsl(240, 5%, 96%)',
+                            foreground: 'hsl(240, 5%, 45%)',
+                        },
+                        destructive: {
+                            DEFAULT: 'hsl(0, 84%, 60%)',
+                            foreground: 'hsl(0, 0%, 98%)',
+                        },
+                        border: 'hsl(240, 6%, 90%)',
+                        input: 'hsl(240, 6%, 96%)',
+                        ring: 'hsl(260, 84%, 65%)',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        'heading': ['Space Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'gradient-primary': 'linear-gradient(135deg, hsl(260, 84%, 65%), hsl(217, 91%, 60%))',
+                        'gradient-hero': 'linear-gradient(135deg, hsl(260, 84%, 65%) 0%, hsl(217, 91%, 60%) 50%, hsl(14, 90%, 65%) 100%)',
+                        'gradient-subtle': 'linear-gradient(180deg, hsl(240, 10%, 98%), hsl(240, 5%, 96%))',
+                    },
+                    boxShadow: {
+                        'glow': '0 0 40px hsl(260, 84%, 65%, 0.3)',
+                        'glow-lg': '0 0 60px hsl(260, 84%, 65%, 0.4)',
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .text-gradient {
+            background: linear-gradient(135deg, hsl(260, 84%, 65%), hsl(217, 91%, 60%));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hover-lift { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hover-lift:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="bg-background min-h-screen font-sans">
+    <!-- Navigation -->
+    <nav class="bg-card shadow-sm border-b border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <h1 class="text-xl font-heading font-bold text-foreground">Trace Admin</h1>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="/admin/dashboard" id="adminLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Dashboard
+                        </a>
+                        <a href="/admin/feedback" id="adminFeedbackLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Feedback
+                        </a>
+                        <a href="/admin/products" id="adminProductsLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Products
+                        </a>
+                        <a href="/admin/prompt-test" id="adminPromptTestLink" class="border-primary-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Prompt Test
+                        </a>
+                        <a href="/admin/email-test" id="adminEmailTestLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Email Test
+                        </a>
+                        <a href="/admin/style-guide" id="adminStyleGuideLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Style Guide
+                        </a>
+                        <a href="/admin/landing-page" id="adminLandingPageLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Landing Page
+                        </a>
+                        <a href="/admin/logo" id="adminLogoLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Logo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <!-- Configuration Panel - Horizontal Layout -->
+            <div class="bg-card border border-border rounded-lg p-6 mb-6 hover-lift">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <!-- Test Articles and URL Input -->
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-900 mb-3">Select Test Article or Enter URL</h3>
+
+                        <!-- URL Input Option -->
+                        <div class="mb-3">
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="article" value="custom" class="mr-2">
+                                <div class="flex-1">
+                                    <div class="font-medium">🌐 Custom URL</div>
+                                    <div class="text-xs text-gray-500">Enter any webpage URL</div>
+                                </div>
+                            </label>
+                            <div id="urlInputContainer" class="mt-2 ml-6">
+                                <input type="url" id="customUrl" placeholder="https://example.com/article"
+                                       class="w-full px-3 py-2 text-sm bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-all">
+                                <div class="text-xs text-gray-500 mt-1">⚠️ Some sites may block automated access</div>
+                            </div>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="relative mb-3">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-gray-200"></div>
+                            </div>
+                            <div class="relative flex justify-center text-xs text-gray-500">
+                                <span class="bg-white px-2">Or choose test article</span>
+                            </div>
+                        </div>
+
+                        <!-- Test Articles -->
+                        <div class="space-y-1">
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="article" value="tech" class="mr-2" checked>
+                                <div>
+                                    <div class="font-medium">TechCrunch: AI</div>
+                                    <div class="text-xs text-gray-500">AI developments</div>
+                                </div>
+                            </label>
+
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="article" value="science" class="mr-2">
+                                <div>
+                                    <div class="font-medium">Nature: Climate</div>
+                                    <div class="text-xs text-gray-500">Ocean currents</div>
+                                </div>
+                            </label>
+
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="article" value="business" class="mr-2">
+                                <div>
+                                    <div class="font-medium">WSJ: Markets</div>
+                                    <div class="text-xs text-gray-500">Tech stocks analysis</div>
+                                </div>
+                            </label>
+
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="article" value="health" class="mr-2">
+                                <div>
+                                    <div class="font-medium">Harvard: Sleep</div>
+                                    <div class="text-xs text-gray-500">Sleep research</div>
+                                </div>
+                            </label>
+
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="article" value="history" class="mr-2">
+                                <div>
+                                    <div class="font-medium">Smithsonian</div>
+                                    <div class="text-xs text-gray-500">Maya discovery</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Reader Type -->
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-900 mb-3">Reader Type</h3>
+                        <div class="space-y-1">
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="readerType" value="student" class="mr-2">
+                                <span>🎓 Student</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="readerType" value="business" class="mr-2">
+                                <span>💼 Business Professional</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="readerType" value="researcher" class="mr-2">
+                                <span>🔬 Researcher/Academic</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="readerType" value="tech" class="mr-2">
+                                <span>💻 Tech Professional</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="readerType" value="lifelong_learner" class="mr-2" checked>
+                                <span>📖 Lifelong Learner</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="readerType" value="creative" class="mr-2">
+                                <span>🎨 Creative Professional</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Reading Level -->
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-900 mb-3">Reading Level</h3>
+                        <div class="space-y-1">
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="readingLevel" value="simple" class="mr-2">
+                                <span>🟢 Quick & Simple</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="readingLevel" value="balanced" class="mr-2" checked>
+                                <span>🟡 Clear & Balanced</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="readingLevel" value="detailed" class="mr-2">
+                                <span>🔵 Detailed & Thorough</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="readingLevel" value="technical" class="mr-2">
+                                <span>🟣 Technical & Expert</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Summary Style & Actions -->
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-900 mb-3">Summary Style</h3>
+                        <div class="space-y-1 mb-3">
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="summaryStyle" value="quick" class="mr-2">
+                                <span>Quick Summary (1 sentence)</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="summaryStyle" value="eli8" class="mr-2" checked>
+                                <span>Explain Like I'm 8</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded cursor-pointer hover:bg-gray-50 text-sm">
+                                <input type="radio" name="summaryStyle" value="detailed" class="mr-2">
+                                <span>Detailed Summary (5 bullets)</span>
+                            </label>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="space-y-2">
+                            <button id="checkArticleBtn" class="w-full px-3 py-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground rounded-lg font-medium text-sm transition-all hover-lift">
+                                🔍 Check if Article
+                            </button>
+                            <button id="showPromptBtn" class="w-full px-3 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg font-medium text-sm transition-all hover-lift">
+                                📝 Show Prompt
+                            </button>
+                            <button id="summarizeBtn" class="w-full px-3 py-2 bg-gradient-primary text-white rounded-lg font-medium text-sm shadow-glow hover:shadow-glow-lg transition-all hover-lift">
+                                ⚡ Summarize
+                            </button>
+                            <button id="clearBtn" class="w-full px-3 py-2 bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded-lg font-medium text-sm transition-all hover-lift">
+                                🗑️ Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="space-y-6">
+                <!-- Loading Section -->
+                <div id="loadingSection" class="bg-card border border-border rounded-lg p-6 hidden">
+                    <div class="flex items-center justify-center py-4">
+                        <div class="animate-spin rounded-full h-8 w-8 border-2 border-muted border-t-primary"></div>
+                        <span class="ml-3 text-muted-foreground">Processing...</span>
+                    </div>
+                </div>
+
+                <!-- Error Section -->
+                <div id="errorSection" class="bg-destructive/10 border border-destructive/20 rounded-lg p-6 hidden">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <div class="w-5 h-5 bg-destructive/20 rounded-full flex items-center justify-center">
+                                <span class="text-destructive text-sm">✗</span>
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-heading font-medium text-destructive">Error</h3>
+                            <div class="mt-2 text-sm text-destructive/80">
+                                <p id="errorMessage"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article Detection Result -->
+                <div id="articleCheckSection" class="bg-card border border-border rounded-lg p-6 hidden hover-lift">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-lg font-heading font-semibold text-foreground">Article Detection Result</h2>
+                        <div class="text-sm text-muted-foreground">
+                            <span id="checkResponseTime"></span>
+                        </div>
+                    </div>
+                    <div id="articleCheckContent" class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div id="articleStatus" class="px-3 py-1 rounded-full text-sm font-medium"></div>
+                            <div id="articleConfidence" class="text-sm text-muted-foreground"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-foreground mb-2">Analysis Details:</h4>
+                            <div class="bg-input p-3 rounded-lg">
+                                <div class="text-sm space-y-1">
+                                    <div><strong>Page Type:</strong> <span id="pageType"></span></div>
+                                    <div><strong>Reason:</strong> <span id="checkReason"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generated Prompt -->
+                <div id="promptSection" class="bg-card border border-border rounded-lg p-6 hidden hover-lift">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-lg font-heading font-semibold text-foreground">Generated Prompt</h2>
+                        <button id="copyPromptBtn" class="px-3 py-1 text-sm bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-all">
+                            📋 Copy
+                        </button>
+                    </div>
+                    <pre id="promptDisplay" class="bg-input p-4 rounded-lg text-sm text-foreground whitespace-pre-wrap font-mono overflow-x-auto border border-border"></pre>
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-foreground mb-2">Edit Prompt (Optional)</label>
+                        <textarea id="customPrompt" rows="10" class="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring font-mono text-sm transition-all"></textarea>
+                    </div>
+                </div>
+
+                <!-- Summary Result -->
+                <div id="resultSection" class="bg-card border border-border rounded-lg p-6 hidden hover-lift">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-lg font-heading font-semibold text-foreground">Summary Result</h2>
+                        <div class="text-sm text-muted-foreground">
+                            <span id="tokenCount"></span> | <span id="responseTime"></span>
+                        </div>
+                    </div>
+                    <div id="summaryContent" class="prose max-w-none text-foreground"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Get JWT token from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        if (!token) {
+            window.location.href = '/admin/login';
+        }
+
+        // Function to format JSON summary for display (for test page)
+        function formatJSONSummaryForTestPage(jsonData) {
+            let formattedHTML = '';
+
+            // Extract summary text - handle various formats
+            let summary_text = "";
+            if (jsonData.SUMMARY) {
+                summary_text = jsonData.SUMMARY;
+            } else if (jsonData.summary) {
+                summary_text = jsonData.summary;
+            } else if (jsonData.main_points && jsonData.main_points.summary) {
+                summary_text = jsonData.main_points.summary;
+            }
+
+            if (summary_text) {
+                // Convert markdown bold to HTML
+                summary_text = summary_text.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #333; background: rgba(59, 130, 246, 0.1); padding: 0 2px; border-radius: 2px;">$1</strong>');
+
+                formattedHTML += `<div style="font-style: italic; color: #666; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #e0e0e0; font-size: 16px; line-height: 1.5;">
+                    <strong>Summary:</strong> ${summary_text}
+                </div>`;
+            }
+
+            // Extract main points - handle the actual structure we're getting
+            let main_points = [];
+            if (jsonData.main_points && Array.isArray(jsonData.main_points)) {
+                main_points = jsonData.main_points;
+            } else if (jsonData.key_takeaways) {
+                main_points = jsonData.key_takeaways.map(point => ({ point: point, QUOTES: [] }));
+            } else if (jsonData.points) {
+                main_points = jsonData.points.map(p => ({ point: p.text || p, QUOTES: p.quotes || [] }));
+            }
+
+            if (main_points.length > 0) {
+                formattedHTML += `<div style="margin: 20px 0;"><h3 style="color: #333; margin-bottom: 16px;">Key Points:</h3></div>`;
+
+                main_points.forEach((pointObj, index) => {
+                    let pointText = pointObj.point || pointObj.text || String(pointObj);
+                    // Convert markdown bold to HTML
+                    pointText = pointText.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #333; background: rgba(59, 130, 246, 0.1); padding: 0 2px; border-radius: 2px;">$1</strong>');
+
+                    formattedHTML += `<div style="margin: 16px 0; padding: 16px; background: #fafafa; border-radius: 8px; border-left: 4px solid #3b82f6;">`;
+                    formattedHTML += `<div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px;">`;
+                    formattedHTML += `<span style="color: #3b82f6; font-weight: bold; min-width: 20px;">${index + 1}.</span>`;
+                    formattedHTML += `<div style="flex: 1; font-size: 15px; line-height: 1.5;">${pointText}</div>`;
+                    formattedHTML += `</div>`;
+
+                    // Display quotes for this point
+                    let quotes = pointObj.QUOTES || pointObj.quotes || [];
+                    if (quotes && quotes.length > 0) {
+                        formattedHTML += `<div style="margin-left: 28px;">`;
+                        formattedHTML += `<div style="font-size: 12px; font-weight: bold; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Supporting Evidence:</div>`;
+                        quotes.forEach(quote => {
+                            formattedHTML += `<blockquote style="margin: 6px 0; padding: 8px 12px; background: white; border-radius: 4px; border-left: 3px solid #3b82f6; font-size: 13px; line-height: 1.4; color: #444; font-style: italic;">
+                                "${quote}"
+                            </blockquote>`;
+                        });
+                        formattedHTML += `</div>`;
+                    }
+
+                    formattedHTML += `</div>`;
+                });
+            }
+
+            // Show raw JSON structure for debugging (defaults to open)
+            formattedHTML += `<details open style="margin-top: 24px; padding: 12px; background: #f5f5f5; border-radius: 4px;">
+                <summary style="cursor: pointer; font-weight: bold; color: #666;">🔍 Raw JSON Structure (for debugging)</summary>
+                <pre style="margin: 8px 0; padding: 12px; background: white; border-radius: 4px; overflow-x: auto; font-size: 11px; line-height: 1.3; color: #333; border: 1px solid #e0e0e0;">${JSON.stringify(jsonData, null, 2)}</pre>
+            </details>`;
+
+            return formattedHTML;
+        }
+
+        // Function to format summary with all quotes visible (for test page)
+        function formatSummaryForTestPage(summaryText) {
+            let lines = summaryText.split('\n');
+            let formattedHTML = '';
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+
+                // Handle SUMMARY line
+                if (line.startsWith('SUMMARY:')) {
+                    formattedHTML += `<div style="font-style: italic; color: #666; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #e0e0e0;">
+                        ${line.replace('SUMMARY:', '').trim()}
+                    </div>`;
+                }
+                // Handle bullet points
+                else if (line.startsWith('•')) {
+                    let bulletContent = line.substring(1).trim();
+                    // Convert markdown bold to HTML
+                    bulletContent = bulletContent.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #333; background: rgba(59, 130, 246, 0.1); padding: 0 2px; border-radius: 2px;">$1</strong>');
+
+                    formattedHTML += `<div style="margin: 12px 0;">`;
+                    formattedHTML += `<div style="display: flex; align-items: flex-start; gap: 8px;">`;
+                    formattedHTML += `<span style="color: #3b82f6;">•</span> ${bulletContent}`;
+                    formattedHTML += `</div>`;
+
+                    // Check if next line contains QUOTES
+                    if (i + 1 < lines.length && lines[i + 1].trim().startsWith('QUOTES:')) {
+                        // Add the quotes section (visible by default in test page)
+                        let quotesLine = lines[i + 1].trim().replace('QUOTES:', '').trim();
+                        // Parse quotes - they're comma-separated and in quotes
+                        let quotes = quotesLine.match(/"([^"]*)"/g) || [];
+
+                        formattedHTML += `<div style="margin-top: 8px; margin-left: 24px; padding: 12px; background: #f9fafb; border-radius: 6px; border-left: 3px solid #3b82f6;">`;
+                        formattedHTML += `<div style="font-size: 11px; text-transform: uppercase; color: #666; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.5px;">Supporting Evidence:</div>`;
+
+                        quotes.forEach(quote => {
+                            // Remove surrounding quotes
+                            let cleanQuote = quote.slice(1, -1);
+                            formattedHTML += `<blockquote style="margin: 8px 0; padding: 8px 12px; background: white; border-radius: 4px; border-left: 2px solid rgba(59, 130, 246, 0.3); font-size: 13px; line-height: 1.5; color: #333; font-style: italic;">
+                                ${cleanQuote}
+                            </blockquote>`;
+                        });
+
+                        formattedHTML += `</div>`; // Close quotes section
+                        i++; // Skip the QUOTES line since we've processed it
+                    }
+
+                    formattedHTML += `</div>`; // Close bullet item
+                }
+                // Handle empty lines
+                else if (line === '') {
+                    formattedHTML += '<br>';
+                }
+                // Handle other lines
+                else if (line.trim() !== '') {
+                    formattedHTML += `<div>${line}</div>`;
+                }
+            }
+
+            return formattedHTML;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle article selection and URL input visibility
+            const articleRadios = document.querySelectorAll('input[name="article"]');
+            const urlInputContainer = document.getElementById('urlInputContainer');
+
+            articleRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'custom') {
+                        urlInputContainer.classList.remove('hidden');
+                        document.getElementById('customUrl').focus();
+                    } else {
+                        urlInputContainer.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Preserve token in navigation links
+            if (token) {
+                const adminLink = document.getElementById('adminLink');
+                const adminFeedbackLink = document.getElementById('adminFeedbackLink');
+                const adminProductsLink = document.getElementById('adminProductsLink');
+                const adminPromptTestLink = document.getElementById('adminPromptTestLink');
+                const adminStyleGuideLink = document.getElementById('adminStyleGuideLink');
+                
+                if (adminLink) {
+                    adminLink.href = `/admin/dashboard?token=${token}`;
+                }
+                if (adminFeedbackLink) {
+                    adminFeedbackLink.href = `/admin/feedback?token=${token}`;
+                }
+                if (adminProductsLink) {
+                    adminProductsLink.href = `/admin/products?token=${token}`;
+                }
+                if (adminPromptTestLink) {
+                    adminPromptTestLink.href = `/admin/prompt-test?token=${token}`;
+                }
+                if (adminStyleGuideLink) {
+                    adminStyleGuideLink.href = `/admin/style-guide?token=${token}`;
+                }
+                const adminLandingPageLink = document.getElementById('adminLandingPageLink');
+                if (adminLandingPageLink) {
+                    adminLandingPageLink.href = `/admin/landing-page?token=${token}`;
+                }
+                const adminLogoLink = document.getElementById('adminLogoLink');
+                if (adminLogoLink) {
+                    adminLogoLink.href = `/admin/logo?token=${token}`;
+                }
+            }
+        });
+
+        // Test articles with mock content
+        const testArticles = {
+            tech: {
+                title: "Revolutionary AI Model Achieves Human-Level Reasoning",
+                url: "https://techcrunch.com/2024/ai-breakthrough-llm",
+                content: `Researchers at leading AI labs have announced a breakthrough in artificial intelligence that brings machines closer to human-level reasoning capabilities. The new model, dubbed "ReasonNet," demonstrates unprecedented ability to solve complex logical problems and engage in multi-step reasoning tasks that were previously thought to be decades away.
+
+The breakthrough comes after years of research into transformer architectures and represents a significant leap forward in artificial general intelligence (AGI) development. Unlike previous models that relied heavily on pattern matching and statistical inference, ReasonNet appears to engage in genuine logical reasoning, showing the ability to work through problems step-by-step and explain its reasoning process.
+
+Key capabilities include solving mathematical proofs, engaging in complex scientific reasoning, and demonstrating common-sense understanding that has long eluded AI systems. The model scored 94% on advanced reasoning benchmarks, compared to previous state-of-the-art models that achieved only 67%.
+
+The implications for industries ranging from healthcare and education to scientific research and software development are profound. However, researchers emphasize the importance of careful deployment and ongoing safety research as these capabilities approach human-level performance.`
+            },
+            science: {
+                title: "Major Ocean Current System Shows Signs of Critical Slowdown",
+                url: "https://nature.com/articles/climate-ocean-currents",
+                content: `A comprehensive new study published in Nature Climate Change reveals that the Atlantic Meridional Overturning Circulation (AMOC), a crucial ocean current system that helps regulate global climate, is showing unprecedented signs of weakening that could trigger abrupt climate changes within decades.
+
+The AMOC acts as a massive conveyor belt, transporting warm water northward along the surface and cold water southward at depth. This circulation pattern plays a critical role in maintaining Europe's relatively mild climate and influences weather patterns across the globe.
+
+Researchers analyzed 150 years of temperature and salinity data from across the Atlantic Ocean, using advanced machine learning techniques to identify early warning signals of potential collapse. The study found that key indicators suggest the system may be approaching a critical tipping point, with current strength at its weakest level in over 1,000 years.
+
+If the AMOC were to shut down or significantly weaken, the consequences would include rapid cooling in Europe, rising sea levels along the US East Coast, altered precipitation patterns affecting agriculture globally, and disruption of monsoon systems that billions depend on for freshwater.
+
+The findings underscore the urgent need for aggressive climate action to prevent crossing irreversible tipping points in Earth's climate system.`
+            },
+            business: {
+                title: "Tech Sector Defies Market Volatility with Strong Q4 Performance",
+                url: "https://wsj.com/tech-stocks-q4-analysis",
+                content: `Despite broader market uncertainty and economic headwinds, major technology companies delivered robust fourth-quarter earnings that exceeded analyst expectations, driving a late-year rally in tech stocks and reinforcing the sector's resilience.
+
+Leading the charge were cloud computing giants, with Amazon Web Services reporting 35% year-over-year growth and Microsoft Azure posting 42% growth. The artificial intelligence boom continued to fuel enterprise spending on cloud infrastructure, with companies investing heavily in AI capabilities and data processing capacity.
+
+Semiconductor companies also showed surprising strength, with NVIDIA reporting record quarterly revenue driven by demand for AI chips. Despite earlier concerns about supply chain disruptions and geopolitical tensions affecting chip manufacturing, the sector demonstrated remarkable adaptability and innovation.
+
+Consumer technology companies faced a more mixed landscape, with streaming services and social media platforms grappling with market saturation and increased competition. However, companies that successfully pivoted to AI-enhanced services and productivity tools saw significant user growth and engagement.
+
+The strong performance has led to upgraded outlook forecasts for 2024, with analysts predicting continued growth driven by enterprise AI adoption, edge computing expansion, and the rollout of 5G applications. However, experts caution that regulatory scrutiny and potential economic recession risks could impact the sector's momentum in the coming year.`
+            },
+            health: {
+                title: "Groundbreaking Sleep Study Reveals Critical Links to Immune Function",
+                url: "https://health.harvard.edu/sleep-immune-system",
+                content: `A landmark longitudinal study conducted by Harvard Medical School researchers has uncovered profound connections between sleep quality and immune system function, revealing that even minor sleep disruptions can significantly compromise the body's ability to fight infections and maintain health.
+
+The 10-year study followed 50,000 participants across diverse demographics, tracking their sleep patterns, immune biomarkers, and health outcomes. Using advanced wearable technology and regular blood sampling, researchers discovered that individuals who consistently slept less than 6 hours per night showed 70% higher rates of respiratory infections and took 50% longer to recover from illness.
+
+Perhaps most striking was the discovery that sleep quality matters as much as quantity. Participants with fragmented sleep—frequent awakenings even if total sleep time was adequate—showed similar immune impairments to those with insufficient sleep duration. The study identified specific sleep stages crucial for immune function, particularly deep sleep phases when the body produces infection-fighting cells.
+
+The research team also investigated sleep's role in vaccine effectiveness, finding that people who slept poorly in the weeks following vaccination produced 50% fewer antibodies than well-rested individuals. This finding has significant implications for public health policy and vaccination strategies.
+
+The study's findings support implementing sleep hygiene as a critical component of preventive healthcare, with researchers recommending 7-9 hours of uninterrupted sleep for optimal immune function.`
+            },
+            history: {
+                title: "Advanced LiDAR Survey Reveals Massive Maya Civilization Hidden in Guatemala",
+                url: "https://smithsonianmag.com/maya-discovery-2024",
+                content: `An international team of archaeologists using cutting-edge LiDAR technology has discovered what may be the largest Maya settlement ever found, hidden beneath dense jungle canopy in northern Guatemala. The revelation fundamentally challenges our understanding of ancient Maya civilization's scope and sophistication.
+
+The survey, conducted over 2,100 square kilometers of the Mirador-Calakmul Karst Basin, revealed a massive network of interconnected cities, agricultural systems, and monumental architecture dating from 1000 BCE to 150 CE. The newly mapped settlement includes over 1,000 sites connected by 177 kilometers of raised stone roadways, suggesting a level of regional integration previously unknown in ancient Mesoamerica.
+
+Most remarkably, the LiDAR data revealed sophisticated water management systems, including complex networks of canals, reservoirs, and dams that allowed the Maya to thrive in an otherwise challenging environment. These innovations enabled sustainable agriculture that supported population densities far exceeding previous estimates.
+
+The discovery includes several pyramids larger than those at the famous site of Tikal, with the largest structure measuring over 72 meters in height. Complex palace structures, ball courts, and defensive fortifications indicate a highly organized society with advanced architectural knowledge.
+
+Carbon dating and ceramic analysis suggest this civilization flourished for over a millennium, contradicting theories about early Maya society being composed of scattered, small-scale communities. The findings provide crucial insights into how ancient civilizations managed environmental challenges and organized complex societies.`
+            }
+        };
+
+        // Check if article
+        document.getElementById('checkArticleBtn').addEventListener('click', async function() {
+            const selectedArticle = document.querySelector('input[name="article"]:checked').value;
+
+            let article;
+
+            if (selectedArticle === 'custom') {
+                const customUrl = document.getElementById('customUrl').value.trim();
+                if (!customUrl) {
+                    alert('Please enter a URL to check');
+                    return;
+                }
+
+                article = {
+                    title: 'Custom URL Article',
+                    url: customUrl,
+                    content: null // Will be fetched by backend
+                };
+            } else {
+                article = testArticles[selectedArticle];
+            }
+
+            try {
+                document.getElementById('loadingSection').classList.remove('hidden');
+                document.getElementById('errorSection').classList.add('hidden');
+                document.getElementById('articleCheckSection').classList.add('hidden');
+
+                const startTime = Date.now();
+
+                const response = await fetch('/api/admin/check-article', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        article_url: article.url,
+                        article_content: article.content,
+                        is_custom_url: selectedArticle === 'custom'
+                    })
+                });
+
+                const data = await response.json();
+                const responseTime = Date.now() - startTime;
+
+                if (data.success) {
+                    // Display results
+                    const isArticle = data.analysis.is_article;
+                    const confidence = data.analysis.confidence;
+                    const pageType = data.analysis.page_type;
+                    const reason = data.analysis.reason;
+
+                    // Update status badge
+                    const statusEl = document.getElementById('articleStatus');
+                    if (isArticle) {
+                        statusEl.textContent = '✅ Summarizable Article';
+                        statusEl.className = 'px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800';
+                    } else {
+                        statusEl.textContent = '❌ Not an Article';
+                        statusEl.className = 'px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800';
+                    }
+
+                    // Update other fields
+                    document.getElementById('articleConfidence').textContent = `${confidence}% confidence`;
+                    document.getElementById('pageType').textContent = pageType;
+                    document.getElementById('checkReason').textContent = reason;
+                    document.getElementById('checkResponseTime').textContent = `${responseTime}ms`;
+
+                    document.getElementById('articleCheckSection').classList.remove('hidden');
+                } else {
+                    throw new Error(data.error || 'Article check failed');
+                }
+            } catch (error) {
+                console.error('Article check error:', error);
+                document.getElementById('errorMessage').textContent = error.message;
+                document.getElementById('errorSection').classList.remove('hidden');
+            } finally {
+                document.getElementById('loadingSection').classList.add('hidden');
+            }
+        });
+
+        // Show prompt generation
+        document.getElementById('showPromptBtn').addEventListener('click', async function() {
+            const selectedArticle = document.querySelector('input[name="article"]:checked').value;
+            const readerType = document.querySelector('input[name="readerType"]:checked').value;
+            const readingLevel = document.querySelector('input[name="readingLevel"]:checked').value;
+            const summaryStyle = document.querySelector('input[name="summaryStyle"]:checked').value;
+
+            let article;
+
+            if (selectedArticle === 'custom') {
+                const customUrl = document.getElementById('customUrl').value.trim();
+                if (!customUrl) {
+                    alert('Please enter a URL to test');
+                    return;
+                }
+
+                article = {
+                    title: 'Custom URL Article',
+                    url: customUrl,
+                    content: '[Content will be fetched from URL]'
+                };
+            } else {
+                article = testArticles[selectedArticle];
+            }
+
+            const settings = {
+                reader_type: readerType,
+                reading_level: readingLevel,
+                summary_style: summaryStyle
+            };
+
+            // Generate prompt based on settings
+            let prompt = await generatePrompt(settings, article);
+
+            document.getElementById('promptDisplay').textContent = prompt;
+            document.getElementById('customPrompt').value = prompt;
+            document.getElementById('promptSection').classList.remove('hidden');
+        });
+
+        // Summarize with current settings
+        document.getElementById('summarizeBtn').addEventListener('click', async function() {
+            const selectedArticle = document.querySelector('input[name="article"]:checked').value;
+
+            let article;
+
+            if (selectedArticle === 'custom') {
+                const customUrl = document.getElementById('customUrl').value.trim();
+                if (!customUrl) {
+                    alert('Please enter a URL to test');
+                    return;
+                }
+
+                article = {
+                    title: 'Custom URL Article',
+                    url: customUrl,
+                    content: null // Will be fetched by backend
+                };
+            } else {
+                article = testArticles[selectedArticle];
+            }
+
+            const settings = {
+                reader_type: document.querySelector('input[name="readerType"]:checked').value,
+                reading_level: document.querySelector('input[name="readingLevel"]:checked').value,
+                summary_style: document.querySelector('input[name="summaryStyle"]:checked').value
+            };
+
+            // Use custom prompt if available, otherwise generate
+            let prompt = document.getElementById('customPrompt').value;
+            if (!prompt) {
+                prompt = await generatePrompt(settings, article);
+            }
+
+            try {
+                document.getElementById('loadingSection').classList.remove('hidden');
+                document.getElementById('errorSection').classList.add('hidden');
+                document.getElementById('resultSection').classList.add('hidden');
+
+                const startTime = Date.now();
+
+                const response = await fetch('/api/admin/test-prompt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        article_url: article.url,
+                        article_title: article.title,
+                        article_content: article.content, // Pass content if it's a test article
+                        is_custom_url: selectedArticle === 'custom',
+                        settings: settings
+                    })
+                });
+
+                const data = await response.json();
+                const responseTime = Date.now() - startTime;
+
+                if (data.success) {
+                    // Check if the response is JSON and parse it
+                    let summaryToDisplay = data.summary;
+
+                    try {
+                        // Try to parse as JSON first
+                        const jsonData = JSON.parse(data.summary);
+                        console.log('Parsed JSON structure:', Object.keys(jsonData));
+
+                        // Format JSON for better display
+                        summaryToDisplay = formatJSONSummaryForTestPage(jsonData);
+                    } catch (e) {
+                        // If not JSON, check if it's already formatted text
+                        if (data.summary.includes('SUMMARY:')) {
+                            summaryToDisplay = formatSummaryForTestPage(data.summary);
+                        } else {
+                            // Plain text, just show as is
+                            summaryToDisplay = data.summary.replace(/\n/g, '<br>');
+                        }
+                    }
+
+                    document.getElementById('summaryContent').innerHTML = summaryToDisplay;
+                    document.getElementById('tokenCount').textContent = `${data.token_count || 'N/A'} tokens`;
+                    document.getElementById('responseTime').textContent = `${responseTime}ms`;
+                    document.getElementById('resultSection').classList.remove('hidden');
+                } else {
+                    throw new Error(data.error || 'Unknown error occurred');
+                }
+            } catch (error) {
+                console.error('Summarization error:', error);
+                document.getElementById('errorMessage').textContent = error.message;
+                document.getElementById('errorSection').classList.remove('hidden');
+            } finally {
+                document.getElementById('loadingSection').classList.add('hidden');
+            }
+        });
+
+        // Clear results
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            document.getElementById('promptSection').classList.add('hidden');
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('errorSection').classList.add('hidden');
+            document.getElementById('articleCheckSection').classList.add('hidden');
+            document.getElementById('customPrompt').value = '';
+        });
+
+        // Copy prompt to clipboard
+        document.getElementById('copyPromptBtn').addEventListener('click', function() {
+            const promptText = document.getElementById('promptDisplay').textContent;
+            navigator.clipboard.writeText(promptText).then(() => {
+                this.textContent = '✅ Copied';
+                setTimeout(() => {
+                    this.textContent = '📋 Copy';
+                }, 2000);
+            });
+        });
+
+        async function generatePrompt(settings, article) {
+            // Use UNIFIED backend prompt generation - same as summarize endpoint
+            console.log('🎯 Using unified backend prompt generation');
+
+            const response = await fetch('/api/admin/generate-prompt', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    reading_level: settings.reading_level,
+                    content: article.content || `Article Title: ${article.title}\nArticle URL: ${article.url}`
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error generating prompt: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (!data.success) {
+                throw new Error(data.error || 'Backend prompt generation failed');
+            }
+
+            console.log('✅ Generated unified prompt from backend');
+            return data.prompt;
+        }
+    </script>
+</body>
+</html>

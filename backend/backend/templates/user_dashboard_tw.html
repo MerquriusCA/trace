@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Trace Extension</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe', 
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <h1 class="text-xl font-bold text-gray-900">Trace Admin</h1>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="/admin/dashboard" id="adminDashboardLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Dashboard
+                        </a>
+                        <a href="/admin/feedback" id="adminFeedbackLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Feedback
+                        </a>
+                        <a href="/admin/products" id="adminProductsLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Products
+                        </a>
+                        <a href="/admin/prompt-test" id="adminPromptTestLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Prompt Test
+                        </a>
+                        <a href="/admin/style-guide" id="adminStyleGuideLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Style Guide
+                        </a>
+                        <a href="/admin/landing-page" id="adminLandingPageLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Landing Page
+                        </a>
+                        <a href="/admin/logo" id="adminLogoLink" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Logo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Back Navigation -->
+        <div class="px-4 sm:px-0 mb-6">
+            <a href="/admin/dashboard" id="backLink" class="inline-flex items-center text-sm text-gray-500 hover:text-gray-700">
+                <svg class="-ml-1 mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Back to Dashboard
+            </a>
+        </div>
+        
+        <!-- Header -->
+        <div class="px-4 sm:px-0">
+            <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <h1 id="userTitle" class="text-2xl font-semibold text-gray-900">User Dashboard</h1>
+                    <p id="userEmail" class="mt-2 text-sm text-gray-700">Loading user information...</p>
+                </div>
+                <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+                    <button onclick="loadUserData()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Stats Cards -->
+        <div class="mt-8 px-4 sm:px-0">
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                <!-- Total API Requests -->
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <dt class="text-sm font-medium text-gray-500 truncate">Total API Requests</dt>
+                        <dd id="totalRequests" class="mt-1 text-3xl font-semibold text-blue-600">-</dd>
+                    </div>
+                </div>
+                
+                <!-- Subscription Status -->
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <dt class="text-sm font-medium text-gray-500 truncate">Subscription</dt>
+                        <dd class="mt-1 flex items-center justify-between">
+                            <span id="subscriptionStatus" class="text-lg font-semibold">-</span>
+                            <button id="cancelSubscriptionBtn" onclick="showCancelDialog()" class="hidden ml-2 px-3 py-1 text-sm text-red-600 hover:text-red-700 border border-red-300 hover:border-red-400 rounded-md">
+                                Cancel
+                            </button>
+                        </dd>
+                    </div>
+                </div>
+                
+                <!-- Member Since -->
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <dt class="text-sm font-medium text-gray-500 truncate">Member Since</dt>
+                        <dd id="memberSince" class="mt-1 text-lg font-semibold text-gray-900">-</dd>
+                    </div>
+                </div>
+                
+                <!-- Last Activity -->
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <dt class="text-sm font-medium text-gray-500 truncate">Last Activity</dt>
+                        <dd id="lastActivity" class="mt-1 text-lg font-semibold text-gray-900">-</dd>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Details -->
+        <div class="mt-8 px-4 sm:px-0">
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">User Information</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Personal details and account information.</p>
+                </div>
+                <div class="border-t border-gray-200">
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Full name</dt>
+                            <dd id="userFullName" class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Loading...</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Email address</dt>
+                            <dd id="userEmailDetail" class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Loading...</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">User ID</dt>
+                            <dd id="userId" class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Loading...</dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Google ID</dt>
+                            <dd id="googleId" class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Loading...</dd>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Account created</dt>
+                            <dd id="accountCreated" class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Loading...</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="mt-8 px-4 sm:px-0">
+            <div class="bg-white shadow overflow-hidden sm:rounded-md">
+                <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Activity</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Latest API requests and usage statistics.</p>
+                </div>
+                <ul id="recentActivity" class="divide-y divide-gray-200">
+                    <!-- Activity items will be inserted here -->
+                    <li class="px-4 py-4 sm:px-6">
+                        <div class="text-center text-gray-500">Loading recent activity...</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- Cancel Subscription Confirmation Dialog -->
+    <div id="cancelDialog" class="hidden fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+            <!-- Modal panel -->
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                Cancel Subscription
+                            </h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">
+                                    Are you sure you want to cancel this user's subscription? This action will immediately cancel their subscription and revoke access to AI features. This action cannot be undone.
+                                </p>
+                                <p class="text-sm text-gray-500 mt-2">
+                                    User: <span id="confirmUserEmail" class="font-medium"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" onclick="confirmCancelSubscription()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Cancel Subscription
+                    </button>
+                    <button type="button" onclick="hideCancelDialog()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Keep Subscription
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for auth token
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            if (token) {
+                localStorage.setItem('adminToken', token);
+
+                // Update navigation links with token
+                const adminDashboardLink = document.getElementById('adminDashboardLink');
+                const adminFeedbackLink = document.getElementById('adminFeedbackLink');
+                const adminProductsLink = document.getElementById('adminProductsLink');
+                const adminPromptTestLink = document.getElementById('adminPromptTestLink');
+                const adminStyleGuideLink = document.getElementById('adminStyleGuideLink');
+                const adminLandingPageLink = document.getElementById('adminLandingPageLink');
+                const adminLogoLink = document.getElementById('adminLogoLink');
+                const backLink = document.getElementById('backLink');
+
+                if (adminDashboardLink) {
+                    adminDashboardLink.href = `/admin/dashboard?token=${token}`;
+                }
+                if (adminFeedbackLink) {
+                    adminFeedbackLink.href = `/admin/feedback?token=${token}`;
+                }
+                if (adminProductsLink) {
+                    adminProductsLink.href = `/admin/products?token=${token}`;
+                }
+                if (adminPromptTestLink) {
+                    adminPromptTestLink.href = `/admin/prompt-test?token=${token}`;
+                }
+                if (adminStyleGuideLink) {
+                    adminStyleGuideLink.href = `/admin/style-guide?token=${token}`;
+                }
+                if (adminLandingPageLink) {
+                    adminLandingPageLink.href = `/admin/landing-page?token=${token}`;
+                }
+                if (adminLogoLink) {
+                    adminLogoLink.href = `/admin/logo?token=${token}`;
+                }
+                if (backLink) {
+                    backLink.href = `/admin/dashboard?token=${token}`;
+                }
+            }
+            
+            // Get user ID from URL path
+            const pathParts = window.location.pathname.split('/');
+            const userId = pathParts[3]; // /admin/user/{id}/dashboard
+            
+            if (userId) {
+                loadUserData(userId);
+            }
+        });
+        
+        async function loadUserData(userId) {
+            if (!userId) {
+                const pathParts = window.location.pathname.split('/');
+                userId = pathParts[3];
+            }
+            
+            try {
+                const token = localStorage.getItem('adminToken') || new URLSearchParams(window.location.search).get('token');
+                
+                if (!token) {
+                    throw new Error('No authentication token found');
+                }
+                
+                const response = await fetch(`/api/admin/user/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.user) {
+                    // Merge user, subscription, and usage data for display
+                    const userData = {
+                        ...data.user,
+                        subscription_status: data.subscription?.status || 'inactive',
+                        subscription_id: data.subscription?.subscription_id,
+                        stripe_customer_id: data.subscription?.stripe_customer_id,
+                        total_requests: data.usage?.total_requests || 0,
+                        month_requests: data.usage?.month_requests || 0,
+                        recent_activity: data.activity || []
+                    };
+                    displayUserData(userData);
+                } else {
+                    throw new Error(data.error || 'Failed to load user data');
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Show error state
+            }
+        }
+        
+        function displayUserData(user) {
+            // Store user data globally for cancel subscription function
+            currentUserId = user.id;
+            currentUserEmail = user.email;
+
+            // Update header
+            document.getElementById('userTitle').textContent = `${user.name}'s Dashboard`;
+            document.getElementById('userEmail').textContent = user.email;
+            
+            // Update stats cards
+            document.getElementById('totalRequests').textContent = user.total_requests || '0';
+            
+            const subscriptionStatus = document.getElementById('subscriptionStatus');
+            subscriptionStatus.textContent = user.subscription_status || 'inactive';
+            subscriptionStatus.className = `text-lg font-semibold ${
+                user.subscription_status === 'active' ? 'text-green-600' : 'text-gray-500'
+            }`;
+
+            // Show cancel button for active subscriptions
+            const cancelBtn = document.getElementById('cancelSubscriptionBtn');
+            if (user.subscription_status === 'active') {
+                cancelBtn.classList.remove('hidden');
+            } else {
+                cancelBtn.classList.add('hidden');
+            }
+
+            document.getElementById('memberSince').textContent = user.created_at ?
+                new Date(user.created_at).toLocaleDateString() : 'Unknown';
+            
+            document.getElementById('lastActivity').textContent = user.last_activity || 'No recent activity';
+            
+            // Update user details
+            document.getElementById('userFullName').textContent = user.name;
+            document.getElementById('userEmailDetail').textContent = user.email;
+            document.getElementById('userId').textContent = user.id;
+            document.getElementById('googleId').textContent = user.google_id || 'Not available';
+            document.getElementById('accountCreated').textContent = user.created_at ? 
+                new Date(user.created_at).toLocaleString() : 'Unknown';
+            
+            // Update recent activity
+            displayRecentActivity(user.recent_activity || []);
+        }
+        
+        function displayRecentActivity(activities) {
+            const container = document.getElementById('recentActivity');
+            
+            if (!activities || activities.length === 0) {
+                container.innerHTML = `
+                    <li class="px-4 py-4 sm:px-6">
+                        <div class="text-center text-gray-500">No recent activity found</div>
+                    </li>
+                `;
+                return;
+            }
+            
+            container.innerHTML = activities.map(activity => {
+                // Extract domain from URL for better display
+                let domain = 'Unknown';
+                try {
+                    if (activity.url) {
+                        const url = new URL(activity.url);
+                        domain = url.hostname;
+                    }
+                } catch (e) {
+                    domain = activity.url || 'Unknown';
+                }
+
+                const endpoint = activity.endpoint || 'API Request';
+                const tokensInfo = activity.tokens_used ? ` (${activity.tokens_used} tokens)` : '';
+
+                return `
+                    <li class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
+                                        <span class="text-primary-600 font-medium text-sm">API</span>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-900">${endpoint}</p>
+                                    <p class="text-sm text-gray-500">${domain}${tokensInfo}</p>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                ${activity.created_at ? new Date(activity.created_at).toLocaleString() : 'Unknown time'}
+                            </div>
+                        </div>
+                    </li>
+                `;
+            }).join('');
+        }
+
+        // Global variables for cancel subscription
+        let currentUserId = null;
+        let currentUserEmail = null;
+
+
+        // Cancel subscription functions
+        function showCancelDialog() {
+            if (currentUserEmail) {
+                document.getElementById('confirmUserEmail').textContent = currentUserEmail;
+                document.getElementById('cancelDialog').classList.remove('hidden');
+            }
+        }
+
+        function hideCancelDialog() {
+            document.getElementById('cancelDialog').classList.add('hidden');
+        }
+
+        async function confirmCancelSubscription() {
+            if (!currentUserId) {
+                alert('Error: User ID not found');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('adminToken') || new URLSearchParams(window.location.search).get('token');
+
+                if (!token) {
+                    throw new Error('No authentication token found');
+                }
+
+                const response = await fetch(`/api/admin/user/${currentUserId}/cancel-subscription`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Subscription cancelled successfully');
+                    hideCancelDialog();
+                    // Reload the user data to reflect the cancellation
+                    loadUserData(currentUserId);
+                } else {
+                    alert('Error cancelling subscription: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error cancelling subscription:', error);
+                alert('Error cancelling subscription: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
