@@ -790,13 +790,31 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   function checkOnboardingStatus() {
-    // Check if onboarding has been completed
+    // Check if onboarding has been completed locally
     chrome.storage.local.get(['onboardingCompleted'], function(result) {
-      config.log('Onboarding status:', result);
+      config.log('Onboarding status (local):', result);
 
       if (!result.onboardingCompleted) {
-        config.log('🎯 Starting onboarding for new user');
-        startOnboarding();
+        // Also check if user has preferences saved on backend (from subscription success page)
+        config.log('🔍 Checking if user has backend preferences...');
+
+        chrome.runtime.sendMessage({action: 'getPreferences'}, function(response) {
+          if (chrome.runtime.lastError) {
+            config.log('Error checking preferences:', chrome.runtime.lastError);
+            // If error, assume need onboarding
+            startOnboarding();
+            return;
+          }
+
+          if (response && response.success && response.preferences) {
+            config.log('✅ User has backend preferences, skipping onboarding');
+            // Mark as completed locally so we don't check again
+            chrome.storage.local.set({onboardingCompleted: true});
+          } else {
+            config.log('🎯 Starting onboarding for new user');
+            startOnboarding();
+          }
+        });
       } else {
         config.log('✅ Onboarding already completed');
       }
