@@ -40,8 +40,20 @@ const CONFIG = {
 
   // OAuth configuration
   oauth: {
-    clientId: '953660294928-e9hfvo7c9rhvobsij5rli2lv5vqj221q.apps.googleusercontent.com',
+    production: {
+      clientId: '953660294928-e9hfvo7c9rhvobsij5rli2lv5vqj221q.apps.googleusercontent.com',
+      extensionId: 'aclegbimjnjckchogjimbgdpinohimon' // Chrome Web Store extension ID
+    },
+    development: {
+      clientId: 'YOUR_DEV_CLIENT_ID_HERE', // Replace with local dev OAuth client ID
+      extensionId: 'YOUR_LOCAL_EXTENSION_ID_HERE' // Replace with unpacked extension ID
+    },
     scopes: ['openid', 'email', 'profile']
+  },
+
+  // Get the current OAuth client ID based on environment
+  getOAuthClientId() {
+    return this.oauth[this.backend.environment].clientId;
   },
   
   // Debug mode (set to false for production)

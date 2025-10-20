@@ -86,3 +86,7 @@ instance/*.db
 
 # Railway
 .railway/
+# Development files - don't commit with dev credentials
+manifest.dev.json
+config.js.bak
+
