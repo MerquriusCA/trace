@@ -45,8 +45,8 @@ const CONFIG = {
       extensionId: 'aclegbimjnjckchogjimbgdpinohimon' // Chrome Web Store extension ID
     },
     development: {
-      clientId: 'YOUR_DEV_CLIENT_ID_HERE', // Replace with local dev OAuth client ID
-      extensionId: 'YOUR_LOCAL_EXTENSION_ID_HERE' // Replace with unpacked extension ID
+      clientId: '953660294928-0jioej5rqjffa67q3mc04o0ecsa6bbdl.apps.googleusercontent.com',
+      extensionId: 'geombjboonaimbpdommfmicfeaokjcgf'
     },
     scopes: ['openid', 'email', 'profile']
   },
