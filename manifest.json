@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Trace",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "AI-powered reading assistant that summarizes articles and web pages with personalized insights based on your reading style.",
   "permissions": [
     "storage",
