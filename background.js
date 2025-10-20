@@ -355,6 +355,11 @@ async function checkAuthStatus(sendResponse) {
 }
 
 async function getSubscriptionStatus(sendResponse) {
+  // Ensure authToken is loaded from storage if not in memory
+  if (!authToken) {
+    await initializeExtensionState();
+  }
+
   if (!authToken) {
     sendResponse({ success: false, error: 'Not authenticated' });
     return;
@@ -421,6 +426,11 @@ async function createCheckoutSession(priceId, sendResponse) {
 }
 
 async function refreshSubscriptionStatus(sendResponse) {
+  // Ensure authToken is loaded from storage if not in memory
+  if (!authToken) {
+    await initializeExtensionState();
+  }
+
   if (!authToken) {
     sendResponse({ success: false, error: 'Not authenticated' });
     return;
@@ -709,6 +719,12 @@ async function saveUserPreferences(preferences, sendResponse, retryCount = 0) {
   config.log('🔄 saveUserPreferences called with:', preferences);
 
   try {
+    // Ensure authToken is loaded from storage if not in memory
+    if (!authToken) {
+      config.log('⚠️ No auth token in memory, checking storage...');
+      await initializeExtensionState();
+    }
+
     config.log('🔑 Auth token available:', !!authToken);
 
     if (!authToken) {
@@ -786,6 +802,11 @@ async function saveUserPreferences(preferences, sendResponse, retryCount = 0) {
 
 async function loadUserPreferences(sendResponse) {
   try {
+    // Ensure authToken is loaded from storage if not in memory
+    if (!authToken) {
+      await initializeExtensionState();
+    }
+
     if (!authToken) {
       sendResponse({
         success: false,
