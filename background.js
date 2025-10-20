@@ -846,6 +846,12 @@ async function sendFeedback(feedbackData, sendResponse) {
   config.log("📧 Sending feedback to backend", feedbackData);
 
   try {
+    // Ensure authToken is loaded from storage if not in memory
+    if (!authToken) {
+      config.log("⚠️ No auth token in memory, checking storage...");
+      await initializeExtensionState();
+    }
+
     if (!authToken) {
       config.log("❌ No auth token - cannot send feedback");
       sendResponse({
