@@ -453,7 +453,8 @@ def create_checkout_session(current_user):
         'c.vi.nguyen@gmail.com',
         'rickychen@gmail.com',
         'patricianyen@gmail.com',
-        'david.hongrui.wu@gmail.com'
+        'david.hongrui.wu@gmail.com',
+        'hellojeffsmith@gmail.com'
     ]
 
     # Check if user is allowed to purchase
